@@ -1,11 +1,13 @@
-﻿// Copyright © 2015 - Present RealDimensions Software, LLC
+﻿// <copyright company="RealDimensions Software, LLC" file="ContainerBindingConsole.cs">
+//   Copyright 2015 - Present RealDimensions Software, LLC
+// </copyright>
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// 	http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -38,7 +40,8 @@ namespace chocolatey.package.verifier.Host.Infrastructure.Registration
 
             container.Register<IFileSystem, DotNetFileSystem>(Lifestyle.Singleton);
 
-            container.Register<IEnumerable<IFileWatcher>>(() =>
+            container.Register<IEnumerable<IFileWatcher>>(
+                () =>
                 {
                     var list = new List<IFileWatcher>
                         {
@@ -48,9 +51,10 @@ namespace chocolatey.package.verifier.Host.Infrastructure.Registration
                         };
 
                     return list.AsReadOnly();
-                }, Lifestyle.Singleton);
+                }, 
+                Lifestyle.Singleton);
 
-            //container.Register<IEnumerable<ITask>>(() =>
+            // container.Register<IEnumerable<ITask>>(() =>
             //    {
             //        var list = new List<ITask>
             //            {
@@ -58,7 +62,6 @@ namespace chocolatey.package.verifier.Host.Infrastructure.Registration
             //                new FileWatchTask(container.GetInstance<IFileSystem>(), EventManager.ManagerService, configuration, container.GetInstance<IEnumerable<IFileWatcher>>()),
             //                new ShutdownAfterWorkCompletedTask()
             //            };
-
             //        return list.AsReadOnly();
             //    }, Lifestyle.Singleton);
         }

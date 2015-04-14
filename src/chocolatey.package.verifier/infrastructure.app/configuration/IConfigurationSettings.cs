@@ -1,11 +1,13 @@
-// Copyright © 2015 - Present RealDimensions Software, LLC
+// <copyright company="RealDimensions Software, LLC" file="IConfigurationSettings.cs">
+//   Copyright 2015 - Present RealDimensions Software, LLC
+// </copyright>
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// 	http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,10 +39,10 @@ namespace chocolatey.package.verifier.Infrastructure.App.Configuration
         bool RunProfiler { get; }
 
         /// <summary>
-        ///   Gets a value indicating whether to allow javascript.
+        ///   Gets a value indicating whether to allow JavaScript.
         /// </summary>
         /// <value>
-        ///   <c>true</c> if [allow javascript]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [allow JavaScript]; otherwise, <c>false</c>.
         /// </value>
         bool AllowJavascript { get; }
 
@@ -85,17 +87,17 @@ namespace chocolatey.package.verifier.Infrastructure.App.Configuration
         string TestEmailOverride { get; }
 
         /// <summary>
-        ///   Gets a value indicating if ssl is required
+        ///   Gets a value indicating whether SSL is required
         /// </summary>
         bool ForceSSL { get; }
 
         /// <summary>
-        ///   Gets the url scheme to be used when created absolute urls
+        ///   Gets the URL scheme to be used when created absolute URL's
         /// </summary>
         string UrlScheme { get; }
 
         /// <summary>
-        ///   Gets the cache interval in minutes for repository caching
+        ///   Gets the cache Interval in minutes for repository caching
         /// </summary>
         int RepositoryCacheIntervalMinutes { get; }
 

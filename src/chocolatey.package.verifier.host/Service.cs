@@ -1,11 +1,13 @@
-﻿// Copyright © 2015 - Present RealDimensions Software, LLC
+﻿// <copyright company="RealDimensions Software, LLC" file="Service.cs">
+//   Copyright 2015 - Present RealDimensions Software, LLC
+// </copyright>
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// 	http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,8 +20,8 @@ namespace chocolatey.package.verifier.Host
     using System;
     using System.ServiceProcess;
     using Console.Infrastructure.Registration;
-    using SimpleInjector;
     using log4net;
+    using SimpleInjector;
     using verifier.Infrastructure.App;
     using verifier.Infrastructure.App.Registration;
     using verifier.Infrastructure.Tasks;
@@ -29,41 +31,51 @@ namespace chocolatey.package.verifier.Host
     /// </summary>
     public partial class Service : ServiceBase
     {
-        private readonly ILog _logger;
-        private Container _container;
+        private readonly ILog logger;
+        private Container container;
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="Service" /> class.
         /// </summary>
         public Service()
         {
-            InitializeComponent();
+            this.InitializeComponent();
             Bootstrap.Initialize();
-            _logger = LogManager.GetLogger(typeof (Service));
+            this.logger = LogManager.GetLogger(typeof(Service));
+        }
+
+        /// <summary>
+        ///   Runs as console.
+        /// </summary>
+        /// <param name="args">The args.</param>
+        public void RunAsConsole(string[] args)
+        {
+            this.OnStart(args);
+            this.OnStop();
         }
 
         /// <summary>
         ///   When implemented in a derived class, executes when a Start command is sent to the service by the Service Control Manager (SCM) or when the operating system starts (for a service that starts automatically). Specifies actions to take when the service starts.
         /// </summary>
-        /// <param name="args">Data passed by the start command.</param>
+        /// <param name="args">Data passed by the Start command.</param>
         protected override void OnStart(string[] args)
         {
-            _logger.InfoFormat("Starting {0} service.", ApplicationParameters.Name);
+            this.logger.InfoFormat("Starting {0} service.", ApplicationParameters.Name);
 
             try
             {
                 Bootstrap.Startup();
-                //AutoMapperInitializer.Initialize();
+                ////AutoMapperInitializer.Initialize();
                 SimpleInjectorContainer.Start();
-                _container = SimpleInjectorContainer.Container;
+                this.container = SimpleInjectorContainer.Container;
 
-                var tasks = _container.GetAllInstances<ITask>();
+                var tasks = this.container.GetAllInstances<ITask>();
                 foreach (var task in tasks)
                 {
                     task.initialize();
                 }
 
-                _logger.InfoFormat("{0} service is now operational.", ApplicationParameters.Name);
+                this.logger.InfoFormat("{0} service is now operational.", ApplicationParameters.Name);
 
                 if ((args.Length > 0) && (Array.IndexOf(args, "/console") != -1))
                 {
@@ -73,12 +85,13 @@ namespace chocolatey.package.verifier.Host
             }
             catch (Exception ex)
             {
-                _logger.ErrorFormat("{0} service had an error on {1} (with user {2}):{3}{4}",
-                                    ApplicationParameters.Name,
-                                    Environment.MachineName,
-                                    Environment.UserName,
-                                    Environment.NewLine,
-                                    ex);
+                this.logger.ErrorFormat(
+                    "{0} service had an error on {1} (with user {2}):{3}{4}",
+                    ApplicationParameters.Name,
+                    Environment.MachineName,
+                    Environment.UserName,
+                    Environment.NewLine,
+                    ex);
             }
         }
 
@@ -89,11 +102,11 @@ namespace chocolatey.package.verifier.Host
         {
             try
             {
-                _logger.InfoFormat("Stopping {0} service.", ApplicationParameters.Name);
+                this.logger.InfoFormat("Stopping {0} service.", ApplicationParameters.Name);
 
-                if (_container != null)
+                if (this.container != null)
                 {
-                    var tasks = _container.GetAllInstances<ITask>();
+                    var tasks = this.container.GetAllInstances<ITask>();
                     foreach (var task in tasks.OrEmptyListIfNull())
                     {
                         task.shutdown();
@@ -103,28 +116,18 @@ namespace chocolatey.package.verifier.Host
                 Bootstrap.Shutdown();
                 SimpleInjectorContainer.Stop();
 
-                _logger.InfoFormat("{0} service has shut down.", ApplicationParameters.Name);
+                this.logger.InfoFormat("{0} service has shut down.", ApplicationParameters.Name);
             }
             catch (Exception ex)
             {
-                _logger.ErrorFormat("{0} service had an error on {1} (with user {2}):{3}{4}",
-                                    ApplicationParameters.Name,
-                                    Environment.MachineName,
-                                    Environment.UserName,
-                                    Environment.NewLine,
-                                    ex
-                    );
+                this.logger.ErrorFormat(
+                    "{0} service had an error on {1} (with user {2}):{3}{4}",
+                    ApplicationParameters.Name,
+                    Environment.MachineName,
+                    Environment.UserName,
+                    Environment.NewLine,
+                    ex);
             }
-        }
-
-        /// <summary>
-        ///   Runs as console.
-        /// </summary>
-        /// <param name="args">The args.</param>
-        public void RunAsConsole(string[] args)
-        {
-            OnStart(args);
-            OnStop();
         }
     }
 }

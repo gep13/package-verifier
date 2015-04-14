@@ -1,11 +1,13 @@
-// Copyright © 2015 - Present RealDimensions Software, LLC
+// <copyright company="RealDimensions Software, LLC" file="IFileSystemService.cs">
+//   Copyright 2015 - Present RealDimensions Software, LLC
+// </copyright>
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// 	http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,13 +24,13 @@ namespace chocolatey.package.verifier.Infrastructure.Services
     /// </summary>
     public interface IFileSystemService
     {
-        //void Save(string fileName, string fileText, bool overwrite);
+        ////void Save(string fileName, string fileText, bool overwrite);
 
         /// <summary>
         ///   Gets the name of the file from the file path.
         /// </summary>
         /// <param name="filePath">The file path.</param>
-        /// <returns></returns>
+        /// <returns>The file name</returns>
         string GetFileName(string filePath);
 
         /// <summary>
@@ -42,28 +44,28 @@ namespace chocolatey.package.verifier.Infrastructure.Services
         ///   Does a file exist?
         /// </summary>
         /// <param name="filePath">The file path.</param>
-        /// <returns></returns>
+        /// <returns>A boolean value indicating if file exists</returns>
         bool FileExists(string filePath);
 
         /// <summary>
         ///   Combines all items together as one path with \ between them
         /// </summary>
         /// <param name="paths">The paths.</param>
-        /// <returns></returns>
+        /// <returns>The combined path</returns>
         string PathCombine(params string[] paths);
 
         /// <summary>
         ///   Gets the full path.
         /// </summary>
         /// <param name="path">The path.</param>
-        /// <returns></returns>
+        /// <returns>The full path</returns>
         string GetFullPath(string path);
 
         /// <summary>
         ///   Gets the full directory path of a file path.
         /// </summary>
         /// <param name="filePath">The file path.</param>
-        /// <returns></returns>
+        /// <returns>The directory name</returns>
         string GetDirectoryName(string filePath);
 
         /// <summary>
@@ -77,23 +79,20 @@ namespace chocolatey.package.verifier.Infrastructure.Services
         /// </summary>
         /// <param name="filePath">The path to the file.</param>
         /// <param name="fileStream">The file stream.</param>
-        /// <param name="overwrite">
-        ///   if set to <c>true</c> [overwrite].
-        /// </param>
         void Save(string filePath, Stream fileStream);
 
         /// <summary>
         ///   Gets the stream for a file
         /// </summary>
         /// <param name="filePath">The file path.</param>
-        /// <returns></returns>
+        /// <returns>The Stream for the input file path</returns>
         Stream GetStream(string filePath);
 
         /// <summary>
         ///   Gets the file text.
         /// </summary>
         /// <param name="filePath">The file path.</param>
-        /// <returns></returns>
+        /// <returns>The file text</returns>
         string GetFileText(string filePath);
     }
 }

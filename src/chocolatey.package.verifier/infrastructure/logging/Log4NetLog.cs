@@ -1,11 +1,13 @@
-// Copyright © 2015 - Present RealDimensions Software, LLC
+// <copyright company="RealDimensions Software, LLC" file="Log4NetLog.cs">
+//   Copyright 2015 - Present RealDimensions Software, LLC
+// </copyright>
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// 	http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,70 +26,89 @@ namespace chocolatey.package.verifier.Infrastructure.Logging
     /// </summary>
     public class Log4NetLog : ILog, ILog<Log4NetLog>
     {
-        private log4net.ILog _logger;
+        private log4net.ILog logger;
 
         public void InitializeFor(string loggerName)
         {
-            _logger = LogManager.GetLogger(loggerName);
+            this.logger = LogManager.GetLogger(loggerName);
         }
 
         public void Debug(string message, params object[] formatting)
         {
-            if (_logger.IsDebugEnabled) _logger.DebugFormat(DecorateMessageWithAuditInformation(message), formatting);
+            if (this.logger.IsDebugEnabled)
+            {
+                this.logger.DebugFormat(this.DecorateMessageWithAuditInformation(message), formatting);
+            }
         }
 
         public void Debug(Func<string> message)
         {
-            if (_logger.IsDebugEnabled) _logger.Debug(DecorateMessageWithAuditInformation(message.Invoke()));
+            if (this.logger.IsDebugEnabled)
+            {
+                this.logger.Debug(this.DecorateMessageWithAuditInformation(message.Invoke()));
+            }
         }
 
         public void Info(string message, params object[] formatting)
         {
-            if (_logger.IsInfoEnabled) _logger.InfoFormat(DecorateMessageWithAuditInformation(message), formatting);
+            if (this.logger.IsInfoEnabled)
+            {
+                this.logger.InfoFormat(this.DecorateMessageWithAuditInformation(message), formatting);
+            }
         }
 
         public void Info(Func<string> message)
         {
-            if (_logger.IsInfoEnabled) _logger.Info(DecorateMessageWithAuditInformation(message.Invoke()));
+            if (this.logger.IsInfoEnabled)
+            {
+                this.logger.Info(this.DecorateMessageWithAuditInformation(message.Invoke()));
+            }
         }
 
         public void Warn(string message, params object[] formatting)
         {
-            if (_logger.IsWarnEnabled) _logger.WarnFormat(DecorateMessageWithAuditInformation(message), formatting);
+            if (this.logger.IsWarnEnabled)
+            {
+                this.logger.WarnFormat(this.DecorateMessageWithAuditInformation(message), formatting);
+            }
         }
 
         public void Warn(Func<string> message)
         {
-            if (_logger.IsWarnEnabled) _logger.Warn(DecorateMessageWithAuditInformation(message.Invoke()));
+            if (this.logger.IsWarnEnabled)
+            {
+                this.logger.Warn(this.DecorateMessageWithAuditInformation(message.Invoke()));
+            }
         }
 
         public void Error(string message, params object[] formatting)
         {
             // don't need to check for enabled at this level
-            _logger.ErrorFormat(DecorateMessageWithAuditInformation(message), formatting);
+            this.logger.ErrorFormat(this.DecorateMessageWithAuditInformation(message), formatting);
         }
 
         public void Error(Func<string> message)
         {
             // don't need to check for enabled at this level
-            _logger.Error(DecorateMessageWithAuditInformation(message.Invoke()));
+            this.logger.Error(this.DecorateMessageWithAuditInformation(message.Invoke()));
         }
 
         public void Fatal(string message, params object[] formatting)
         {
             // don't need to check for enabled at this level
-            _logger.FatalFormat(DecorateMessageWithAuditInformation(message), formatting);
+            this.logger.FatalFormat(this.DecorateMessageWithAuditInformation(message), formatting);
         }
 
         public void Fatal(Func<string> message)
         {
             // don't need to check for enabled at this level
-            _logger.Fatal(DecorateMessageWithAuditInformation(message.Invoke()));
+            this.logger.Fatal(this.DecorateMessageWithAuditInformation(message.Invoke()));
         }
 
         public string DecorateMessageWithAuditInformation(string message)
         {
             string currentUserName = ApplicationParameters.GetCurrentUserName();
+
             if (!string.IsNullOrWhiteSpace(currentUserName))
             {
                 return "{0} - {1}".FormatWith(message, currentUserName);

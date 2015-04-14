@@ -1,4 +1,4 @@
-// <copyright company="RealDimensions Software, LLC" file="SampleJobService.cs">
+﻿// <copyright company="RealDimensions Software, LLC" file="Images.cs">
 //   Copyright 2015 - Present RealDimensions Software, LLC
 // </copyright>
 // 
@@ -15,13 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace chocolatey.package.verifier.Infrastructure.App.Services
+namespace chocolatey.package.verifier.infrastructure.app
 {
-    internal class SampleJobService : ISampleJobService
+    public class Images
     {
-        public void Run()
-        {
-            // just a sample...
-        }
+        public const string JpgExtension = ".jpg";
+
+        public const string PngExtension = ".png";
     }
 }

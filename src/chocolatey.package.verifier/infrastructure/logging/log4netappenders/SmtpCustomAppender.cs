@@ -1,11 +1,13 @@
-﻿// Copyright © 2015 - Present RealDimensions Software, LLC
+﻿// <copyright company="RealDimensions Software, LLC" file="SmtpCustomAppender.cs">
+//   Copyright 2015 - Present RealDimensions Software, LLC
+// </copyright>
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// 	http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +17,7 @@
 
 namespace chocolatey.package.verifier.Infrastructure.Logging.Log4netAppenders
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Net;
     using System.Net.Mail;
     using log4net.Appender;
@@ -28,19 +31,20 @@ namespace chocolatey.package.verifier.Infrastructure.Logging.Log4netAppenders
     ///   <para>http://stackoverflow.com/questions/13741312/does-log4net-haven-an-smtp-appender-that-support-tls-encryption</para>
     ///   <para>http://stackoverflow.com/questions/12530128/log4net-smtpappender-for-webemail-not-sending</para>
     /// </remarks>
+    [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
     public class SmtpCustomAppender : SmtpAppender
     {
-        public bool EnableSsl { get; set; }
-
         public SmtpCustomAppender()
         {
-            Authentication = SmtpAuthentication.None;
-            Port = 25; //0x19;
-            //Port = 587; // 0x24b;
-            Priority = MailPriority.Normal;
-            EnableSsl = false;
+            this.Authentication = SmtpAuthentication.None;
+            this.Port = 25; // 0x19;
+            // Port = 587; // 0x24b;
+            this.Priority = MailPriority.Normal;
+            this.EnableSsl = false;
         }
 
+        public bool EnableSsl { get; set; }
+        
         /// <summary>
         ///   Send the email message - this overrides the email sender so that we can add enabling SSL
         /// </summary>
@@ -48,14 +52,16 @@ namespace chocolatey.package.verifier.Infrastructure.Logging.Log4netAppenders
         protected override void SendEmail(string messageBody)
         {
             var client = new SmtpClient();
-            if (!string.IsNullOrEmpty(SmtpHost))
+
+            if (!string.IsNullOrEmpty(this.SmtpHost))
             {
-                client.Host = SmtpHost;
+                client.Host = this.SmtpHost;
             }
-            client.Port = Port;
-            client.EnableSsl = EnableSsl;
+
+            client.Port = this.Port;
+            client.EnableSsl = this.EnableSsl;
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
-            switch (Authentication)
+            switch (this.Authentication)
             {
                 case SmtpAuthentication.Basic:
                     client.Credentials = new NetworkCredential(Username, Password);
@@ -70,9 +76,9 @@ namespace chocolatey.package.verifier.Infrastructure.Logging.Log4netAppenders
                     Body = messageBody,
                     From = new MailAddress(From)
                 };
-            message.To.Add(To);
-            message.Subject = Subject;
-            message.Priority = Priority;
+            message.To.Add(this.To);
+            message.Subject = this.Subject;
+            message.Priority = this.Priority;
             client.Send(message);
         }
     }

@@ -1,11 +1,13 @@
-﻿// Copyright © 2015 - Present RealDimensions Software, LLC
+﻿// <copyright company="RealDimensions Software, LLC" file="SimpleInjectorContainer.cs">
+//   Copyright 2015 - Present RealDimensions Software, LLC
+// </copyright>
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// 	http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,14 +29,14 @@ namespace chocolatey.package.verifier.Console.Infrastructure.Registration
     /// </summary>
     public static class SimpleInjectorContainer
     {
-        private static readonly Lazy<Container> _container = new Lazy<Container>(() => new Container());
+        private static Lazy<Container> container = new Lazy<Container>(() => new Container());
 
         /// <summary>
         ///   Gets the container.
         /// </summary>
         public static Container Container
         {
-            get { return _container.Value; }
+            get { return container.Value; }
         }
 
         /// <summary>
@@ -56,20 +58,20 @@ namespace chocolatey.package.verifier.Console.Infrastructure.Registration
             }
         }
 
-        private static void InitializeContainer(Container container)
-        {
-            var binding = new ContainerBinding();
-            binding.RegisterComponents(container);
-            var bindingClient = new ContainerBindingConsole();
-            bindingClient.RegisterComponents(container);
-        }
-
         /// <summary>
         ///   Does any shutdown for the container
         /// </summary>
         public static void Stop()
         {
             "SimpleInjectorContainer".Log().Debug("SimpleInjector has shut down");
+        }
+
+        private static void InitializeContainer(Container container)
+        {
+            var binding = new ContainerBinding();
+            binding.RegisterComponents(container);
+            var bindingClient = new ContainerBindingConsole();
+            bindingClient.RegisterComponents(container);
         }
     }
 }

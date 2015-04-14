@@ -1,18 +1,16 @@
 <StyleCopSettings Version="105">
   <GlobalSettings>
     <CollectionProperty Name="RecognizedWords">
-      <Value>Chocolatey</Value>
-      <Value>em</Value>
-      <Value>Friedl's</Value>
-      <Value>hr</Value>
-      <Value>li</Value>
-      <Value>ol</Value>
-      <Value>runspace</Value>
-      <Value>sehe</Value>
-      <Value>stackoverflow</Value>
-      <Value>tunnelling</Value>
-      <Value>ul</Value>
-      <Value>xaml</Value>
+      <Value>appender</Value>
+	  <Value>aspx</Value>
+	  <Value>mailsettings</Value>
+	  <Value>nz</Value>
+	  <Value>simpleinjector</Value>
+	  <Value>Smtp</Value>
+	  <Value>smtpappender</Value>
+	  <Value>smtphost</Value>
+	  <Value>stackoverflow</Value>
+	  <Value>wikipage</Value>
     </CollectionProperty>
   </GlobalSettings>
   <Analyzers>
@@ -30,13 +28,18 @@
         </Rule>
       </Rules>
       <AnalyzerSettings>
-        <StringProperty Name="CompanyName">Chocolatey</StringProperty>
-        <StringProperty Name="Copyright">Copyright 2014 - Present Rob Reynolds, the maintainers of Chocolatey, and RealDimensions Software, LLC</StringProperty>
+        <StringProperty Name="CompanyName">RealDimensions Software, LLC</StringProperty>
+        <StringProperty Name="Copyright">Copyright 2015 - Present RealDimensions Software, LLC</StringProperty>
       </AnalyzerSettings>
     </Analyzer>
     <Analyzer AnalyzerId="StyleCop.CSharp.NamingRules">
       <Rules>
         <Rule Name="FieldNamesMustNotBeginWithUnderscore">
+          <RuleSettings>
+            <BooleanProperty Name="Enabled">False</BooleanProperty>
+          </RuleSettings>
+        </Rule>
+		<Rule Name="ElementMustBeginWithUpperCaseLetter">
           <RuleSettings>
             <BooleanProperty Name="Enabled">False</BooleanProperty>
           </RuleSettings>
@@ -62,4 +65,12 @@
       </ParserSettings>
     </Parser>
   </Parsers>
+  <SourceFileList>
+    <SourceFile>SolutionVersion.cs</SourceFile>
+    <Settings>
+    <GlobalSettings>
+      <BooleanProperty Name="RulesEnabledByDefault">False</BooleanProperty>
+    </GlobalSettings>
+    </Settings>
+  </SourceFileList>
 </StyleCopSettings>
