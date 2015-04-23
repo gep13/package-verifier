@@ -1,4 +1,4 @@
-﻿// <copyright company="RealDimensions Software, LLC" file="IntervalOccurred.cs">
+﻿// <copyright company="RealDimensions Software, LLC" file="StartupMessage.cs">
 //   Copyright 2015 - Present RealDimensions Software, LLC
 // </copyright>
 //
@@ -15,10 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace chocolatey.package.verifier.Infrastructure.Schedules
+namespace chocolatey.package.verifier.Infrastructure.App.Messaging
 {
-    /// <summary>
-    ///   Event for when a Schedule Interval occurs
-    /// </summary>
-    public delegate void IntervalOccurred();
+    using Infrastructure.Messaging;
+
+    public class StartupMessage : IMessage
+    {
+    }
 }

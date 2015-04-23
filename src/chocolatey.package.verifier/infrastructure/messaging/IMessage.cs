@@ -1,4 +1,4 @@
-﻿// <copyright company="RealDimensions Software, LLC" file="ITask.cs">
+﻿// <copyright company="RealDimensions Software, LLC" file="IMessage.cs">
 //   Copyright 2015 - Present RealDimensions Software, LLC
 // </copyright>
 //
@@ -15,21 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace chocolatey.package.verifier.Infrastructure.Tasks
+namespace chocolatey.package.verifier.Infrastructure.Messaging
 {
     /// <summary>
-    ///   Interface for all runners.
+    ///   Interface for Message
     /// </summary>
-    public interface ITask
+    public interface IMessage
     {
-        /// <summary>
-        ///   Initializes a task. This should be initialized to run on a schedule, a trigger, a subscription to event messages, etc, or some combination of the above.
-        /// </summary>
-        void Initialize();
-
-        /// <summary>
-        ///   Shuts down a task that is in a waiting state. Turns off all schedules, triggers or subscriptions.
-        /// </summary>
-        void Shutdown();
     }
 }

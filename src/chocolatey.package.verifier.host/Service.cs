@@ -72,7 +72,7 @@ namespace chocolatey.package.verifier.Host
                 var tasks = this.container.GetAllInstances<ITask>();
                 foreach (var task in tasks)
                 {
-                    task.initialize();
+                    task.Initialize();
                 }
 
                 this.logger.InfoFormat("{0} service is now operational.", ApplicationParameters.Name);
@@ -109,7 +109,7 @@ namespace chocolatey.package.verifier.Host
                     var tasks = this.container.GetAllInstances<ITask>();
                     foreach (var task in tasks.OrEmptyListIfNull())
                     {
-                        task.shutdown();
+                        task.Shutdown();
                     }
                 }
 

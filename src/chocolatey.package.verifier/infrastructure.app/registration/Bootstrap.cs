@@ -77,7 +77,7 @@ namespace chocolatey.package.verifier.Infrastructure.App.Registration
         /// </summary>
         public static void Shutdown()
         {
-            Logger.InfoFormat("Performing shutdown operations for '{0}'.", ApplicationParameters.Name);
+            Logger.InfoFormat("Performing Shutdown operations for '{0}'.", ApplicationParameters.Name);
             Timer.Value.Stop();
             Timer.Value.Dispose();
         }

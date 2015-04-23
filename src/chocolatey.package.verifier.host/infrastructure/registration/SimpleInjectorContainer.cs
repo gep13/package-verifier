@@ -59,7 +59,7 @@ namespace chocolatey.package.verifier.Console.Infrastructure.Registration
         }
 
         /// <summary>
-        ///   Does any shutdown for the container
+        ///   Does any Shutdown for the container
         /// </summary>
         public static void Stop()
         {
