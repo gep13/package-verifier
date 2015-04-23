@@ -19,9 +19,11 @@ namespace chocolatey.package.verifier.Host.Infrastructure.Registration
 {
     using System.Collections.Generic;
     using SimpleInjector;
+    using verifier.Infrastructure.App.Tasks;
     using verifier.Infrastructure.Configuration;
     using verifier.Infrastructure.FileSystem;
     using verifier.Infrastructure.FileSystem.FileWatchers;
+    using verifier.Infrastructure.Tasks;
 
     /// <summary>
     ///   The inversion container binding for the application.
@@ -40,30 +42,18 @@ namespace chocolatey.package.verifier.Host.Infrastructure.Registration
 
             container.Register<IFileSystem, DotNetFileSystem>(Lifestyle.Singleton);
 
-            container.Register<IEnumerable<IFileWatcher>>(
+            container.Register<IEnumerable<ITask>>(
                 () =>
-                {
-                    var list = new List<IFileWatcher>
-                        {
-                            new FileWatcher(@".\Triggers\TriggerWatch\FtpTaskTrigger.txt", container.GetInstance<IFileSystem>()),
-                            new FileWatcher(@".\Triggers\TriggerWatch\ImportFilesTaskTrigger.txt", container.GetInstance<IFileSystem>()),
-                            new FileWatcher(@".\Triggers\TriggerWatch\ImportFilesCompletedTrigger.txt", container.GetInstance<IFileSystem>())
-                        };
+                    {
+                        var list = new List<ITask>
+                                       {
+                                           new StartupTask(),
+                                           new ShutdownAfterWorkCompletedTask()
+                                       };
 
-                    return list.AsReadOnly();
-                }, 
+                        return list.AsReadOnly();
+                    },
                 Lifestyle.Singleton);
-
-            // container.Register<IEnumerable<ITask>>(() =>
-            //    {
-            //        var list = new List<ITask>
-            //            {
-            //                new StartupTask(),
-            //                new FileWatchTask(container.GetInstance<IFileSystem>(), EventManager.ManagerService, configuration, container.GetInstance<IEnumerable<IFileWatcher>>()),
-            //                new ShutdownAfterWorkCompletedTask()
-            //            };
-            //        return list.AsReadOnly();
-            //    }, Lifestyle.Singleton);
         }
     }
 }

@@ -19,8 +19,8 @@ namespace chocolatey.package.verifier.Infrastructure.Services
 {
     using System;
     using System.Reactive.Linq;
-    using Messaging;
     using EnsureThat;
+    using Messaging;
     using Reactive.EventAggregator;
 
     /// <summary>
@@ -28,20 +28,18 @@ namespace chocolatey.package.verifier.Infrastructure.Services
     /// </summary>
     public class MessageSubscriptionManagerService : IMessageSubscriptionManagerService
     {
-        private readonly IEventAggregator _eventAggregator;
+        private readonly IEventAggregator eventAggregator;
 
-        //http://joseoncode.com/2010/04/29/event-aggregator-with-reactive-extensions/
-        //https://github.com/shiftkey/Reactive.EventAggregator
-
-        //private readonly ConcurrentDictionary<Type, object> _subscriptions;
+        // http://joseoncode.com/2010/04/29/event-aggregator-with-reactive-extensions/
+        // https://github.com/shiftkey/Reactive.EventAggregator
 
         /// <summary>
-        ///   Initializes a new instance of the <see cref="MessageSubscriptionManagerService" /> class.
+        /// Initializes a new instance of the <see cref="MessageSubscriptionManagerService"/> class.
         /// </summary>
+        /// <param name="eventAggregator">The event Aggregator.</param>
         public MessageSubscriptionManagerService(IEventAggregator eventAggregator)
         {
-            _eventAggregator = eventAggregator;
-            // _subscriptions = new ConcurrentDictionary<Type, object>();
+            this.eventAggregator = eventAggregator;
         }
 
         /// <summary>
@@ -55,30 +53,19 @@ namespace chocolatey.package.verifier.Infrastructure.Services
 
             this.Log().Debug(() => "Sending message '{0}' out if there are subscribers...".FormatWith(typeof(TMessage).Name));
 
-            _eventAggregator.Publish(message);
-
-            //object subscription;
-            //if (_subscriptions.TryGetValue(typeof (TMessage), out subscription))
-            //{
-            //    ((ISubject<TMessage>) subscription).OnNext(message);
-            //}
-            //else
-            //{
-            //    this.Log().Debug(() => "No subscribers for message '{0}'.".FormatWith(typeof(TMessage).Name));
-            //}
+            this.eventAggregator.Publish(message);
         }
 
         /// <summary>
-        ///   Subscribes to the specified message.
+        /// Subscribes to the specified message.
         /// </summary>
         /// <typeparam name="TMessage">The type of the message.</typeparam>
         /// <param name="handleMessage">The message handler.</param>
         /// <param name="handleError">The error handler.</param>
         /// <param name="filter">The message filter.</param>
+        /// <returns>The <see cref="IDisposable"/>.</returns>
         public IDisposable Subscribe<TMessage>(Action<TMessage> handleMessage, Action<Exception> handleError, Func<TMessage, bool> filter) where TMessage : class, IMessage
         {
-            //var subject = (ISubject<TMessage>)_subscriptions.GetOrAdd(typeof(TMessage), t => new Subject<TMessage>());
-
             if (filter == null)
             {
                 filter = (message) => true;
@@ -86,17 +73,13 @@ namespace chocolatey.package.verifier.Infrastructure.Services
 
             if (handleError == null)
             {
-                //handleError = (ex) => this.Log().Error(() => "An exception occurred publishing a message. Details:{0}{1}".FormatWith(Environment.NewLine, ex.ToString()));
                 handleError = (ex) => { };
             }
 
-            //subject.Where(filter).Subscribe(handleMessage, handleError);
-
-            var subscription = _eventAggregator.GetEvent<TMessage>()
+            var subscription = this.eventAggregator.GetEvent<TMessage>()
                                                .Where(filter)
                                                .Subscribe(handleMessage, handleError);
-
-
+            
             return subscription;
         }
     }

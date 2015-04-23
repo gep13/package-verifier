@@ -28,8 +28,8 @@ namespace chocolatey.package.verifier.Infrastructure.App.Tasks
     public class TaskTracker
     {
         private const string TaskTrackerName = "TaskTracker_31235688345";
-        private static int activeTasksCount;
         private static readonly Lazy<ConcurrentDictionary<string, int>> ActiveTasks = new Lazy<ConcurrentDictionary<string, int>>(() => new ConcurrentDictionary<string, int>());
+        private static int activeTasksCount;
 
         /// <summary>
         ///   Notifies the tracker of work beginning for a task
@@ -38,12 +38,13 @@ namespace chocolatey.package.verifier.Infrastructure.App.Tasks
         public static void WorkBegin(string taskName)
         {
             "TaskTracker".Log().Debug("Starting work for {0}".FormatWith(taskName));
-            TransactionLock.Enter(TaskTrackerName, () =>
-            {
-                activeTasksCount += 1;
-                ActiveTasks.Value.AddOrUpdate(taskName, 1, (key, oldValue) => oldValue + 1);
-            });
-            //return TransactionLock.Acquire(TaskSynchronizationName, secondsToWaitBeforeTimingOut);
+            TransactionLock.Enter(
+                TaskTrackerName,
+                () =>
+                    {
+                        activeTasksCount += 1;
+                        ActiveTasks.Value.AddOrUpdate(taskName, 1, (key, oldValue) => oldValue + 1);
+                    });
         }
 
         /// <summary>
@@ -53,34 +54,38 @@ namespace chocolatey.package.verifier.Infrastructure.App.Tasks
         public static void WorkComplete(string taskName)
         {
             "TaskTracker".Log().Debug("Completing work for {0}".FormatWith(taskName));
-            TransactionLock.Enter(TaskTrackerName, () =>
-            {
-                activeTasksCount -= 1;
-                var taskCount = 0;
-                ActiveTasks.Value.TryRemove(taskName, out taskCount);
-                if (taskCount != 0)
-                {
-                    taskCount -= 1;
-                    ActiveTasks.Value.AddOrUpdate(taskName, taskCount, (key, oldValue) => taskCount);
-                }
-            });
+            TransactionLock.Enter(
+                TaskTrackerName,
+                () =>
+                    {
+                        activeTasksCount -= 1;
+                        var taskCount = 0;
+                        ActiveTasks.Value.TryRemove(taskName, out taskCount);
+                        if (taskCount != 0)
+                        {
+                            taskCount -= 1;
+                            ActiveTasks.Value.AddOrUpdate(taskName, taskCount, (key, oldValue) => taskCount);
+                        }
+                    });
         }
 
         /// <summary>
         ///   Gets the active tasks.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The IEnumerable of active tasks.</returns>
         public static IEnumerable<string> GetActiveTasks()
         {
             IList<string> activeTasks = new List<string>();
 
-            TransactionLock.Enter(TaskTrackerName, () =>
-            {
-                foreach (var task in TaskTracker.ActiveTasks.Value)
-                {
-                    activeTasks.Add(task.Key);
-                }
-            });
+            TransactionLock.Enter(
+                TaskTrackerName,
+                () =>
+                    {
+                        foreach (var task in TaskTracker.ActiveTasks.Value)
+                        {
+                            activeTasks.Add(task.Key);
+                        }
+                    });
 
             return activeTasks;
         }
@@ -88,18 +93,21 @@ namespace chocolatey.package.verifier.Infrastructure.App.Tasks
         /// <summary>
         ///   Determines if there are active tasks running.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A boolean value</returns>
         public static bool AreActiveTasks()
         {
             bool activeTasksRunning = true;
 
-            TransactionLock.Enter(TaskTrackerName, 1, () =>
-            {
-                if (activeTasksCount == 0)
-                {
-                    activeTasksRunning = false;
-                }
-            });
+            TransactionLock.Enter(
+                TaskTrackerName,
+                1,
+                () =>
+                    {
+                        if (activeTasksCount == 0)
+                        {
+                            activeTasksRunning = false;
+                        }
+                    });
 
             return activeTasksRunning;
         }

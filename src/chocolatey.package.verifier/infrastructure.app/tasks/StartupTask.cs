@@ -17,10 +17,14 @@
 
 namespace chocolatey.package.verifier.Infrastructure.App.Tasks
 {
+    using System;
+    using System.Data.Services.Client;
+    using System.Threading.Tasks;
     using System.Timers;
     using Infrastructure.App.Messaging;
     using Infrastructure.Messaging;
     using Infrastructure.Tasks;
+    using ChocolateySubmittedFeedService;
 
     public class StartupTask : ITask
     {
@@ -35,14 +39,6 @@ namespace chocolatey.package.verifier.Infrastructure.App.Tasks
             this.Log().Info(() => "{0} will send startup message in {1} milliseconds".FormatWith(GetType().Name, TimerInterval));
         }
 
-        private void TimerElapsed(object sender, ElapsedEventArgs e)
-        {
-            this.timer.Stop();
-
-            this.Log().Info(() => "{0} is sending startup message".FormatWith(GetType().Name));
-            EventManager.Publish(new StartupMessage());
-        }
-
         public void Shutdown()
         {
             if (this.timer != null)
@@ -50,6 +46,22 @@ namespace chocolatey.package.verifier.Infrastructure.App.Tasks
                 this.timer.Stop();
                 this.timer.Dispose();
             }
+        }
+
+        private void TimerElapsed(object sender, ElapsedEventArgs e)
+        {
+            this.timer.Stop();
+
+            this.Log().Info(() => "{0} is sending startup message".FormatWith(GetType().Name));
+
+            var service = new FeedContext_x0060_1(new Uri("http://chocolatey.org/api/v2/submitted/"));
+            
+            foreach (var package in service.Packages)
+            {
+                this.Log().Info(() => "{0} found in submitted state.".FormatWith(package.Title));
+            }
+
+            EventManager.Publish(new StartupMessage());
         }
     }
 }

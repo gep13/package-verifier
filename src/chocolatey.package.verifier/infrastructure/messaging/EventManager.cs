@@ -23,16 +23,7 @@ namespace chocolatey.package.verifier.Infrastructure.Messaging
     public static class EventManager
     {
         private static Func<IMessageSubscriptionManagerService> messageSubscriptionManager;
-
-        /// <summary>
-        ///   Initializes the Message platform with the subscription manager
-        /// </summary>
-        /// <param name="messageSubscriptionManager">The message subscription manager.</param>
-        public static void InitializeWith(Func<IMessageSubscriptionManagerService> messageSubscriptionManager)
-        {
-            EventManager.messageSubscriptionManager = messageSubscriptionManager;
-        }
-
+        
         /// <summary>
         ///   Gets the manager service.
         /// </summary>
@@ -42,6 +33,15 @@ namespace chocolatey.package.verifier.Infrastructure.Messaging
         public static IMessageSubscriptionManagerService ManagerService
         {
             get { return messageSubscriptionManager(); }
+        }
+
+        /// <summary>
+        ///   Initializes the Message platform with the subscription manager
+        /// </summary>
+        /// <param name="messageSubscriptionManager">The message subscription manager.</param>
+        public static void InitializeWith(Func<IMessageSubscriptionManagerService> messageSubscriptionManager)
+        {
+            EventManager.messageSubscriptionManager = messageSubscriptionManager;
         }
 
         /// <summary>

@@ -26,10 +26,10 @@ namespace chocolatey.package.verifier.Infrastructure.App.Tasks
 
     public class ShutdownAfterWorkCompletedTask : ITask
     {
-        private IDisposable subscription;
-        private readonly Timer timer = new Timer();
         private const int DefaultMinutes = 4;
-        private const int FollowUpMinutes = 2;
+        private const int FollowUpMinutes = 2;      
+        private readonly Timer timer = new Timer();
+        private IDisposable subscription;
 
         /// <summary>
         ///   Initializes a task. This should be initialized to run on a schedule, a trigger, a subscription to event messages, etc, or some combination of the above.
@@ -38,14 +38,6 @@ namespace chocolatey.package.verifier.Infrastructure.App.Tasks
         {
             this.subscription = EventManager.Subscribe<ImportFilesCompleteMessage>(this.SetTimer, null, null);
             this.Log().Info(() => "{0} is now ready and waiting for ImportFilesCompleteMessage".FormatWith(this.GetType().Name));
-        }
-
-        private void SetTimer(ImportFilesCompleteMessage message)
-        {
-            this.timer.Interval = TimeSpan.FromMinutes(DefaultMinutes).TotalMilliseconds;
-            this.timer.Elapsed += (sender, args) => this.Synchronize();
-            this.timer.Start();
-            this.Log().Info(() => "{0} will check back in {1} minutes to see if the system can shut down".FormatWith(this.GetType().Name, DefaultMinutes));
         }
 
         /// <summary>
@@ -94,6 +86,14 @@ namespace chocolatey.package.verifier.Infrastructure.App.Tasks
                 this.timer.Stop();
                 this.timer.Dispose();
             }
+        }
+
+        private void SetTimer(ImportFilesCompleteMessage message)
+        {
+            this.timer.Interval = TimeSpan.FromMinutes(DefaultMinutes).TotalMilliseconds;
+            this.timer.Elapsed += (sender, args) => this.Synchronize();
+            this.timer.Start();
+            this.Log().Info(() => "{0} will check back in {1} minutes to see if the system can shut down".FormatWith(this.GetType().Name, DefaultMinutes));
         }
     }
 }
