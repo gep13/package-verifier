@@ -18,14 +18,12 @@
 namespace chocolatey.package.verifier.Infrastructure.App.Tasks
 {
     using System;
-    using System.Data.Services.Client;
-    using System.Threading.Tasks;
     using System.Timers;
+    using ChocolateySubmittedFeedService;
     using Infrastructure.App.Messaging;
     using Infrastructure.Messaging;
     using Infrastructure.Tasks;
-    using ChocolateySubmittedFeedService;
-
+    
     public class StartupTask : ITask
     {
         private const double TimerInterval = 15000;
@@ -62,6 +60,7 @@ namespace chocolatey.package.verifier.Infrastructure.App.Tasks
             }
 
             EventManager.Publish(new StartupMessage());
+            EventManager.Publish(new CreateGistMessage(@"C:\temp\install.log", @"C:\temp\uninstall.log"));
         }
     }
 }

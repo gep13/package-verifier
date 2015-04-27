@@ -22,7 +22,6 @@ namespace chocolatey.package.verifier.Host.Infrastructure.Registration
     using verifier.Infrastructure.App.Tasks;
     using verifier.Infrastructure.Configuration;
     using verifier.Infrastructure.FileSystem;
-    using verifier.Infrastructure.FileSystem.FileWatchers;
     using verifier.Infrastructure.Tasks;
 
     /// <summary>
@@ -48,7 +47,8 @@ namespace chocolatey.package.verifier.Host.Infrastructure.Registration
                         var list = new List<ITask>
                                        {
                                            new StartupTask(),
-                                           new ShutdownAfterWorkCompletedTask()
+                                           new ShutdownAfterWorkCompletedTask(),
+                                           new CreateGistTask()
                                        };
 
                         return list.AsReadOnly();

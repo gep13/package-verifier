@@ -125,9 +125,11 @@
     <Compile Include="infrastructure.app\ApplicationFileType.cs" />
     <Compile Include="infrastructure.app\FileInformation.cs" />
     <Compile Include="infrastructure.app\Images.cs" />
+    <Compile Include="infrastructure.app\messaging\CreateGistMessage.cs" />
     <Compile Include="infrastructure.app\messaging\ImportFilesCompleteMessage.cs" />
     <Compile Include="infrastructure.app\messaging\ShutdownMessage.cs" />
     <Compile Include="infrastructure.app\messaging\StartupMessage.cs" />
+    <Compile Include="infrastructure.app\tasks\CreateGistTask.cs" />
     <Compile Include="infrastructure.app\tasks\ShutdownAfterWorkCompletedTask.cs" />
     <Compile Include="infrastructure.app\tasks\StartupTask.cs" />
     <Compile Include="infrastructure.app\tasks\TaskTracker.cs" />
