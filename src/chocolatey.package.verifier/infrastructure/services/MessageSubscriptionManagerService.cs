@@ -18,7 +18,9 @@
 namespace chocolatey.package.verifier.infrastructure.services
 {
     using System;
+    using System.Reactive.Linq;
     using EnsureThat;
+    using Reactive.EventAggregator;
     using messaging;
 
     /// <summary>
@@ -26,7 +28,7 @@ namespace chocolatey.package.verifier.infrastructure.services
     /// </summary>
     public class MessageSubscriptionManagerService : IMessageSubscriptionManagerService
     {
-        private readonly IEventAggregator eventAggregator;
+        private readonly IEventAggregator _eventAggregator;
 
         // http://joseoncode.com/2010/04/29/event-aggregator-with-reactive-extensions/
         // https://github.com/shiftkey/Reactive.EventAggregator
@@ -37,7 +39,7 @@ namespace chocolatey.package.verifier.infrastructure.services
         /// <param name="eventAggregator">The event Aggregator.</param>
         public MessageSubscriptionManagerService(IEventAggregator eventAggregator)
         {
-            this.eventAggregator = eventAggregator;
+            this._eventAggregator = eventAggregator;
         }
 
         /// <summary>
@@ -51,7 +53,7 @@ namespace chocolatey.package.verifier.infrastructure.services
 
             this.Log().Debug(() => "Sending message '{0}' out if there are subscribers...".FormatWith(typeof(TMessage).Name));
 
-            this.eventAggregator.Publish(message);
+            this._eventAggregator.Publish(message);
         }
 
         /// <summary>
@@ -74,7 +76,7 @@ namespace chocolatey.package.verifier.infrastructure.services
                 handleError = (ex) => { };
             }
 
-            var subscription = this.eventAggregator.GetEvent<TMessage>()
+            var subscription = this._eventAggregator.GetEvent<TMessage>()
                                                .Where(filter)
                                                .Subscribe(handleMessage, handleError);
             
