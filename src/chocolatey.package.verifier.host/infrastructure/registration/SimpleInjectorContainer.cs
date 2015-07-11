@@ -20,9 +20,9 @@ namespace chocolatey.package.verifier.Console.Infrastructure.Registration
     using System;
     using Host.Infrastructure.Registration;
     using SimpleInjector;
-    using verifier.Infrastructure.App;
-    using verifier.Infrastructure.App.Registration;
-    using verifier.Infrastructure.Container;
+    using infrastructure.app;
+    using infrastructure.app.registration;
+    using infrastructure.container;
 
     /// <summary>
     ///   The inversion container

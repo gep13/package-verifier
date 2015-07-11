@@ -15,7 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace chocolatey.package.verifier.Infrastructure.App.Services
+namespace chocolatey.package.verifier.infrastructure.app.services
 {
     using System.Collections.Generic;
     using System.Net.Mail;

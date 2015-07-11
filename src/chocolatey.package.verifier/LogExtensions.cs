@@ -19,7 +19,7 @@ namespace chocolatey.package.verifier
 {
     using System;
     using System.Collections.Concurrent;
-    using Infrastructure.Logging;
+    using infrastructure.logging;
 
     /// <summary>
     ///   Extensions to help make logging awesome
@@ -61,7 +61,7 @@ namespace chocolatey.package.verifier
         /// <returns>Instance of a logger for the object.</returns>
         public static ILog Log(this string objectName)
         {
-            return Dictionary.Value.GetOrAdd(objectName, Infrastructure.Logging.Log.GetLoggerFor);
+            return Dictionary.Value.GetOrAdd(objectName, infrastructure.logging.Log.GetLoggerFor);
         }
     }
 }

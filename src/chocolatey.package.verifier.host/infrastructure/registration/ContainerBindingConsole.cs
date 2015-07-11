@@ -19,10 +19,10 @@ namespace chocolatey.package.verifier.Host.Infrastructure.Registration
 {
     using System.Collections.Generic;
     using SimpleInjector;
-    using verifier.Infrastructure.App.Tasks;
-    using verifier.Infrastructure.Configuration;
-    using verifier.Infrastructure.FileSystem;
-    using verifier.Infrastructure.Tasks;
+    using infrastructure.app.tasks;
+    using infrastructure.configuration;
+    using infrastructure.filesystem;
+    using infrastructure.tasks;
 
     /// <summary>
     ///   The inversion container binding for the application.

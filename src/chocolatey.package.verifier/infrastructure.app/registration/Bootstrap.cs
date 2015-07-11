@@ -19,15 +19,15 @@ using log4net.Config;
 
 [assembly: XmlConfigurator(Watch = true)]
 
-namespace chocolatey.package.verifier.Infrastructure.App.Registration
+namespace chocolatey.package.verifier.infrastructure.app.registration
 {
+    using infrastructure.configuration;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Timers;
-    using Infrastructure.Configuration;
     using log4net;
 
     /// <summary>

@@ -15,15 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace chocolatey.package.verifier.Infrastructure.App
+namespace chocolatey.package.verifier.infrastructure.app
 {
     using System;
     using System.Configuration;
     using System.Diagnostics;
     using System.Reflection;
     using System.Web;
-
-    using chocolatey.package.verifier.Infrastructure.Configuration;
+    using infrastructure.configuration;
 
     /// <summary>
     ///   Parameters used application wide are found here.

@@ -15,12 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace chocolatey.package.verifier.Infrastructure.Services
+namespace chocolatey.package.verifier.infrastructure.services
 {
     using System;
     using System.IO;
-    using App.Configuration;
     using EnsureThat;
+    using app.configuration;
 
     /// <summary>
     ///   File System Service for interacting with files/directories/etc

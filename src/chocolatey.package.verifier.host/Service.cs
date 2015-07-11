@@ -20,11 +20,11 @@ namespace chocolatey.package.verifier.Host
     using System;
     using System.ServiceProcess;
     using Console.Infrastructure.Registration;
+    using infrastructure.app;
+    using infrastructure.app.registration;
+    using infrastructure.tasks;
     using log4net;
     using SimpleInjector;
-    using verifier.Infrastructure.App;
-    using verifier.Infrastructure.App.Registration;
-    using verifier.Infrastructure.Tasks;
 
     /// <summary>
     ///   The service that registers tasks and schedules to run

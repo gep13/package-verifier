@@ -19,11 +19,11 @@ namespace chocolatey.package.verifier.Tests
     using System;
     using System.IO;
     using System.Reflection;
-    using Infrastructure.App.Configuration;
-    using Infrastructure.Configuration;
-    using Infrastructure.Logging;
     using Moq;
     using NUnit.Framework;
+    using infrastructure.app.configuration;
+    using infrastructure.configuration;
+    using infrastructure.logging;
 
     [TestFixture]
     public abstract class TinySpec

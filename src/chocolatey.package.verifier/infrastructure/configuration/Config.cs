@@ -15,9 +15,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace chocolatey.package.verifier.Infrastructure.Configuration
+namespace chocolatey.package.verifier.infrastructure.configuration
 {
-    using App.Configuration;
+    using app.configuration;
 
     /// <summary>
     ///   Configuration initialization

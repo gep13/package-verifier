@@ -3,7 +3,7 @@
 //   Copyright 2015 - Present RealDimensions Software, LLC
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-namespace chocolatey.package.verifier.Infrastructure.FileSystem.FileWatchers
+namespace chocolatey.package.verifier.infrastructure.filesystem.filewatchers
 {
     using System;
     using System.Collections.Generic;

@@ -15,12 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace chocolatey.package.verifier.Infrastructure.App.Tasks
+namespace chocolatey.package.verifier.infrastructure.app.tasks
 {
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using Infrastructure.Synchronization;
+    using synchronization;
 
     /// <summary>
     ///   Used for tracking tasks

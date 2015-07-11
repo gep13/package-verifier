@@ -21,9 +21,8 @@ namespace chocolatey.package.verifier.Tests
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-
-    using Infrastructure.Logging;
     using Moq;
+    using infrastructure.logging;
 
     public enum LogLevel
     {

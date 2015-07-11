@@ -15,7 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace chocolatey.package.verifier.Infrastructure.FileSystem
+namespace chocolatey.package.verifier.infrastructure.filesystem
 {
     /// <summary>
     ///   Implementation of IKnownFolder for RMA

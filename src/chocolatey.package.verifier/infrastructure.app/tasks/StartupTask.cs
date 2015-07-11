@@ -15,15 +15,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace chocolatey.package.verifier.Infrastructure.App.Tasks
+namespace chocolatey.package.verifier.infrastructure.app.tasks
 {
     using System;
     using System.Timers;
-    using ChocolateySubmittedFeedService;
-    using Infrastructure.App.Messaging;
-    using Infrastructure.Messaging;
-    using Infrastructure.Tasks;
-    
+    using chocolatey.package.verifier.ChocolateySubmittedFeedService;
+    using infrastructure.messaging;
+    using infrastructure.tasks;
+    using messaging;
+
     public class StartupTask : ITask
     {
         private const double TimerInterval = 15000;

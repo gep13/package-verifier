@@ -15,7 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace chocolatey.package.verifier.Infrastructure.Container
+namespace chocolatey.package.verifier.infrastructure.container
 {
     using System;
     using System.Linq;

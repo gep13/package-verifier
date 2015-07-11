@@ -15,10 +15,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace chocolatey.package.verifier.Infrastructure.Messaging
+namespace chocolatey.package.verifier.infrastructure.messaging
 {
     using System;
-    using Infrastructure.Services;
+    using services;
 
     public static class EventManager
     {

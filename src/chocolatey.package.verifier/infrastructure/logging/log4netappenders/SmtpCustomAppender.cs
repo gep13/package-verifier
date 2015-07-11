@@ -15,7 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace chocolatey.package.verifier.Infrastructure.Logging.Log4netAppenders
+namespace chocolatey.package.verifier.infrastructure.logging.log4netappenders
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Net;

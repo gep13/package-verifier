@@ -15,9 +15,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace chocolatey.package.verifier.Infrastructure.Services
+namespace chocolatey.package.verifier.infrastructure.services
 {
-    using App;
+    using app;
 
     /// <summary>
     ///   The file serving service

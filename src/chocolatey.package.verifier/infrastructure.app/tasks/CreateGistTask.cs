@@ -15,12 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace chocolatey.package.verifier.Infrastructure.App.Tasks
+namespace chocolatey.package.verifier.infrastructure.app.tasks
 {
     using System;
-    using Infrastructure.App.Messaging;
-    using Infrastructure.Messaging;
-    using Infrastructure.Tasks;
+    using infrastructure.messaging;
+    using infrastructure.tasks;
+    using messaging;
 
     public class CreateGistTask : ITask
     {

@@ -15,14 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace chocolatey.package.verifier.Infrastructure.App.Registration
+namespace chocolatey.package.verifier.infrastructure.app.registration
 {
-    using Configuration;
-    using Infrastructure.Configuration;
-    using Infrastructure.Services;
-    using Logging;
-    using Services;
     using SimpleInjector;
+    using configuration;
+    using infrastructure.configuration;
+    using infrastructure.services;
+    using logging;
+    using services;
 
     /// <summary>
     ///   The main inversion container registration for the application. Look for other container bindings in client projects.

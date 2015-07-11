@@ -15,13 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace chocolatey.package.verifier.Infrastructure.Services
+namespace chocolatey.package.verifier.infrastructure.services
 {
     using System;
     using System.Collections.Generic;
     using System.Net.Mail;
-    using Configuration;
     using Elmah;
+    using configuration;
 
     /// <summary>
     ///   Sends a message with Smtp

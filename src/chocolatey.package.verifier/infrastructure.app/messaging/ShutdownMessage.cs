@@ -15,9 +15,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace chocolatey.package.verifier.Infrastructure.App.Messaging
+namespace chocolatey.package.verifier.infrastructure.app.messaging
 {
-    using Infrastructure.Messaging;
+    using infrastructure.messaging;
 
     public class ShutdownMessage : IMessage
     {
