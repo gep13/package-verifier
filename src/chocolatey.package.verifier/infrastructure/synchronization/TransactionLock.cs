@@ -1,13 +1,11 @@
-﻿// <copyright company="RealDimensions Software, LLC" file="TransactionLock.cs">
-//   Copyright 2015 - Present RealDimensions Software, LLC
-// </copyright>
+﻿// Copyright © 2015 - Present RealDimensions Software, LLC
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// http://www.apache.org/licenses/LICENSE-2.0
+// 	http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,19 +25,19 @@ namespace chocolatey.package.verifier.infrastructure.synchronization
     /// </summary>
     public class TransactionLock
     {
-        private static readonly ConcurrentDictionary<string, TransactionLockObject> LockDictionary = new ConcurrentDictionary<string, TransactionLockObject>();
-        private static int defaultSeconds = 120;
-        private static int activeLocks;
-        private static object localLock = new object();
+        private static readonly ConcurrentDictionary<string, TransactionLockObject> _lockDictionary = new ConcurrentDictionary<string, TransactionLockObject>();
+        private const int DEFAULT_SECONDS = 120;
+        private static int _activeLocks;
+        private static object _localLock = new object();
 
         /// <summary>
         ///   Enters the specified name.
         /// </summary>
         /// <param name="name">The name.</param>
         /// <param name="action">The action.</param>
-        public static void Enter(string name, Action action)
+        public static void enter(string name, Action action)
         {
-            Enter(name, defaultSeconds, action);
+            enter(name, DEFAULT_SECONDS, action);
         }
 
         /// <summary>
@@ -48,19 +46,19 @@ namespace chocolatey.package.verifier.infrastructure.synchronization
         /// <param name="name">The name of the object to use with locking</param>
         /// <param name="secondsToTimeout">The seconds to timeout.</param>
         /// <param name="action">The action.</param>
-        public static void Enter(string name, int? secondsToTimeout, Action action)
+        public static void enter(string name, int? secondsToTimeout, Action action)
         {
             bool lockTaken = false;
             try
             {
-                lockTaken = Acquire(name, secondsToTimeout);
+                lockTaken = acquire(name, secondsToTimeout);
                 if (lockTaken)
                 {
                     action.Invoke();
                 }
                 else
                 {
-                    throw new ApplicationException("Was not able to Acquire a lock on '{0}' within '{1}' seconds.".FormatWith(name, secondsToTimeout));
+                    throw new ApplicationException("Was not able to Acquire a lock on '{0}' within '{1}' seconds.".format_with(name, secondsToTimeout));
                 }
             }
             catch (Exception)
@@ -69,7 +67,7 @@ namespace chocolatey.package.verifier.infrastructure.synchronization
             }
             finally
             {
-                Release(name, lockTaken);
+                release(name, lockTaken);
             }
         }
 
@@ -80,9 +78,9 @@ namespace chocolatey.package.verifier.infrastructure.synchronization
         /// <param name="name">The name.</param>
         /// <param name="func">The function to be used.</param>
         /// <returns>The result of entering the lock</returns>
-        public static TResult Enter<TResult>(string name, Func<TResult> func)
+        public static TResult enter<TResult>(string name, Func<TResult> func)
         {
-            return Enter(name, defaultSeconds, func);
+            return enter(name, DEFAULT_SECONDS, func);
         }
 
         /// <summary>
@@ -93,19 +91,19 @@ namespace chocolatey.package.verifier.infrastructure.synchronization
         /// <param name="func">The action.</param>
         /// <typeparam name="TResult">The Type to Enter</typeparam>
         /// <returns>The result of entering the lock</returns>
-        public static TResult Enter<TResult>(string name, int? secondsToTimeout, Func<TResult> func)
+        public static TResult enter<TResult>(string name, int? secondsToTimeout, Func<TResult> func)
         {
             bool lockTaken = false;
             try
             {
-                lockTaken = Acquire(name, secondsToTimeout);
+                lockTaken = acquire(name, secondsToTimeout);
                 if (lockTaken)
                 {
                     return func.Invoke();
                 }
                 else
                 {
-                    throw new ApplicationException("Was not able to Acquire a lock on '{0}' within '{1}' seconds.".FormatWith(name, secondsToTimeout));
+                    throw new ApplicationException("Was not able to Acquire a lock on '{0}' within '{1}' seconds.".format_with(name, secondsToTimeout));
                 }
             }
             catch (Exception)
@@ -114,7 +112,7 @@ namespace chocolatey.package.verifier.infrastructure.synchronization
             }
             finally
             {
-                Release(name, lockTaken);
+                release(name, lockTaken);
             }
         }
 
@@ -125,15 +123,15 @@ namespace chocolatey.package.verifier.infrastructure.synchronization
         /// <param name="secondsToTimeout">The seconds to timeout.</param>
         /// <returns>True if the lock was acquired</returns>
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        public static bool Acquire(string name, int? secondsToTimeout)
+        public static bool acquire(string name, int? secondsToTimeout)
         {
-            "TransactionLock".Log().Debug("Attempting to Enter lock for {0}".FormatWith(name));
-            var lockingObject = GetLockObject(name);
+            "TransactionLock".Log().Debug("Attempting to Enter lock for {0}".format_with(name));
+            var lockingObject = get_lock_object(name);
             bool lockTaken = false;
 
             if (secondsToTimeout.HasValue)
             {
-                Monitor.TryEnter(lockingObject, (int)TimeSpan.FromSeconds(secondsToTimeout.GetValueOrDefault(0)).TotalMilliseconds, ref lockTaken);
+                Monitor.TryEnter(lockingObject, (int) TimeSpan.FromSeconds(secondsToTimeout.GetValueOrDefault(0)).TotalMilliseconds, ref lockTaken);
             }
             else
             {
@@ -142,8 +140,8 @@ namespace chocolatey.package.verifier.infrastructure.synchronization
 
             if (lockTaken)
             {
-                activeLocks += 1;
-                "TransactionLock".Log().Debug("Entered lock for '{0}'. There are {1} active locks.".FormatWith(name, activeLocks));
+                _activeLocks += 1;
+                "TransactionLock".Log().Debug("Entered lock for '{0}'. There are {1} active locks.".format_with(name, _activeLocks));
                 return true;
             }
 
@@ -151,56 +149,56 @@ namespace chocolatey.package.verifier.infrastructure.synchronization
         }
 
         /// <summary>
-        /// Releases locks.
+        ///   Releases locks.
         /// </summary>
         /// <param name="name">The name.</param>
         /// <param name="lockTaken">The lock Taken.</param>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static void Release(string name, bool lockTaken)
+        public static void release(string name, bool lockTaken)
         {
-            if (localLock == null)
+            if (_localLock == null)
             {
-                localLock = new object();
+                _localLock = new object();
             }
 
             try
             {
-                "TransactionLock".Log().Debug("Exiting lock for '{0}'".FormatWith(name));
-                lock (localLock)
+                "TransactionLock".Log().Debug("Exiting lock for '{0}'".format_with(name));
+                lock (_localLock)
                 {
                     if (lockTaken)
                     {
-                        var lockingObject = GetLockObject(name);
+                        var lockingObject = get_lock_object(name);
                         Monitor.Pulse(lockingObject);
                         Monitor.Exit(lockingObject);
-                        activeLocks -= 1;
-                        "TransactionLock".Log().Debug("Exited lock for '{0}'. There are {1} active locks".FormatWith(name, activeLocks));
+                        _activeLocks -= 1;
+                        "TransactionLock".Log().Debug("Exited lock for '{0}'. There are {1} active locks".format_with(name, _activeLocks));
                     }
 
-                    Monitor.Pulse(localLock);
+                    Monitor.Pulse(_localLock);
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                "TransactionLock".Log().Warn("An error occurred when releasing lock for '{0}':{1}{2}".FormatWith(name, Environment.NewLine, ex));
+                "TransactionLock".Log().Warn("An error occurred when releasing lock for '{0}':{1}{2}".format_with(name, Environment.NewLine, ex));
             }
         }
 
         /// <summary>
-        /// Kills this instance.
+        ///   Kills this instance.
         /// </summary>
         /// <param name="name">The name.</param>
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        public static void Kill(string name)
+        public static void kill(string name)
         {
             try
             {
-                Acquire(name, 2);
+                acquire(name, 2);
             }
             finally
             {
-                Release(name, true);
+                release(name, true);
             }
         }
 
@@ -209,11 +207,11 @@ namespace chocolatey.package.verifier.infrastructure.synchronization
         /// </summary>
         /// <param name="name">The name.</param>
         /// <returns>The locked object</returns>
-        private static TransactionLockObject GetLockObject(string name)
+        private static TransactionLockObject get_lock_object(string name)
         {
             var lockObj = new TransactionLockObject(name);
 
-            return LockDictionary.GetOrAdd(name, lockObj);
+            return _lockDictionary.GetOrAdd(name, lockObj);
         }
     }
 }

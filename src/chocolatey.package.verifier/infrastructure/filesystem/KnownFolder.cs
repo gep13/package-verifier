@@ -1,13 +1,11 @@
-﻿// <copyright company="RealDimensions Software, LLC" file="KnownFolder.cs">
-//   Copyright 2015 - Present RealDimensions Software, LLC
-// </copyright>
+﻿// Copyright © 2015 - Present RealDimensions Software, LLC
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// http://www.apache.org/licenses/LICENSE-2.0
+// 	http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,7 +20,7 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
     /// </summary>
     public class KnownFolder : IKnownFolder
     {
-        private readonly string directory;
+        private readonly string _directory;
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="KnownFolder" /> class.
@@ -30,7 +28,7 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
         /// <param name="directory">The directory.</param>
         public KnownFolder(string directory)
         {
-            this.directory = directory;
+            _directory = directory;
         }
 
         /// <summary>
@@ -39,7 +37,7 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
         /// <value>The directory path for a known folder.</value>
         public string Directory
         {
-            get { return this.directory; }
+            get { return _directory; }
         }
     }
 }

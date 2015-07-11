@@ -1,14 +1,12 @@
-﻿// <copyright company="RealDimensions Software, LLC" file="ISchedule.cs">
-//   Copyright 2015 - Present RealDimensions Software, LLC
-// </copyright>
-//
+﻿// Copyright © 2015 - Present RealDimensions Software, LLC
+// 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
-//
+// 
 // You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
+// 
+// 	http://www.apache.org/licenses/LICENSE-2.0
+// 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,22 +20,22 @@ namespace chocolatey.package.verifier.infrastructure.schedules
         /// <summary>
         ///   Occurs when the Interval has happened.
         /// </summary>
-        event IntervalOccurred Interval;
+        event IntervalOccurred interval;
 
         /// <summary>
         ///   Starts the scheduler
         /// </summary>
-        void Start();
+        void start();
 
         /// <summary>
         ///   Changes the Interval.
         /// </summary>
         /// <param name="interval">The Interval.</param>
-        void ChangeInterval(long interval);
+        void change_interval(long interval);
 
         /// <summary>
         ///   Stops the scheduler
         /// </summary>
-        void Stop();
+        void stop();
     }
 }

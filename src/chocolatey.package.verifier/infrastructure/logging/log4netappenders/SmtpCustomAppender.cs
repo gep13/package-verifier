@@ -1,13 +1,11 @@
-﻿// <copyright company="RealDimensions Software, LLC" file="SmtpCustomAppender.cs">
-//   Copyright 2015 - Present RealDimensions Software, LLC
-// </copyright>
+﻿// Copyright © 2015 - Present RealDimensions Software, LLC
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// http://www.apache.org/licenses/LICENSE-2.0
+// 	http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,15 +34,15 @@ namespace chocolatey.package.verifier.infrastructure.logging.log4netappenders
     {
         public SmtpCustomAppender()
         {
-            this.Authentication = SmtpAuthentication.None;
-            this.Port = 25; // 0x19;
+            Authentication = SmtpAuthentication.None;
+            Port = 25; // 0x19;
             // Port = 587; // 0x24b;
-            this.Priority = MailPriority.Normal;
-            this.EnableSsl = false;
+            Priority = MailPriority.Normal;
+            EnableSsl = false;
         }
 
         public bool EnableSsl { get; set; }
-        
+
         /// <summary>
         ///   Send the email message - this overrides the email sender so that we can add enabling SSL
         /// </summary>
@@ -53,15 +51,15 @@ namespace chocolatey.package.verifier.infrastructure.logging.log4netappenders
         {
             var client = new SmtpClient();
 
-            if (!string.IsNullOrEmpty(this.SmtpHost))
+            if (!string.IsNullOrEmpty(SmtpHost))
             {
-                client.Host = this.SmtpHost;
+                client.Host = SmtpHost;
             }
 
-            client.Port = this.Port;
-            client.EnableSsl = this.EnableSsl;
+            client.Port = Port;
+            client.EnableSsl = EnableSsl;
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
-            switch (this.Authentication)
+            switch (Authentication)
             {
                 case SmtpAuthentication.Basic:
                     client.Credentials = new NetworkCredential(Username, Password);
@@ -76,9 +74,9 @@ namespace chocolatey.package.verifier.infrastructure.logging.log4netappenders
                     Body = messageBody,
                     From = new MailAddress(From)
                 };
-            message.To.Add(this.To);
-            message.Subject = this.Subject;
-            message.Priority = this.Priority;
+            message.To.Add(To);
+            message.Subject = Subject;
+            message.Priority = Priority;
             client.Send(message);
         }
     }

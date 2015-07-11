@@ -1,14 +1,12 @@
-// <copyright company="RealDimensions Software, LLC" file="ConfigurationSettings.cs">
-//   Copyright 2015 - Present RealDimensions Software, LLC
-// </copyright>
-//
+// Copyright © 2015 - Present RealDimensions Software, LLC
+// 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
-//
+// 
 // You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
+// 
+// 	http://www.apache.org/licenses/LICENSE-2.0
+// 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,10 +35,7 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         /// </value>
         public bool IsDebugMode
         {
-            get
-            {
-                return this.GetApplicationSettingsValue("IsDebugMode").Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase);
-            }
+            get { return get_application_settings_value("IsDebugMode").Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase); }
         }
 
         /// <summary>
@@ -51,10 +46,7 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         /// </value>
         public bool RunProfiler
         {
-            get
-            {
-                return this.GetApplicationSettingsValue("RunProfiler").Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase);
-            }
+            get { return get_application_settings_value("RunProfiler").Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase); }
         }
 
         /// <summary>
@@ -65,10 +57,7 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         /// </value>
         public bool AllowJavascript
         {
-            get
-            {
-                return this.GetApplicationSettingsValue("AllowJavascript").Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase);
-            }
+            get { return get_application_settings_value("AllowJavascript").Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase); }
         }
 
         /// <summary>
@@ -76,10 +65,7 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         /// </summary>
         public string FilesPath
         {
-            get
-            {
-                return this.GetApplicationSettingsValue("Path.Files");
-            }
+            get { return get_application_settings_value("Path.Files"); }
         }
 
         /// <summary>
@@ -88,10 +74,7 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         /// <value>The remote folders for FTP task.</value>
         public IList<IKnownFolder> RemoteFoldersForFtpTask
         {
-            get
-            {
-                return this.GetListOfKnownFolders("FtpTask.RemoteFolders");
-            }
+            get { return get_list_of_known_folders("FtpTask.RemoteFolders"); }
         }
 
         /// <summary>
@@ -100,10 +83,7 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         /// <value>The ignored folders for FTP task.</value>
         public IList<IKnownFolder> IgnoredFoldersForFtpTask
         {
-            get
-            {
-                return this.GetListOfKnownFolders("FtpTask.IgnoredFolders");
-            }
+            get { return get_list_of_known_folders("FtpTask.IgnoredFolders"); }
         }
 
         /// <summary>
@@ -113,14 +93,14 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         {
             get
             {
-                var siteUrl = this.GetApplicationSettingsValue("Site.Url");
+                var siteUrl = get_application_settings_value("Site.Url");
                 if (string.IsNullOrWhiteSpace(siteUrl))
                 {
                     if (HttpContext.Current != null)
                     {
                         var url = HttpContext.Current.Request.Url;
 
-                        siteUrl = "{0}://{1}:{2}".FormatWith(this.UrlScheme, url.Host, url.Port);
+                        siteUrl = "{0}://{1}:{2}".format_with(UrlScheme, url.Host, url.Port);
                     }
                 }
 
@@ -136,10 +116,7 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         /// </value>
         public bool UseCaching
         {
-            get
-            {
-                return this.GetApplicationSettingsValue("UseCaching").Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase);
-            }
+            get { return get_application_settings_value("UseCaching").Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase); }
         }
 
         /// <summary>
@@ -147,10 +124,7 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         /// </summary>
         public string SystemEmailAddress
         {
-            get
-            {
-                return this.GetSmtpEmailFromMailSettingsSection(this.GetConfigurationSection<SmtpSection>("system.net/mailSettings/smtp"));
-            }
+            get { return get_smtp_email_from_mail_settings_section(get_configuration_section<SmtpSection>("system.net/mailSettings/smtp")); }
         }
 
         /// <summary>
@@ -158,21 +132,15 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         /// </summary>
         public string TestEmailOverride
         {
-            get
-            {
-                return this.GetApplicationSettingsValue("TestingEmailOverride");
-            }
+            get { return get_application_settings_value("TestingEmailOverride"); }
         }
 
         /// <summary>
         ///   Gets a value indicating whether SSL is required
         /// </summary>
-        public bool ForceSSL
+        public bool ForceSsl
         {
-            get
-            {
-                return this.GetApplicationSettingsValue("ForceSSL").Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase);
-            }
+            get { return get_application_settings_value("ForceSSL").Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase); }
         }
 
         /// <summary>
@@ -180,10 +148,7 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         /// </summary>
         public string UrlScheme
         {
-            get
-            {
-                return this.GetApplicationSettingsValue("UrlScheme");
-            }
+            get { return get_application_settings_value("UrlScheme"); }
         }
 
         /// <summary>
@@ -191,10 +156,7 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         /// </summary>
         public int RepositoryCacheIntervalMinutes
         {
-            get
-            {
-                return int.Parse(this.GetApplicationSettingsValue("RepositoryCacheIntervalMinutes"));
-            }
+            get { return int.Parse(get_application_settings_value("RepositoryCacheIntervalMinutes")); }
         }
 
         /// <summary>
@@ -202,10 +164,7 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         /// </summary>
         public int FormsAuthenticationExpirationInMinutes
         {
-            get
-            {
-                return int.Parse(this.GetApplicationSettingsValue("FormsAuthenticationExpirationInMinutes"));
-            }
+            get { return int.Parse(get_application_settings_value("FormsAuthenticationExpirationInMinutes")); }
         }
 
         /// <summary>
@@ -213,7 +172,7 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         /// </summary>
         /// <param name="name">The name.</param>
         /// <returns>A string with the settings value; otherwise an empty string</returns>
-        public string GetApplicationSettingsValue(string name)
+        public string get_application_settings_value(string name)
         {
             return ConfigurationManager.AppSettings.Get(name);
         }
@@ -224,7 +183,7 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         /// <typeparam name="T">The configuration section type</typeparam>
         /// <param name="section">The section.</param>
         /// <returns>The configuration section requested as a strong type; otherwise null</returns>
-        public T GetConfigurationSection<T>(string section) where T : ConfigurationSection
+        public T get_configuration_section<T>(string section) where T : ConfigurationSection
         {
             return ConfigurationManager.GetSection(section) as T;
 
@@ -239,7 +198,7 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         /// <returns>
         ///   The From property on <see cref="SmtpSection" />.
         /// </returns>
-        public string GetSmtpEmailFromMailSettingsSection(SmtpSection settings)
+        public string get_smtp_email_from_mail_settings_section(SmtpSection settings)
         {
             if (settings == null)
             {
@@ -254,16 +213,16 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         /// </summary>
         /// <param name="configFileSetting">The config file setting.</param>
         /// <returns>List of known folders</returns>
-        public IList<IKnownFolder> GetListOfKnownFolders(string configFileSetting)
+        public IList<IKnownFolder> get_list_of_known_folders(string configFileSetting)
         {
-            var folders = this.GetApplicationSettingsValue(configFileSetting).Split(
+            var folders = get_application_settings_value(configFileSetting).Split(
                 new[]
-                {
-                    "|"
-                },
+                    {
+                        "|"
+                    },
                 StringSplitOptions.RemoveEmptyEntries);
 
-            var knownFolders = new List<IKnownFolder> { };
+            var knownFolders = new List<IKnownFolder> {};
 
             foreach (var folder in folders)
             {
@@ -273,7 +232,7 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
             return knownFolders;
         }
 
-        private Dictionary<string, string> ParseQueryParameters(string queryParameters)
+        private Dictionary<string, string> parse_query_parameters(string queryParameters)
         {
             var result = new Dictionary<string, string>();
 

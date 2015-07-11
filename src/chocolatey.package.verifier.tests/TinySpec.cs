@@ -17,65 +17,147 @@
 namespace chocolatey.package.verifier.Tests
 {
     using System;
-    using System.IO;
-    using System.Reflection;
-    using Moq;
     using NUnit.Framework;
-    using infrastructure.app.configuration;
-    using infrastructure.configuration;
+    using infrastructure.app;
     using infrastructure.logging;
+    using tests;
+
+    // ReSharper disable InconsistentNaming
+
+    [SetUpFixture]
+    public class NUnitSetup
+    {
+        public static MockLogger MockLogger { get; set; }
+
+        [SetUp]
+        public virtual void BeforeEverything()
+        {
+            MockLogger = new MockLogger();
+            Log.InitializeWith(MockLogger);
+        }
+
+        public virtual void before_everything()
+        {
+        }
+
+        [TearDown]
+        public void AfterEverything()
+        {
+        }
+    }
 
     [TestFixture]
     public abstract class TinySpec
     {
-        public MockLogger Logger { get; set; }
-
-        public string CurrentDirectory { get; private set; }
-
-        public Mock<IConfigurationSettings> ConfigurationSettings { get; set; }
+        public MockLogger MockLogger
+        {
+            get { return NUnitSetup.MockLogger; }
+        }
 
         [TestFixtureSetUp]
         public void Setup()
         {
-            this.CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
-            this.ConfigurationSettings = new Mock<IConfigurationSettings>();
-            Config.InitializeWith(this.ConfigurationSettings.Object);
-            this.Logger = new MockLogger();
-            Log.InitializeWith(this.Logger);
-            
-            //// Logger = new Mock<ILog>();
-            //// Log.InitializeWith(Logger.Object);
-
-            this.Context();
-            this.Because();
+            if (MockLogger != null) MockLogger.reset();
+            //Log.InitializeWith(MockLogger);
+            Context();
+            Because();
         }
 
         public abstract void Context();
 
         public abstract void Because();
 
+        [SetUp]
+        public void EachSpecSetup()
+        {
+            BeforeEachSpec();
+        }
+
+        public virtual void BeforeEachSpec()
+        {
+        }
+
+        [TearDown]
+        public void EachSpecTearDown()
+        {
+            AfterEachSpec();
+        }
+
+        public virtual void AfterEachSpec()
+        {
+        }
+
         [TestFixtureTearDown]
         public void TearDown()
         {
-            this.AfterObservations();
+            AfterObservations();
         }
 
         public virtual void AfterObservations()
         {
-            foreach (var messageGroup in this.Logger.Messages)
-            {
-                foreach (var message in messageGroup.Value)
-                {
-                    Console.WriteLine("{0}: {1}".FormatWith(messageGroup.Key, message));
-                }
-            }
-        }
-
-        [Fact]
-        public void should_complete_without_error()
-        {
-            // nothing to test here
         }
     }
+
+    public class ObservationAttribute : TestAttribute
+    {
+    }
+
+    public class FactAttribute : ObservationAttribute
+    {
+    }
+
+    public class ExplicitAttribute : NUnit.Framework.ExplicitAttribute
+    {
+    }
+
+
+    public class ConcernForAttribute : Attribute
+    {
+        public string Name { get; set; }
+
+        public ConcernForAttribute(string name)
+        {
+            Name = name;
+        }
+    }
+
+    public class NotWorkingAttribute : CategoryAttribute
+    {
+        public string Reason { get; set; }
+
+        public NotWorkingAttribute(string reason)
+            : base("NotWorking")
+        {
+            Reason = reason;
+        }
+    }
+
+    public class PendingAttribute : IgnoreAttribute
+    {
+        public PendingAttribute(string reason)
+            : base("Pending test - {0}".format_with(reason))
+        {
+        }
+    }
+
+    public class IntegrationAttribute : CategoryAttribute
+    {
+        public IntegrationAttribute()
+            : base("Integration")
+        {
+        }
+    }
+
+    public class ExpectedExceptionAttribute : NUnit.Framework.ExpectedExceptionAttribute
+    {
+        public ExpectedExceptionAttribute(Type exceptionType)
+            : base(exceptionType)
+        { }
+
+        public ExpectedExceptionAttribute(string exceptionName)
+            : base(exceptionName)
+        { }
+    }
+
+    // ReSharper restore InconsistentNaming
 }

@@ -1,13 +1,11 @@
-﻿// <copyright company="RealDimensions Software, LLC" file="Config.cs">
-//   Copyright 2015 - Present RealDimensions Software, LLC
-// </copyright>
+﻿// Copyright © 2015 - Present RealDimensions Software, LLC
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// http://www.apache.org/licenses/LICENSE-2.0
+// 	http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,7 +28,7 @@ namespace chocolatey.package.verifier.infrastructure.configuration
         ///   Initializes application configuration with a configuration instance.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
-        public static void InitializeWith(IConfigurationSettings configuration)
+        public static void initialize_with(IConfigurationSettings configuration)
         {
             _configuration = configuration;
         }
@@ -44,7 +42,7 @@ namespace chocolatey.package.verifier.infrastructure.configuration
         ///     cref="ConfigurationSettings" />
         ///   if one has not been.
         /// </returns>
-        public static IConfigurationSettings GetConfigurationSettings()
+        public static IConfigurationSettings get_configuration_settings()
         {
             return _configuration;
         }

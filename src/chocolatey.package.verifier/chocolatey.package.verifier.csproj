@@ -124,7 +124,6 @@
     <Compile Include="EnumerationExtensions.cs" />
     <Compile Include="infrastructure.app\ApplicationFileType.cs" />
     <Compile Include="infrastructure.app\FileInformation.cs" />
-    <Compile Include="infrastructure.app\Images.cs" />
     <Compile Include="infrastructure.app\messaging\CreateGistMessage.cs" />
     <Compile Include="infrastructure.app\messaging\ImportFilesCompleteMessage.cs" />
     <Compile Include="infrastructure.app\messaging\ShutdownMessage.cs" />
@@ -133,7 +132,6 @@
     <Compile Include="infrastructure.app\tasks\ShutdownAfterWorkCompletedTask.cs" />
     <Compile Include="infrastructure.app\tasks\StartupTask.cs" />
     <Compile Include="infrastructure.app\tasks\TaskTracker.cs" />
-    <Compile Include="infrastructure.app\Web.cs" />
     <Compile Include="infrastructure\container\SimpleInjectorContainerResolutionBehavior.cs" />
     <Compile Include="infrastructure.app\services\EmailDistributionService.cs" />
     <Compile Include="infrastructure.app\services\IEmailDistributionService.cs" />
@@ -185,6 +183,7 @@
     <Compile Include="LogExtensions.cs" />
     <Compile Include="NameValueCollectionExtensions.cs" />
     <Compile Include="NullExtensions.cs" />
+    <Compile Include="ObjectExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyInfoExtensions.cs" />
     <Compile Include="Service References\ChocolateySubmittedFeedService\Reference.cs">

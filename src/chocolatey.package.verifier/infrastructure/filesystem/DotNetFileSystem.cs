@@ -1,13 +1,11 @@
-﻿// <copyright company="RealDimensions Software, LLC" file="DotNetFileSystem.cs">
-//   Copyright 2015 - Present RealDimensions Software, LLC
-// </copyright>
+﻿// Copyright © 2015 - Present RealDimensions Software, LLC
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// http://www.apache.org/licenses/LICENSE-2.0
+// 	http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,194 +16,485 @@
 namespace chocolatey.package.verifier.infrastructure.filesystem
 {
     using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
+    using System.Linq;
+    using System.Reflection;
+    using System.Runtime.InteropServices;
+    using System.Text;
+    using System.Threading;
 
     /// <summary>
     ///   Implementation of IFileSystem for Dot Net
     /// </summary>
-    public class DotNetFileSystem : IFileSystem
+    /// <remarks>Normally we avoid regions, however this has so many methods that we are making an exception.</remarks>
+    public sealed class DotNetFileSystem : IFileSystem
     {
-        /// <summary>
-        ///   Gets the files.
-        /// </summary>
-        /// <param name="path">The path to a specified directory.</param>
-        /// <param name="pattern">The search pattern.</param>
-        /// <param name="option">The option specifies whether the search operation should include all subdirectories or only the current directory.</param>
-        /// <returns>Returns the names of files (including their paths).</returns>
-        public string[] GetFiles(string path, string pattern, SearchOption option)
-        {
-            return Directory.GetFiles(path, pattern, option);
-        }
+        #region Path
 
-        /// <summary>
-        ///   Gets the full path.
-        /// </summary>
-        /// <param name="filePath">The file or directory for which to obtain absolute path information.</param>
-        /// <returns>The fully qualified location of path, such as "C:\MyFile.txt".</returns>
-        public string GetFullPath(string filePath)
-        {
-            return Path.GetFullPath(filePath);
-        }
-
-        /// <summary>
-        ///   Files the exists.
-        /// </summary>
-        /// <param name="filePath">The file to check.</param>
-        /// <returns>Boolean - true if the caller has the required permissions and path contains the name of an existing file; otherwise, false.</returns>
-        public bool FileExists(string filePath)
-        {
-            return File.Exists(filePath);
-        }
-
-        /// <summary>
-        ///   Gets the file name without extension.
-        /// </summary>
-        /// <param name="filePath">The file path.</param>
-        /// <returns>The string returned by GetFileName, minus the last period (.) and all characters following it.</returns>
-        public string GetFileNameWithoutExtension(string filePath)
-        {
-            return Path.GetFileNameWithoutExtension(filePath);
-        }
-
-        /// <summary>
-        ///   Gets the extension.
-        /// </summary>
-        /// <param name="filePath">The file path.</param>
-        /// <returns>he extension of the specified path (including the period "."), or Nothing, or String.Empty. If path is Nothing, GetExtension returns Nothing. If path does not have extension information, GetExtension returns String.Empty.</returns>
-        public string GetExtension(string filePath)
-        {
-            return Path.GetExtension(filePath);
-        }
-
-        /// <summary>
-        ///   Gets the name of the directory.
-        /// </summary>
-        /// <param name="filePath">The file path.</param>
-        /// <returns>Directory information for path, or Nothing if path denotes a root directory or is null. Returns String.Empty if path does not contain directory information.</returns>
-        public string GetDirectoryName(string filePath)
-        {
-            return Path.GetDirectoryName(filePath);
-        }
-
-        /// <summary>
-        ///   Combines strings into a path.
-        /// </summary>
-        /// <param name="leftItem">The first path to combine. </param>
-        /// <param name="rightItems">string array of all other paths to combine.</param>
-        /// <returns>The combined paths.</returns>
-        public string PathCombine(string leftItem, params string[] rightItems)
+        public string combine_paths(string leftItem, params string[] rightItems)
         {
             var combinedPath = leftItem;
             foreach (var rightItem in rightItems)
             {
-                combinedPath = Path.Combine(combinedPath, rightItem);
+                if (rightItem.Contains(":")) throw new ApplicationException("Cannot combine a path with ':' attempted to combine '{0}' with '{1}'".format_with(rightItem, combinedPath));
+
+                var rightSide = rightItem;
+                if (rightSide.StartsWith(Path.DirectorySeparatorChar.to_string()) || rightSide.StartsWith(Path.AltDirectorySeparatorChar.to_string()))
+                {
+                    combinedPath = Path.Combine(combinedPath, rightSide.Substring(1));
+                }
+                else
+                {
+                    combinedPath = Path.Combine(combinedPath, rightSide);
+                }
             }
 
             return combinedPath;
         }
 
-        /// <summary>
-        ///   Moves a specified file to a new location, providing the option to specify a new file name.
-        /// </summary>
-        /// <param name="filePath">The name of the file to move. </param>
-        /// <param name="newFilePath">The new path for the file. </param>
-        public void FileMove(string filePath, string newFilePath)
+        public string get_full_path(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path)) return path;
+
+            return Path.GetFullPath(path);
+        }
+
+        public string get_temp_path()
+        {
+            return Path.GetTempPath();
+        }
+
+        public char get_path_directory_separator_char()
+        {
+            return Path.DirectorySeparatorChar;
+        }
+
+        public char get_path_separator()
+        {
+            return Path.PathSeparator;
+        }
+
+        public string get_executable_path(string executableName)
+        {
+            if (string.IsNullOrWhiteSpace(executableName)) return string.Empty;
+
+            IList<string> extensions = new List<string>();
+
+            if (get_file_name_without_extension(executableName).is_equal_to(executableName))
+            {
+                var pathExtensions = Environment.GetEnvironmentVariable("PATHEXT").to_string().Split(new[] {";"}, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var extension in pathExtensions.or_empty_list_if_null())
+                {
+                    extensions.Add(extension.StartsWith(".") ? extension : ".{0}".format_with(extension));
+                }
+            }
+
+            // Always add empty, for when the executable name is enough.
+            extensions.Add(string.Empty);
+
+            // Gets the path to an executable based on looking in current 
+            // working directory, next to the running process, then among the
+            // derivatives of Path and Pathext variables, applied in order.
+            var searchPaths = new List<string>();
+            searchPaths.Add(get_current_directory());
+            searchPaths.Add(get_directory_name(get_current_assembly_path()));
+            searchPaths.AddRange(Environment.GetEnvironmentVariable("Path").to_string().Split(new[] {get_path_separator()}, StringSplitOptions.RemoveEmptyEntries));
+
+            foreach (var path in searchPaths.or_empty_list_if_null())
+            {
+                foreach (var extension in extensions.or_empty_list_if_null())
+                {
+                    var possiblePath = combine_paths(path, "{0}{1}".format_with(executableName, extension.to_lower()));
+                    if (file_exists(possiblePath)) return possiblePath;
+                }
+            }
+
+            // If not found, return the same as passed in - it may work, 
+            // but possibly not.
+            return executableName;
+        }
+
+        public string get_current_assembly_path()
+        {
+            return Assembly.GetExecutingAssembly().CodeBase.Replace("file:///", string.Empty);
+        }
+
+        #endregion
+
+        #region File
+
+        public IEnumerable<string> get_files(string directoryPath, string pattern = "*.*", SearchOption option = SearchOption.TopDirectoryOnly)
+        {
+            return Directory.EnumerateFiles(directoryPath, pattern, option);
+        }
+
+        public IEnumerable<string> get_files(string directoryPath, string[] extensions, SearchOption option = SearchOption.TopDirectoryOnly)
+        {
+            return Directory.EnumerateFiles(directoryPath, "*.*", option)
+                            .Where(f => extensions.Any(x => f.EndsWith(x, StringComparison.OrdinalIgnoreCase)));
+        }
+
+        public bool file_exists(string filePath)
+        {
+            return File.Exists(filePath);
+        }
+
+        public string get_file_name(string filePath)
+        {
+            return Path.GetFileName(filePath);
+        }
+
+        public string get_file_name_without_extension(string filePath)
+        {
+            return Path.GetFileNameWithoutExtension(filePath);
+        }
+
+        public string get_file_extension(string filePath)
+        {
+            return Path.GetExtension(filePath);
+        }
+
+        public FileInfo get_file_info_for(string filePath)
+        {
+            return new FileInfo(filePath);
+        }
+
+        public DateTime get_file_modified_date(string filePath)
+        {
+            return new FileInfo(filePath).LastWriteTime;
+        }
+
+        public long get_file_size(string filePath)
+        {
+            return new FileInfo(filePath).Length;
+        }
+
+        public string get_file_version_for(string filePath)
+        {
+            return FileVersionInfo.GetVersionInfo(get_full_path(filePath)).FileVersion;
+        }
+
+        public bool is_system_file(FileInfo file)
+        {
+            bool isSystemFile = ((file.Attributes & FileAttributes.System) == FileAttributes.System);
+            if (!isSystemFile)
+            {
+                //check the directory to be sure
+                DirectoryInfo directoryInfo = get_directory_info_for(file.DirectoryName);
+                isSystemFile = ((directoryInfo.Attributes & FileAttributes.System) == FileAttributes.System);
+                this.Log().Debug(() => "Is directory \"{0}\" a system directory? {1}".format_with(file.DirectoryName, isSystemFile.to_string()));
+            }
+            else
+            {
+                this.Log().Debug(() => "File \"{0}\" is a system file.".format_with(file.FullName));
+            }
+
+            return isSystemFile;
+        }
+
+        public bool is_encrypted_file(FileInfo file)
+        {
+            bool isEncrypted = ((file.Attributes & FileAttributes.Encrypted) == FileAttributes.Encrypted);
+            this.Log().Debug(() => "Is file \"{0}\" an encrypted file? {1}".format_with(file.FullName, isEncrypted.to_string()));
+            return isEncrypted;
+        }
+
+        public string get_file_date(FileInfo file)
+        {
+            return file.CreationTime < file.LastWriteTime
+                       ? file.CreationTime.Date.ToString("yyyyMMdd")
+                       : file.LastWriteTime.Date.ToString("yyyyMMdd");
+        }
+
+        public void move_file(string filePath, string newFilePath)
         {
             File.Move(filePath, newFilePath);
         }
 
-        /// <summary>
-        ///   Copies an existing file to a new file. Overwriting a file of the same name is allowed.
-        /// </summary>
-        /// <param name="sourceFilePath">The source file path. The File to copy.</param>
-        /// <param name="destFilePath">The destination file path.</param>
-        /// <param name="overWriteExisting">true if the destination file can be overwritten; otherwise, false.</param>
-        public void FileCopy(string sourceFilePath, string destFilePath, bool overWriteExisting)
+        public void copy_file(string sourceFilePath, string destinationFilePath, bool overwriteExisting)
         {
-            File.Copy(sourceFilePath, destFilePath, overWriteExisting);
+            this.Log().Debug(() => "Attempting to copy \"{0}\"{1} to \"{2}\".".format_with(sourceFilePath, Environment.NewLine, destinationFilePath));
+            create_directory_if_not_exists(get_directory_name(destinationFilePath), ignoreError: true);
+
+            File.Copy(sourceFilePath, destinationFilePath, overwriteExisting);
         }
 
-        /// <summary>
-        ///   Deletes the specified file.
-        /// </summary>
-        /// <param name="filePath">The name of the file to be deleted. Wildcard characters are not supported.</param>
-        public void FileDelete(string filePath)
+        public bool copy_file_unsafe(string sourceFilePath, string destinationFilePath, bool overwriteExisting)
         {
-            if (this.FileExists(filePath))
+            this.Log().Debug(() => "Attempting to copy from \"{0}\" to \"{1}\".".format_with(sourceFilePath, destinationFilePath));
+            create_directory_if_not_exists(get_directory_name(destinationFilePath), ignoreError: true);
+
+            //Private Declare Function apiCopyFile Lib "kernel32" Alias "CopyFileA" _
+            int success = CopyFileW(sourceFilePath, destinationFilePath, overwriteExisting ? 0 : 1);
+            //if (success == 0)
+            //{
+            //    var error = Marshal.GetLastWin32Error();
+
+            //}
+            return success != 0;
+        }
+
+        // ReSharper disable InconsistentNaming
+
+        // http://msdn.microsoft.com/en-us/library/windows/desktop/aa363851.aspx
+        // http://www.pinvoke.net/default.aspx/kernel32.copyfile
+        /*
+            BOOL WINAPI CopyFile(
+              _In_  LPCTSTR lpExistingFileName,
+              _In_  LPCTSTR lpNewFileName,
+              _In_  BOOL bFailIfExists
+            );
+         */
+
+        [DllImport("kernel32", SetLastError = true)]
+        private static extern int CopyFileW(string lpExistingFileName, string lpNewFileName, int bFailIfExists);
+
+        // ReSharper restore InconsistentNaming
+
+        public void delete_file(string filePath)
+        {
+            this.Log().Debug(() => "Attempting to delete file \"{0}\".".format_with(filePath));
+            if (file_exists(filePath))
             {
                 File.Delete(filePath);
             }
         }
 
-        /// <summary>
-        ///   Determines whether the given path refers to an existing directory on disk.
-        /// </summary>
-        /// <param name="path">The path to test.</param>
-        /// <returns>True if path refers to an existing directory; otherwise, false.</returns>
-        public bool DirectoryExists(string path)
+        public FileStream create_file(string filePath)
         {
-            return Directory.Exists(path);
+            return new FileStream(filePath, FileMode.OpenOrCreate);
         }
 
-        /// <summary>
-        ///   Creates all directories and subdirectories in the specified path.
-        /// </summary>
-        /// <param name="path">The directory path to create. </param>
-        public void CreateDirectory(string path)
+        public string read_file(string filePath)
         {
-            Directory.CreateDirectory(path);
+            return File.ReadAllText(filePath, get_file_encoding(filePath));
         }
 
-        /// <summary>
-        ///   Creates all directories and subdirectories in the specified path if they have not already been created.
-        /// </summary>
-        /// <param name="path">The directory path to create.</param>
-        public void CreateDirectoryIfNotExists(string path)
+        public byte[] read_file_bytes(string filePath)
         {
-            if (!this.DirectoryExists(path))
+            return File.ReadAllBytes(filePath);
+        }
+
+        public FileStream open_file_readonly(string filePath)
+        {
+            return File.OpenRead(filePath);
+        }
+
+        public void write_file(string filePath, string fileText)
+        {
+            write_file(filePath, fileText, file_exists(filePath) ? get_file_encoding(filePath) : Encoding.UTF8);
+        }
+
+        public void write_file(string filePath, string fileText, Encoding encoding)
+        {
+            using (FileStream fileStream = File.Open(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
+            using (var streamWriter = new StreamWriter(fileStream, encoding))
             {
-                this.CreateDirectory(path);
+                streamWriter.Write(fileText);
+                streamWriter.Flush();
+                streamWriter.Close();
+                fileStream.Close();
+            }
+        }
+
+        public void write_file(string filePath, Func<Stream> getStream)
+        {
+            using (Stream incomingStream = getStream())
+            using (Stream fileStream = File.Create(filePath))
+            {
+                incomingStream.CopyTo(fileStream);
+                fileStream.Close();
+            }
+        }
+
+        #endregion
+
+        #region Directory
+
+        public string get_current_directory()
+        {
+            return Directory.GetCurrentDirectory();
+        }
+
+        public IEnumerable<string> get_directories(string directoryPath)
+        {
+            if (!directory_exists(directoryPath)) return new List<string>();
+
+            return Directory.EnumerateDirectories(directoryPath);
+        }
+
+        public IEnumerable<string> get_directories(string directoryPath, string pattern, SearchOption option = SearchOption.TopDirectoryOnly)
+        {
+            if (!directory_exists(directoryPath)) return new List<string>();
+
+            return Directory.EnumerateDirectories(directoryPath, pattern, option);
+        }
+
+        public bool directory_exists(string directoryPath)
+        {
+            return Directory.Exists(directoryPath);
+        }
+
+        public string get_directory_name(string filePath)
+        {
+            return Path.GetDirectoryName(filePath);
+        }
+
+        public DirectoryInfo get_directory_info_for(string directoryPath)
+        {
+            return new DirectoryInfo(directoryPath);
+        }
+
+        public DirectoryInfo get_directory_info_from_file_path(string filePath)
+        {
+            return new DirectoryInfo(filePath).Parent;
+        }
+
+        public void create_directory(string directoryPath)
+        {
+            this.Log().Debug(() => "Attempting to create directory \"{0}\".".format_with(get_full_path(directoryPath)));
+            Directory.CreateDirectory(directoryPath);
+        }
+
+        public void move_directory(string directoryPath, string newDirectoryPath)
+        {
+            if (string.IsNullOrWhiteSpace(directoryPath) || string.IsNullOrWhiteSpace(newDirectoryPath)) throw new ApplicationException("You must provide a directory to move from or to.");
+            if (combine_paths(directoryPath, "").is_equal_to(combine_paths(Environment.GetEnvironmentVariable("SystemDrive"), ""))) throw new ApplicationException("Cannot move or delete the root of the system drive");
+
+            try
+            {
+                this.Log().Debug("Moving '{0}'{1} to '{2}'".format_with(directoryPath, Environment.NewLine, newDirectoryPath));
+                Directory.Move(directoryPath, newDirectoryPath);
+            }
+            catch (Exception ex)
+            {
+                this.Log().Warn("Move failed with message:{0} {1}{0} Attempting backup move method.".format_with(Environment.NewLine, ex.Message));
+
+                create_directory_if_not_exists(newDirectoryPath, ignoreError: true);
+                foreach (var file in get_files(directoryPath, "*.*", SearchOption.AllDirectories).or_empty_list_if_null())
+                {
+                    var destinationFile = file.Replace(directoryPath, newDirectoryPath);
+                    if (file_exists(destinationFile)) delete_file(destinationFile);
+
+                    create_directory_if_not_exists(get_directory_name(destinationFile), ignoreError: true);
+                    this.Log().Debug("Moving '{0}'{1} to '{2}'".format_with(file, Environment.NewLine, destinationFile));
+                    move_file(file, destinationFile);
+                }
+
+                Thread.Sleep(1000); // let the moving files finish up
+                delete_directory_if_exists(directoryPath, recursive: true);
+            }
+
+            Thread.Sleep(2000); // sleep for enough time to allow the folder to be cleared
+        }
+
+        public void copy_directory(string sourceDirectoryPath, string destinationDirectoryPath, bool overwriteExisting)
+        {
+            create_directory_if_not_exists(destinationDirectoryPath, ignoreError: true);
+
+            foreach (var file in get_files(sourceDirectoryPath, "*.*", SearchOption.AllDirectories).or_empty_list_if_null())
+            {
+                var destinationFile = file.Replace(sourceDirectoryPath, destinationDirectoryPath);
+                create_directory_if_not_exists(get_directory_name(destinationFile), ignoreError: true);
+                //this.Log().Debug("Copying '{0}' {1} to '{2}'".format_with(file, Environment.NewLine, destinationFile));
+                copy_file(file, destinationFile, overwriteExisting);
+            }
+
+            Thread.Sleep(1500); // sleep for enough time to allow the folder to finish copying
+        }
+
+        public void create_directory_if_not_exists(string directoryPath)
+        {
+            create_directory_if_not_exists(directoryPath, false);
+        }
+
+        public void create_directory_if_not_exists(string directoryPath, bool ignoreError)
+        {
+            if (!directory_exists(directoryPath))
+            {
+                try
+                {
+                    create_directory(directoryPath);
+                }
+                catch (SystemException e)
+                {
+                    if (!ignoreError)
+                    {
+                        this.Log().Error("Cannot create directory \"{0}\". Error was:{1}{2}", get_full_path(directoryPath), Environment.NewLine, e);
+                        throw;
+                    }
+                }
+            }
+        }
+
+        public void delete_directory(string directoryPath, bool recursive)
+        {
+            if (string.IsNullOrWhiteSpace(directoryPath)) throw new ApplicationException("You must provide a directory to delete.");
+            if (combine_paths(directoryPath, "").is_equal_to(combine_paths(Environment.GetEnvironmentVariable("SystemDrive"), ""))) throw new ApplicationException("Cannot move or delete the root of the system drive");
+
+            this.Log().Debug(() => "Attempting to delete directory \"{0}\".".format_with(get_full_path(directoryPath)));
+            Directory.Delete(directoryPath, recursive);
+        }
+
+        public void delete_directory_if_exists(string directoryPath, bool recursive)
+        {
+            if (directory_exists(directoryPath))
+            {
+                delete_directory(directoryPath, recursive);
+            }
+        }
+
+        #endregion
+
+        public void ensure_file_attribute_set(string path, FileAttributes attributes)
+        {
+            if (directory_exists(path))
+            {
+                var directoryInfo = get_directory_info_for(path);
+                if ((directoryInfo.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
+                {
+                    directoryInfo.Attributes |= FileAttributes.Hidden;
+                }
+            }
+            if (file_exists(path))
+            {
+                var fileInfo = get_file_info_for(path);
+                if ((fileInfo.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
+                {
+                    fileInfo.Attributes |= FileAttributes.Hidden;
+                }
             }
         }
 
         /// <summary>
-        ///   Gets the size of the file.
+        ///   Takes a guess at the file encoding by looking to see if it has a BOM
         /// </summary>
-        /// <param name="filePath">The file path.</param>
-        /// <returns>The size, in bytes, of the current file.</returns>
-        public long GetFileSize(string filePath)
+        /// <param name="filePath">Path to the file name</param>
+        /// <returns>A best guess at the encoding of the file</returns>
+        /// <remarks>http://www.west-wind.com/WebLog/posts/197245.aspx</remarks>
+        public static Encoding get_file_encoding(string filePath)
         {
-            return new FileInfo(filePath).Length;
-        }
+            // *** Use Default of Encoding.Default (Ansi CodePage)
+            Encoding enc = Encoding.Default;
 
-        /// <summary>
-        ///   Gets the names of subdirectories (including their paths) in the specified directory.
-        /// </summary>
-        /// <param name="directory">The path for which an array of subdirectory names is returned. </param>
-        /// <returns>An array of the names of subdirectories in "directory".</returns>
-        public string[] GetDirectories(string directory)
-        {
-            return Directory.GetDirectories(directory);
-        }
+            // *** Detect byte order mark if any - otherwise assume default
+            var buffer = new byte[5];
+            var file = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            file.Read(buffer, 0, 5);
+            file.Close();
 
-        /// <summary>
-        ///   Returns the file name and extension of the specified path string.
-        /// </summary>
-        /// <param name="filePath">The file path.</param>
-        /// <returns>The characters after the last directory character in path. If the last character of path is a directory or volume separator character, this method returns String.Empty. If path is Nothing, this method returns Nothing.</returns>
-        public string GetFileName(string filePath)
-        {
-            return Path.GetFileName(filePath);
-        }
+            if (buffer[0] == 0xef && buffer[1] == 0xbb && buffer[2] == 0xbf)
+                enc = Encoding.UTF8;
+            else if (buffer[0] == 0xfe && buffer[1] == 0xff)
+                enc = Encoding.Unicode;
+            else if (buffer[0] == 0 && buffer[1] == 0 && buffer[2] == 0xfe && buffer[3] == 0xff)
+                enc = Encoding.UTF32;
+            else if (buffer[0] == 0x2b && buffer[1] == 0x2f && buffer[2] == 0x76)
+                enc = Encoding.UTF7;
 
-        /// <summary>
-        ///   Gets the file mod date.
-        /// </summary>
-        /// <param name="filePath">The file path.</param>
-        /// <returns>the modification date of the specified file.</returns>
-        public DateTime GetFileModDate(string filePath)
-        {
-            return new FileInfo(filePath).LastWriteTime;
+            return enc;
         }
     }
 }

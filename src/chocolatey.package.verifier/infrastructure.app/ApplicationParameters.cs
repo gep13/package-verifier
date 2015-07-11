@@ -1,13 +1,11 @@
-﻿// <copyright company="RealDimensions Software, LLC" file="ApplicationParameters.cs">
-//   Copyright 2015 - Present RealDimensions Software, LLC
-// </copyright>
+﻿// Copyright © 2015 - Present RealDimensions Software, LLC
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// http://www.apache.org/licenses/LICENSE-2.0
+// 	http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,6 +21,8 @@ namespace chocolatey.package.verifier.infrastructure.app
     using System.Reflection;
     using System.Web;
     using infrastructure.configuration;
+
+    // ReSharper disable InconsistentNaming
 
     /// <summary>
     ///   Parameters used application wide are found here.
@@ -56,14 +56,9 @@ namespace chocolatey.package.verifier.infrastructure.app
 
         public const char WebSeparatorChar = '/';
 
-        public const string DatabaseTransactionLockName = "yo";
-
         public static int RepositoryCacheIntervalMinutes
         {
-            get
-            {
-                return Config.GetConfigurationSettings().RepositoryCacheIntervalMinutes;
-            }
+            get { return Config.get_configuration_settings().RepositoryCacheIntervalMinutes; }
         }
 
         /// <summary>
@@ -71,10 +66,7 @@ namespace chocolatey.package.verifier.infrastructure.app
         /// </summary>
         public static bool IsDebug
         {
-            get
-            {
-                return TryGetConfig(() => Config.GetConfigurationSettings().IsDebugMode, false);
-            }
+            get { return try_get_config(() => Config.get_configuration_settings().IsDebugMode, false); }
         }
 
         /// <summary>
@@ -88,20 +80,17 @@ namespace chocolatey.package.verifier.infrastructure.app
             get
             {
                 return ConfigurationManager.AppSettings["InsertTestData"].Equals(
-                    bool.TrueString, 
+                    bool.TrueString,
                     StringComparison.InvariantCultureIgnoreCase);
             }
         }
-        
+
         /// <summary>
         ///   Gets the connection string.
         /// </summary>
         public static string ConnectionString
         {
-            get
-            {
-                return ConfigurationManager.ConnectionStrings[ConnectionStringName].ConnectionString;
-            }
+            get { return ConfigurationManager.ConnectionStrings[ConnectionStringName].ConnectionString; }
         }
 
         /// <summary>
@@ -109,10 +98,7 @@ namespace chocolatey.package.verifier.infrastructure.app
         /// </summary>
         public static string SiteUrl
         {
-            get
-            {
-                return Config.GetConfigurationSettings().SiteUrl;
-            }
+            get { return Config.get_configuration_settings().SiteUrl; }
         }
 
         /// <summary>
@@ -132,12 +118,12 @@ namespace chocolatey.package.verifier.infrastructure.app
         }
 
         /// <summary>
-        /// Gets the current user's name
+        ///   Gets the current user's name
         /// </summary>
         /// <returns>
-        /// The <see cref="string"/>.
+        ///   The <see cref="string" />.
         /// </returns>
-        public static string GetCurrentUserName()
+        public static string get_current_user_name()
         {
             string userName = Environment.UserName;
 
@@ -152,17 +138,17 @@ namespace chocolatey.package.verifier.infrastructure.app
 
             return userName;
         }
-        
+
         /// <summary>
         ///   Gets the system email address.
         /// </summary>
         /// <returns>The email address from system.net/mailsettings/from; otherwise null.</returns>
-        public static string GetSystemEmailAddress()
+        public static string get_system_email_address()
         {
-            return Config.GetConfigurationSettings().SystemEmailAddress;
+            return Config.get_configuration_settings().SystemEmailAddress;
         }
 
-        private static T TryGetConfig<T>(Func<T> func, T defaultValue)
+        private static T try_get_config<T>(Func<T> func, T defaultValue)
         {
             try
             {
@@ -174,4 +160,6 @@ namespace chocolatey.package.verifier.infrastructure.app
             }
         }
     }
+
+    // ReSharper restore InconsistentNaming
 }

@@ -1,14 +1,12 @@
-﻿// <copyright company="RealDimensions Software, LLC" file="ShutdownAfterWorkCompletedTask.cs">
-//   Copyright 2015 - Present RealDimensions Software, LLC
-// </copyright>
-//
+﻿// Copyright © 2015 - Present RealDimensions Software, LLC
+// 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
-//
+// 
 // You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
+// 
+// 	http://www.apache.org/licenses/LICENSE-2.0
+// 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,74 +24,74 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
     public class ShutdownAfterWorkCompletedTask : ITask
     {
-        private const int DefaultMinutes = 4;
-        private const int FollowUpMinutes = 2;      
-        private readonly Timer timer = new Timer();
-        private IDisposable subscription;
+        private const int DEFAULT_MINUTES = 4;
+        private const int FOLLOW_UP_MINUTES = 2;
+        private readonly Timer _timer = new Timer();
+        private IDisposable _subscription;
 
         /// <summary>
         ///   Initializes a task. This should be initialized to run on a schedule, a trigger, a subscription to event messages, etc, or some combination of the above.
         /// </summary>
-        public void Initialize()
+        public void initialize()
         {
-            this.subscription = EventManager.Subscribe<ImportFilesCompleteMessage>(this.SetTimer, null, null);
-            this.Log().Info(() => "{0} is now ready and waiting for ImportFilesCompleteMessage".FormatWith(this.GetType().Name));
+            _subscription = EventManager.subscribe<ImportFilesCompleteMessage>(set_timer, null, null);
+            this.Log().Info(() => "{0} is now ready and waiting for ImportFilesCompleteMessage".format_with(GetType().Name));
         }
 
         /// <summary>
         ///   Synchronizes this instance.
         /// </summary>
-        public void Synchronize()
+        public void synchronize()
         {
-            this.timer.Stop();
+            _timer.Stop();
 
-            var canShutdown = !TaskTracker.AreActiveTasks();
+            var canShutdown = !TaskTracker.are_active_tasks();
 
             if (!canShutdown)
             {
-                var tasks = TaskTracker.GetActiveTasks();
+                var tasks = TaskTracker.get_active_tasks();
                 var activeTasks = new StringBuilder();
-                foreach (var task in tasks.OrEmptyListIfNull())
+                foreach (var task in tasks.or_empty_list_if_null())
                 {
-                    activeTasks.Append("{0}; ".FormatWith(task));
+                    activeTasks.Append("{0}; ".format_with(task));
                 }
 
-                this.Log().Info("Still waiting on the following tasks: {0}".FormatWith(activeTasks.ToString()));
+                this.Log().Info("Still waiting on the following tasks: {0}".format_with(activeTasks.ToString()));
             }
             else
             {
                 this.Log().Info("Signalling for shutdown... all tasks have completed.");
-                EventManager.Publish(new ShutdownMessage());
+                EventManager.publish(new ShutdownMessage());
             }
 
-            this.Log().Info("Waiting for {0} minutes to check again for ability to shutdown.".FormatWith(FollowUpMinutes));
-            this.timer.Interval = TimeSpan.FromMinutes(FollowUpMinutes).TotalMilliseconds;
-            this.timer.Start();
+            this.Log().Info("Waiting for {0} minutes to check again for ability to shutdown.".format_with(FOLLOW_UP_MINUTES));
+            _timer.Interval = TimeSpan.FromMinutes(FOLLOW_UP_MINUTES).TotalMilliseconds;
+            _timer.Start();
         }
 
         /// <summary>
         ///   Shuts down a task that is in a waiting state. Turns off all schedules, triggers or subscriptions.
         /// </summary>
-        public void Shutdown()
+        public void shutdown()
         {
-            if (this.subscription != null)
+            if (_subscription != null)
             {
-                this.subscription.Dispose();
+                _subscription.Dispose();
             }
 
-            if (this.timer != null)
+            if (_timer != null)
             {
-                this.timer.Stop();
-                this.timer.Dispose();
+                _timer.Stop();
+                _timer.Dispose();
             }
         }
 
-        private void SetTimer(ImportFilesCompleteMessage message)
+        private void set_timer(ImportFilesCompleteMessage message)
         {
-            this.timer.Interval = TimeSpan.FromMinutes(DefaultMinutes).TotalMilliseconds;
-            this.timer.Elapsed += (sender, args) => this.Synchronize();
-            this.timer.Start();
-            this.Log().Info(() => "{0} will check back in {1} minutes to see if the system can shut down".FormatWith(this.GetType().Name, DefaultMinutes));
+            _timer.Interval = TimeSpan.FromMinutes(DEFAULT_MINUTES).TotalMilliseconds;
+            _timer.Elapsed += (sender, args) => synchronize();
+            _timer.Start();
+            this.Log().Info(() => "{0} will check back in {1} minutes to see if the system can shut down".format_with(GetType().Name, DEFAULT_MINUTES));
         }
     }
 }

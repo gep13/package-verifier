@@ -1,13 +1,11 @@
-﻿// <copyright company="RealDimensions Software, LLC" file="ContainerBinding.cs">
-//   Copyright 2015 - Present RealDimensions Software, LLC
-// </copyright>
+﻿// Copyright © 2015 - Present RealDimensions Software, LLC
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// http://www.apache.org/licenses/LICENSE-2.0
+// 	http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,7 +28,7 @@ namespace chocolatey.package.verifier.infrastructure.app.registration
     public class ContainerBinding
     {
         /// <summary>
-        /// Loads the module into the kernel.
+        ///   Loads the module into the kernel.
         /// </summary>
         /// <param name="container">The container.</param>
         public void RegisterComponents(Container container)
@@ -38,7 +36,7 @@ namespace chocolatey.package.verifier.infrastructure.app.registration
             Log.InitializeWith<Log4NetLog>();
 
             IConfigurationSettings configuration = new ConfigurationSettings();
-            Config.InitializeWith(configuration);
+            Config.initialize_with(configuration);
 
             container.Register(() => configuration, Lifestyle.Singleton);
 
@@ -49,7 +47,7 @@ namespace chocolatey.package.verifier.infrastructure.app.registration
             container.Register<IFileSystemService, FileSystemService>(Lifestyle.Singleton);
             container.Register<IRegularExpressionService, RegularExpressionService>(Lifestyle.Singleton);
 
-            this.RegisterOverrideableComponents(container, configuration);
+            RegisterOverrideableComponents(container, configuration);
         }
 
         /// <summary>

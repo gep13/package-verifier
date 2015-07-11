@@ -1,13 +1,11 @@
-﻿// <copyright company="RealDimensions Software, LLC" file="SimpleInjectorContainerResolutionBehavior.cs">
-//   Copyright 2015 - Present RealDimensions Software, LLC
-// </copyright>
+﻿// Copyright © 2015 - Present RealDimensions Software, LLC
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// http://www.apache.org/licenses/LICENSE-2.0
+// 	http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,14 +21,14 @@ namespace chocolatey.package.verifier.infrastructure.container
     using SimpleInjector.Advanced;
 
     /// <summary>
-    /// Class to control the Resolution Behavior of the Simple Injector Container
+    ///   Class to control the Resolution Behavior of the Simple Injector Container
     /// </summary>
     /// <remarks>
     ///   Adapted from https://simpleinjector.codeplex.com/wikipage?title=T4MVC%20Integration
     /// </remarks>
     public class SimpleInjectorContainerResolutionBehavior : IConstructorResolutionBehavior
     {
-        private readonly IConstructorResolutionBehavior originalBehavior;
+        private readonly IConstructorResolutionBehavior _originalBehavior;
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="SimpleInjectorContainerResolutionBehavior" /> class.
@@ -38,7 +36,7 @@ namespace chocolatey.package.verifier.infrastructure.container
         /// <param name="originalBehavior">The original behavior.</param>
         public SimpleInjectorContainerResolutionBehavior(IConstructorResolutionBehavior originalBehavior)
         {
-            this.originalBehavior = originalBehavior;
+            _originalBehavior = originalBehavior;
         }
 
         /// <summary>
@@ -66,7 +64,7 @@ namespace chocolatey.package.verifier.infrastructure.container
             }
 
             // fall back to the container's default behavior.
-            return this.originalBehavior.GetConstructor(serviceType, implementationType);
+            return _originalBehavior.GetConstructor(serviceType, implementationType);
         }
     }
 }

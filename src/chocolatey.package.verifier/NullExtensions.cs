@@ -1,13 +1,11 @@
-// <copyright company="RealDimensions Software, LLC" file="NullExtensions.cs">
-//   Copyright 2015 - Present RealDimensions Software, LLC
-// </copyright>
+// Copyright © 2015 - Present RealDimensions Software, LLC
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// http://www.apache.org/licenses/LICENSE-2.0
+// 	http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,58 +24,58 @@ namespace chocolatey.package.verifier
     /// </summary>
     public static class NullExtensions
     {
-        public static TValue ValueOrDefault<TSource, TValue>(this TSource instance, Expression<Func<TSource, TValue>> expression)
+        public static TValue value_or_default<TSource, TValue>(this TSource instance, Expression<Func<TSource, TValue>> expression)
         {
-            return ValueOrDefault(instance, expression, true);
+            return value_or_default(instance, expression, true);
         }
 
-        internal static TProperty EvaluateExpression<TSource, TProperty>(TSource source, Expression<Func<TSource, TProperty>> expression)
+        internal static TProperty evaluate_expression<TSource, TProperty>(TSource source, Expression<Func<TSource, TProperty>> expression)
         {
             var method = expression.Body as MethodCallExpression;
 
             if (method != null)
             {
-                return ValueOrDefault(source, expression, false);
+                return value_or_default(source, expression, false);
             }
 
             var body = expression.Body as MemberExpression;
 
             if (body == null)
             {
-                const string Format = "Expression '{0}' must refer to a property.";
-                string message = string.Format(Format, expression);
+                const string format = "Expression '{0}' must refer to a property.";
+                string message = string.Format(format, expression);
                 throw new ArgumentException(message);
             }
 
-            object value = EvaluateMemberExpression(source, body);
+            object value = evaluate_member_expression(source, body);
 
             if (ReferenceEquals(value, null))
             {
                 return default(TProperty);
             }
 
-            return (TProperty)value;
+            return (TProperty) value;
         }
 
-        private static object EvaluateMemberExpression(object instance, MemberExpression memberExpression)
+        private static object evaluate_member_expression(object instance, MemberExpression memberExpression)
         {
             if (memberExpression == null)
             {
                 return instance;
             }
 
-            instance = EvaluateMemberExpression(instance, memberExpression.Expression as MemberExpression);
+            instance = evaluate_member_expression(instance, memberExpression.Expression as MemberExpression);
             var propertyInfo = memberExpression.Member as PropertyInfo;
-            instance = ValueOrDefault(instance, item => propertyInfo.GetValue(item, null), false);
+            instance = value_or_default(instance, item => propertyInfo.GetValue(item, null), false);
             return instance;
         }
 
-        private static TValue ValueOrDefault<TSource, TValue>(this TSource instance, Expression<Func<TSource, TValue>> expression, bool nested)
+        private static TValue value_or_default<TSource, TValue>(this TSource instance, Expression<Func<TSource, TValue>> expression, bool nested)
         {
             return ReferenceEquals(instance, default(TSource))
                        ? default(TValue)
                        : nested
-                             ? EvaluateExpression(instance, expression)
+                             ? evaluate_expression(instance, expression)
                              : expression.Compile()(instance);
         }
     }

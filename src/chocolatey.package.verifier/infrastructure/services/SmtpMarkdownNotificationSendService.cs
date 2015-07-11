@@ -1,13 +1,11 @@
-// <copyright company="RealDimensions Software, LLC" file="SmtpMarkdownNotificationSendService.cs">
-//   Copyright 2015 - Present RealDimensions Software, LLC
-// </copyright>
+// Copyright © 2015 - Present RealDimensions Software, LLC
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// http://www.apache.org/licenses/LICENSE-2.0
+// 	http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,9 +34,9 @@ namespace chocolatey.package.verifier.infrastructure.services
         /// <param name="to">The recipient.</param>
         /// <param name="subject">The subject.</param>
         /// <param name="message">The message.</param>
-        public void Send(string @from, string to, string subject, string message)
+        public void send(string @from, string to, string subject, string message)
         {
-            this.Send(@from, new List<string> { to }, subject, message, null, useHtmlBody: false);
+            send(@from, new List<string> {to}, subject, message, null, useHtmlBody: false);
         }
 
         /// <summary>
@@ -48,9 +46,9 @@ namespace chocolatey.package.verifier.infrastructure.services
         /// <param name="to">The recipient.</param>
         /// <param name="subject">The subject.</param>
         /// <param name="message">The message.</param>
-        public void Send(string @from, IEnumerable<string> to, string subject, string message)
+        public void send(string @from, IEnumerable<string> to, string subject, string message)
         {
-            this.Send(@from, to, subject, message, null, useHtmlBody: false);
+            send(@from, to, subject, message, null, useHtmlBody: false);
         }
 
         /// <summary>
@@ -61,9 +59,9 @@ namespace chocolatey.package.verifier.infrastructure.services
         /// <param name="subject">The subject.</param>
         /// <param name="message">The message.</param>
         /// <param name="useHtmlBody">Whether to use html or not.</param>
-        public void Send(string @from, IEnumerable<string> to, string subject, string message, bool useHtmlBody)
+        public void send(string @from, IEnumerable<string> to, string subject, string message, bool useHtmlBody)
         {
-            this.Send(@from, to, subject, message, null, useHtmlBody);
+            send(@from, to, subject, message, null, useHtmlBody);
         }
 
         /// <summary>
@@ -77,9 +75,9 @@ namespace chocolatey.package.verifier.infrastructure.services
         /// <param name="useHtmlBody">
         ///   if set to <c>true</c> [use HTML body].
         /// </param>
-        public void Send(string @from, IEnumerable<string> to, string subject, string message, IEnumerable<Attachment> attachments, bool useHtmlBody)
+        public void send(string @from, IEnumerable<string> to, string subject, string message, IEnumerable<Attachment> attachments, bool useHtmlBody)
         {
-            var config = Config.GetConfigurationSettings();
+            var config = Config.get_configuration_settings();
 
             var emailMessage = new MailMessage();
             emailMessage.From = new MailAddress(@from);
@@ -102,12 +100,12 @@ namespace chocolatey.package.verifier.infrastructure.services
             emailMessage.Subject = subject;
             emailMessage.Body = message;
             emailMessage.IsBodyHtml = useHtmlBody;
-            foreach (var attachment in attachments.OrEmptyListIfNull())
+            foreach (var attachment in attachments.or_empty_list_if_null())
             {
                 emailMessage.Attachments.Add(attachment);
             }
 
-            this.Log().Info(() => "Sending '{0}' a message from '{1}': {2}{3}{4}".FormatWith(string.Join(",", to), @from, subject, Environment.NewLine, message));
+            this.Log().Info(() => "Sending '{0}' a message from '{1}': {2}{3}{4}".format_with(string.Join(",", to), @from, subject, Environment.NewLine, message));
 
             try
             {
@@ -117,7 +115,7 @@ namespace chocolatey.package.verifier.infrastructure.services
             }
             catch (Exception ex)
             {
-                this.Log().Error(() => "Error sending email to '{0}' with subject '{1}':{2}{3}".FormatWith(emailMessage.To.ToString(), emailMessage.Subject, Environment.NewLine, ex));
+                this.Log().Error(() => "Error sending email to '{0}' with subject '{1}':{2}{3}".format_with(emailMessage.To.ToString(), emailMessage.Subject, Environment.NewLine, ex));
                 ErrorSignal.FromCurrentContext().Raise(ex);
             }
         }

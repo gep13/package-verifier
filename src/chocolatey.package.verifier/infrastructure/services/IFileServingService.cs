@@ -1,13 +1,11 @@
-// <copyright company="RealDimensions Software, LLC" file="IFileServingService.cs">
-//   Copyright 2015 - Present RealDimensions Software, LLC
-// </copyright>
+// Copyright © 2015 - Present RealDimensions Software, LLC
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// http://www.apache.org/licenses/LICENSE-2.0
+// 	http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,6 +28,6 @@ namespace chocolatey.package.verifier.infrastructure.services
         /// <param name="fileName">Name of the file.</param>
         /// <param name="fileType">Type of the file.</param>
         /// <returns>The file information</returns>
-        FileInformation GetFileInformation(string fileName, ApplicationFileType fileType);
+        FileInformation get_file_information(string fileName, ApplicationFileType fileType);
     }
 }

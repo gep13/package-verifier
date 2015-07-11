@@ -1,13 +1,11 @@
-// <copyright company="RealDimensions Software, LLC" file="IRegularExpressionService.cs">
-//   Copyright 2015 - Present RealDimensions Software, LLC
-// </copyright>
+// Copyright © 2015 - Present RealDimensions Software, LLC
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// http://www.apache.org/licenses/LICENSE-2.0
+// 	http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,6 +29,6 @@ namespace chocolatey.package.verifier.infrastructure.services
         /// <param name="pattern">The pattern.</param>
         /// <param name="matchEvaluator">The match evaluator.</param>
         /// <returns>A string with all replacements completed</returns>
-        string Replace(string input, string pattern, MatchEvaluator matchEvaluator);
+        string replace(string input, string pattern, MatchEvaluator matchEvaluator);
     }
 }

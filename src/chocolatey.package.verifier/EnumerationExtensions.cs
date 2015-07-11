@@ -1,13 +1,11 @@
-// <copyright company="RealDimensions Software, LLC" file="EnumerationExtensions.cs">
-//   Copyright 2015 - Present RealDimensions Software, LLC
-// </copyright>
+// Copyright © 2015 - Present RealDimensions Software, LLC
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// http://www.apache.org/licenses/LICENSE-2.0
+// 	http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,7 +30,7 @@ namespace chocolatey.package.verifier
         /// </summary>
         /// <param name="enumeration">The enumeration item.</param>
         /// <returns>The description of the value</returns>
-        public static string GetDescriptionOrValue(this Enum enumeration)
+        public static string get_description_or_value(this Enum enumeration)
         {
             string description = enumeration.ToString();
 
@@ -41,7 +39,7 @@ namespace chocolatey.package.verifier
 
             if (memInfo != null && memInfo.Length > 0)
             {
-                var attrib = memInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false).Cast<DescriptionAttribute>().SingleOrDefault();
+                var attrib = memInfo[0].GetCustomAttributes(typeof (DescriptionAttribute), false).Cast<DescriptionAttribute>().SingleOrDefault();
 
                 if (attrib != null)
                 {
@@ -52,21 +50,21 @@ namespace chocolatey.package.verifier
             return description;
         }
 
-        public static TEnum ParseEnumFromDescription<TEnum>(this string description)
+        public static TEnum parse_enum_from_description<TEnum>(this string description)
             where TEnum : struct
         {
-            if (!typeof(TEnum).IsEnum)
+            if (!typeof (TEnum).IsEnum)
             {
                 throw new InvalidEnumArgumentException("TEnum must be of type Enum");
             }
 
-            Type type = typeof(TEnum);
+            Type type = typeof (TEnum);
             foreach (var fieldInfo in type.GetFields())
             {
-                var attr = fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), false).Cast<DescriptionAttribute>().SingleOrDefault();
+                var attr = fieldInfo.GetCustomAttributes(typeof (DescriptionAttribute), false).Cast<DescriptionAttribute>().SingleOrDefault();
                 if (attr != null && attr.Description.Equals(description))
                 {
-                    return (TEnum)fieldInfo.GetValue(null);
+                    return (TEnum) fieldInfo.GetValue(null);
                 }
             }
 

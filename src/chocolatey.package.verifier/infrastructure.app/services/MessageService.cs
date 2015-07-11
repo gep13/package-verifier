@@ -1,13 +1,11 @@
-// <copyright company="RealDimensions Software, LLC" file="MessageService.cs">
-//   Copyright 2015 - Present RealDimensions Software, LLC
-// </copyright>
+// Copyright © 2015 - Present RealDimensions Software, LLC
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// http://www.apache.org/licenses/LICENSE-2.0
+// 	http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,7 +34,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
         public MessageService(INotificationSendService sendService)
         {
             this.sendService = sendService;
-            this.messageFrom = ApplicationParameters.GetSystemEmailAddress();
+            messageFrom = ApplicationParameters.get_system_email_address();
         }
 
         /// <summary>
@@ -47,7 +45,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
         /// <param name="message">The message.</param>
         public void Send(string to, string subject, string message)
         {
-            this.sendService.Send(this.messageFrom, to, subject, message);
+            sendService.send(messageFrom, to, subject, message);
         }
 
         /// <summary>
@@ -58,7 +56,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
         /// <param name="message">The message.</param>
         public void Send(IEnumerable<string> to, string subject, string message)
         {
-            this.sendService.Send(this.messageFrom, to, subject, message);
+            sendService.send(messageFrom, to, subject, message);
         }
 
         /// <summary>
@@ -70,7 +68,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
         /// <param name="attachments">The attachments.</param>
         public void Send(IEnumerable<string> to, string subject, string message, IEnumerable<Attachment> attachments)
         {
-            this.sendService.Send(this.messageFrom, to, subject, message, attachments, useHtmlBody: false);
+            sendService.send(messageFrom, to, subject, message, attachments, useHtmlBody: false);
         }
     }
 }

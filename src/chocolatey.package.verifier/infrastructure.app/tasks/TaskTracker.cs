@@ -1,14 +1,12 @@
-﻿// <copyright company="RealDimensions Software, LLC" file="TaskTracker.cs">
-//   Copyright 2015 - Present RealDimensions Software, LLC
-// </copyright>
-//
+﻿// Copyright © 2015 - Present RealDimensions Software, LLC
+// 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
-//
+// 
 // You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
+// 
+// 	http://www.apache.org/licenses/LICENSE-2.0
+// 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,23 +25,23 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
     /// </summary>
     public class TaskTracker
     {
-        private const string TaskTrackerName = "TaskTracker_31235688345";
-        private static readonly Lazy<ConcurrentDictionary<string, int>> ActiveTasks = new Lazy<ConcurrentDictionary<string, int>>(() => new ConcurrentDictionary<string, int>());
-        private static int activeTasksCount;
+        private const string TASK_TRACKER_NAME = "TaskTracker_31235688345";
+        private static readonly Lazy<ConcurrentDictionary<string, int>> _activeTasks = new Lazy<ConcurrentDictionary<string, int>>(() => new ConcurrentDictionary<string, int>());
+        private static int _activeTasksCount;
 
         /// <summary>
         ///   Notifies the tracker of work beginning for a task
         /// </summary>
         /// <param name="taskName">Name of the task.</param>
-        public static void WorkBegin(string taskName)
+        public static void work_begin(string taskName)
         {
-            "TaskTracker".Log().Debug("Starting work for {0}".FormatWith(taskName));
-            TransactionLock.Enter(
-                TaskTrackerName,
+            "TaskTracker".Log().Debug("Starting work for {0}".format_with(taskName));
+            TransactionLock.enter(
+                TASK_TRACKER_NAME,
                 () =>
                     {
-                        activeTasksCount += 1;
-                        ActiveTasks.Value.AddOrUpdate(taskName, 1, (key, oldValue) => oldValue + 1);
+                        _activeTasksCount += 1;
+                        _activeTasks.Value.AddOrUpdate(taskName, 1, (key, oldValue) => oldValue + 1);
                     });
         }
 
@@ -51,20 +49,20 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
         ///   Notifies the tracker work has completed
         /// </summary>
         /// <param name="taskName">Name of the task.</param>
-        public static void WorkComplete(string taskName)
+        public static void work_complete(string taskName)
         {
-            "TaskTracker".Log().Debug("Completing work for {0}".FormatWith(taskName));
-            TransactionLock.Enter(
-                TaskTrackerName,
+            "TaskTracker".Log().Debug("Completing work for {0}".format_with(taskName));
+            TransactionLock.enter(
+                TASK_TRACKER_NAME,
                 () =>
                     {
-                        activeTasksCount -= 1;
+                        _activeTasksCount -= 1;
                         var taskCount = 0;
-                        ActiveTasks.Value.TryRemove(taskName, out taskCount);
+                        _activeTasks.Value.TryRemove(taskName, out taskCount);
                         if (taskCount != 0)
                         {
                             taskCount -= 1;
-                            ActiveTasks.Value.AddOrUpdate(taskName, taskCount, (key, oldValue) => taskCount);
+                            _activeTasks.Value.AddOrUpdate(taskName, taskCount, (key, oldValue) => taskCount);
                         }
                     });
         }
@@ -73,15 +71,15 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
         ///   Gets the active tasks.
         /// </summary>
         /// <returns>The IEnumerable of active tasks.</returns>
-        public static IEnumerable<string> GetActiveTasks()
+        public static IEnumerable<string> get_active_tasks()
         {
             IList<string> activeTasks = new List<string>();
 
-            TransactionLock.Enter(
-                TaskTrackerName,
+            TransactionLock.enter(
+                TASK_TRACKER_NAME,
                 () =>
                     {
-                        foreach (var task in TaskTracker.ActiveTasks.Value)
+                        foreach (var task in _activeTasks.Value)
                         {
                             activeTasks.Add(task.Key);
                         }
@@ -94,16 +92,16 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
         ///   Determines if there are active tasks running.
         /// </summary>
         /// <returns>A boolean value</returns>
-        public static bool AreActiveTasks()
+        public static bool are_active_tasks()
         {
             bool activeTasksRunning = true;
 
-            TransactionLock.Enter(
-                TaskTrackerName,
+            TransactionLock.enter(
+                TASK_TRACKER_NAME,
                 1,
                 () =>
                     {
-                        if (activeTasksCount == 0)
+                        if (_activeTasksCount == 0)
                         {
                             activeTasksRunning = false;
                         }

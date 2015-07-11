@@ -1,14 +1,12 @@
-﻿// <copyright company="RealDimensions Software, LLC" file="StartupTask.cs">
-//   Copyright 2015 - Present RealDimensions Software, LLC
-// </copyright>
-//
+﻿// Copyright © 2015 - Present RealDimensions Software, LLC
+// 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
-//
+// 
 // You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
+// 
+// 	http://www.apache.org/licenses/LICENSE-2.0
+// 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +17,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 {
     using System;
     using System.Timers;
-    using chocolatey.package.verifier.ChocolateySubmittedFeedService;
+    using ChocolateySubmittedFeedService;
     using infrastructure.messaging;
     using infrastructure.tasks;
     using messaging;
@@ -29,38 +27,39 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
         private const double TimerInterval = 15000;
         private readonly Timer timer = new Timer();
 
-        public void Initialize()
+        public void initialize()
         {
-            this.timer.Interval = TimerInterval;
-            this.timer.Elapsed += this.TimerElapsed;
-            this.timer.Start();
-            this.Log().Info(() => "{0} will send startup message in {1} milliseconds".FormatWith(GetType().Name, TimerInterval));
+            timer.Interval = TimerInterval;
+            timer.Elapsed += TimerElapsed;
+            timer.Start();
+            this.Log().Info(() => "{0} will send startup message in {1} milliseconds".format_with(GetType().Name, TimerInterval));
         }
 
-        public void Shutdown()
+        public void shutdown()
         {
-            if (this.timer != null)
+            if (timer != null)
             {
-                this.timer.Stop();
-                this.timer.Dispose();
+                timer.Stop();
+                timer.Dispose();
             }
         }
 
         private void TimerElapsed(object sender, ElapsedEventArgs e)
         {
-            this.timer.Stop();
+            timer.Stop();
 
-            this.Log().Info(() => "{0} is sending startup message".FormatWith(GetType().Name));
+            this.Log().Info(() => "{0} is sending startup message".format_with(GetType().Name));
 
             var service = new FeedContext_x0060_1(new Uri("http://chocolatey.org/api/v2/submitted/"));
-            
+
             foreach (var package in service.Packages)
             {
-                this.Log().Info(() => "{0} found in submitted state.".FormatWith(package.Title));
+                this.Log().Info(() => "{0} found in submitted state.".format_with(package.Title));
             }
 
-            EventManager.Publish(new StartupMessage());
-            EventManager.Publish(new CreateGistMessage(@"C:\temp\install.log", @"C:\temp\uninstall.log"));
+            EventManager.publish(new StartupMessage());
+            //todo:summary
+            EventManager.publish(new CreateGistMessage(@"C:\temp\install.log", @"C:\temp\uninstall.log", summary: "passed/failed"));
         }
     }
 }

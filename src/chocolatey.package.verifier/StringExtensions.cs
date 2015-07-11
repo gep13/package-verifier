@@ -1,13 +1,11 @@
-// <copyright company="RealDimensions Software, LLC" file="StringExtensions.cs">
-//   Copyright 2015 - Present RealDimensions Software, LLC
-// </copyright>
+// Copyright © 2015 - Present RealDimensions Software, LLC
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// http://www.apache.org/licenses/LICENSE-2.0
+// 	http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,7 +15,10 @@
 
 namespace chocolatey.package.verifier
 {
+    using System;
+    using System.Globalization;
     using System.Text.RegularExpressions;
+    using infrastructure.app;
 
     /// <summary>
     ///   Extensions for strings
@@ -30,54 +31,118 @@ namespace chocolatey.package.verifier
         /// <param name="input">The input.</param>
         /// <param name="formatting">The formatting.</param>
         /// <returns>A formatted string.</returns>
-        public static string FormatWith(this string input, params object[] formatting)
+        public static string format_with(this string input, params object[] formatting)
         {
-            return string.Format(input, formatting);
+            if (string.IsNullOrWhiteSpace(input)) return string.Empty;
+
+            try
+            {
+                return string.Format(input, formatting);
+            }
+            catch (Exception ex)
+            {
+                ApplicationParameters.Name.Log().Error("{0} had an error formatting string:{1} {2}", ApplicationParameters.Name, Environment.NewLine, ex.Message);
+                return input;
+            }
         }
 
         /// <summary>
         ///   Performs a trim only if the item is not null
         /// </summary>
         /// <param name="input">The input.</param>
-        /// <returns>The trimmed string</returns>
-        public static string TrimSafe(this string input)
+        /// <returns></returns>
+        public static string trim_safe(this string input)
         {
-            if (string.IsNullOrWhiteSpace(input))
-            {
-                return string.Empty;
-            }
+            if (string.IsNullOrWhiteSpace(input)) return string.Empty;
 
             return input.Trim();
         }
 
         /// <summary>
-        ///   Toes the lower safe.
+        ///   Performs ToLower() only if input is not null
         /// </summary>
         /// <param name="input">The input.</param>
-        /// <returns>The input string in lower case</returns>
-        public static string ToLowerSafe(this string input)
+        /// <returns></returns>
+        public static string to_lower(this string input)
         {
-            if (string.IsNullOrWhiteSpace(input))
-            {
-                return string.Empty;
-            }
+            if (string.IsNullOrWhiteSpace(input)) return string.Empty;
 
             return input.ToLower();
         }
 
         /// <summary>
-        ///   Removes all html elements.
+        ///   Gets a string representation unless input is null.
         /// </summary>
         /// <param name="input">The input.</param>
-        /// <returns>The string with elements removed</returns>
-        public static string RemoveElements(this string input)
+        /// <returns></returns>
+        public static string to_string(this string input)
         {
-            if (string.IsNullOrWhiteSpace(input))
+            if (string.IsNullOrWhiteSpace(input)) return string.Empty;
+
+            return input;
+        }
+
+        private static readonly Regex _spacePattern = new Regex(@"\s", RegexOptions.Compiled);
+
+        /// <summary>
+        ///   If the item contains spaces, it wraps it in quotes
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <returns></returns>
+        public static string wrap_spaces_in_quotes(this string input)
+        {
+            if (string.IsNullOrWhiteSpace(input)) return input;
+
+            if (_spacePattern.IsMatch(input))
             {
-                return string.Empty;
+                return "\"{0}\"".format_with(input);
             }
 
-            return Regex.Replace(input, "<.*?>", string.Empty);
+            return input;
+        }
+
+        /// <summary>
+        ///   Are the strings equal(ignoring case and culture)?
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <param name="other">The value to compare to</param>
+        /// <returns>True if these are the same</returns>
+        public static bool is_equal_to(this string input, string other)
+        {
+            return string.Compare(input, other, ignoreCase: true, culture: CultureInfo.InvariantCulture) == 0;
+        }
+
+        /// <summary>
+        ///   Removes quotes or apostrophes surrounding a string
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <returns></returns>
+        public static string remove_surrounding_quotes(this string input)
+        {
+            if (string.IsNullOrWhiteSpace(input)) return string.Empty;
+
+            if (input.StartsWith(" "))
+            {
+                input = input.trim_safe();
+            }
+
+            if ((input.StartsWith("\"") && input.EndsWith("\""))
+                || (input.StartsWith("'") && input.EndsWith("'")))
+            {
+                input = input.Remove(0, 1).Remove(input.Length - 2, 1);
+            }
+
+            return input;
+        }
+
+        private static readonly Regex _openBraceRegex = new Regex("(?<!{){(?!{)", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Compiled);
+        private static readonly Regex _closeBraceRegex = new Regex("(?<!})}(?!})", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Compiled);
+
+        public static string escape_curly_braces(this string input)
+        {
+            if (string.IsNullOrWhiteSpace(input)) return string.Empty;
+
+            return _openBraceRegex.Replace(_closeBraceRegex.Replace(input, "}}"), "{{");
         }
     }
 }

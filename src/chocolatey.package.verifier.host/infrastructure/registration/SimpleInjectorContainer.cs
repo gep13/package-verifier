@@ -1,13 +1,11 @@
-﻿// <copyright company="RealDimensions Software, LLC" file="SimpleInjectorContainer.cs">
-//   Copyright 2015 - Present RealDimensions Software, LLC
-// </copyright>
+﻿// Copyright © 2015 - Present RealDimensions Software, LLC
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// http://www.apache.org/licenses/LICENSE-2.0
+// 	http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,34 +13,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace chocolatey.package.verifier.Console.Infrastructure.Registration
+namespace chocolatey.package.verifier.host.infrastructure.registration
 {
     using System;
-    using Host.Infrastructure.Registration;
     using SimpleInjector;
-    using infrastructure.app;
-    using infrastructure.app.registration;
-    using infrastructure.container;
+    using verifier.infrastructure.app;
+    using verifier.infrastructure.app.registration;
+    using verifier.infrastructure.container;
 
     /// <summary>
     ///   The inversion container
     /// </summary>
     public static class SimpleInjectorContainer
     {
-        private static Lazy<Container> container = new Lazy<Container>(() => new Container());
+        private static readonly Lazy<Container> _container = new Lazy<Container>(() => new Container());
 
         /// <summary>
         ///   Gets the container.
         /// </summary>
         public static Container Container
         {
-            get { return container.Value; }
+            get { return _container.Value; }
         }
 
         /// <summary>
         ///   Initializes the container
         /// </summary>
-        public static void Start()
+        public static void start()
         {
             "SimpleInjectorContainer".Log().Debug("SimpleInjector is starting up");
 
@@ -50,7 +47,7 @@ namespace chocolatey.package.verifier.Console.Infrastructure.Registration
             var originalConstructorResolutionBehavior = Container.Options.ConstructorResolutionBehavior;
             Container.Options.ConstructorResolutionBehavior = new SimpleInjectorContainerResolutionBehavior(originalConstructorResolutionBehavior);
 
-            InitializeContainer(Container);
+            initialize_container(Container);
 
             if (ApplicationParameters.IsDebug)
             {
@@ -61,17 +58,17 @@ namespace chocolatey.package.verifier.Console.Infrastructure.Registration
         /// <summary>
         ///   Does any Shutdown for the container
         /// </summary>
-        public static void Stop()
+        public static void stop()
         {
             "SimpleInjectorContainer".Log().Debug("SimpleInjector has shut down");
         }
 
-        private static void InitializeContainer(Container container)
+        private static void initialize_container(Container container)
         {
             var binding = new ContainerBinding();
             binding.RegisterComponents(container);
             var bindingClient = new ContainerBindingConsole();
-            bindingClient.RegisterComponents(container);
+            bindingClient.register_components(container);
         }
     }
 }

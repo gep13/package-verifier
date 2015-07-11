@@ -1,13 +1,11 @@
-// <copyright company="RealDimensions Software, LLC" file="FileSystemService.cs">
-//   Copyright 2015 - Present RealDimensions Software, LLC
-// </copyright>
+// Copyright © 2015 - Present RealDimensions Software, LLC
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// http://www.apache.org/licenses/LICENSE-2.0
+// 	http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,7 +25,7 @@ namespace chocolatey.package.verifier.infrastructure.services
     /// </summary>
     public class FileSystemService : IFileSystemService
     {
-        private readonly IConfigurationSettings configuration;
+        private readonly IConfigurationSettings _configuration;
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="FileSystemService" /> class.
@@ -35,7 +33,7 @@ namespace chocolatey.package.verifier.infrastructure.services
         /// <param name="configuration">The configuration.</param>
         public FileSystemService(IConfigurationSettings configuration)
         {
-            this.configuration = configuration;
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -43,7 +41,7 @@ namespace chocolatey.package.verifier.infrastructure.services
         /// </summary>
         /// <param name="filePath">The file path.</param>
         /// <returns>The File Name</returns>
-        public string GetFileName(string filePath)
+        public string get_file_name(string filePath)
         {
             Ensure.That(() => filePath).IsNotNullOrWhiteSpace();
 
@@ -57,7 +55,7 @@ namespace chocolatey.package.verifier.infrastructure.services
         /// <returns>
         ///   Extension of the file
         /// </returns>
-        public string GetFileExtension(string path)
+        public string get_file_extension(string path)
         {
             return Path.GetExtension(path);
         }
@@ -67,7 +65,7 @@ namespace chocolatey.package.verifier.infrastructure.services
         /// </summary>
         /// <param name="filePath">The file path.</param>
         /// <returns>A boolean value indicating if file exists</returns>
-        public bool FileExists(string filePath)
+        public bool file_exists(string filePath)
         {
             return File.Exists(filePath);
         }
@@ -77,7 +75,7 @@ namespace chocolatey.package.verifier.infrastructure.services
         /// </summary>
         /// <param name="paths">The paths.</param>
         /// <returns>The combined path</returns>
-        public string PathCombine(params string[] paths)
+        public string path_combine(params string[] paths)
         {
             return Path.Combine(paths);
         }
@@ -87,7 +85,7 @@ namespace chocolatey.package.verifier.infrastructure.services
         /// </summary>
         /// <param name="path">The path.</param>
         /// <returns>The full path</returns>
-        public string GetFullPath(string path)
+        public string get_full_path(string path)
         {
             Ensure.That(() => path).IsNotNullOrWhiteSpace();
 
@@ -99,7 +97,7 @@ namespace chocolatey.package.verifier.infrastructure.services
         /// </summary>
         /// <param name="filePath">The file path.</param>
         /// <returns>The directory name</returns>
-        public string GetDirectoryName(string filePath)
+        public string get_directory_name(string filePath)
         {
             Ensure.That(() => filePath).IsNotNullOrWhiteSpace();
 
@@ -110,7 +108,7 @@ namespace chocolatey.package.verifier.infrastructure.services
         ///   Creates the directory if it doesn't exist.
         /// </summary>
         /// <param name="directory">The directory.</param>
-        public void CreateDirectoryIfNotExists(string directory)
+        public void create_directory_if_not_exists(string directory)
         {
             Ensure.That(() => directory).IsNotNullOrWhiteSpace();
 
@@ -127,16 +125,16 @@ namespace chocolatey.package.verifier.infrastructure.services
         /// </summary>
         /// <param name="filePath">The path to the file.</param>
         /// <param name="fileStream">The file stream.</param>
-        public void Save(string filePath, Stream fileStream)
+        public void save(string filePath, Stream fileStream)
         {
             Ensure.That(() => filePath).IsNotNullOrWhiteSpace();
 
-            filePath = this.GetFullPath(filePath);
-            this.CreateDirectoryIfNotExists(this.GetDirectoryName(filePath));
+            filePath = get_full_path(filePath);
+            create_directory_if_not_exists(get_directory_name(filePath));
 
-            if (this.FileExists(filePath))
+            if (file_exists(filePath))
             {
-                File.Move(filePath, filePath + ".{0:yyyyMMddHHmmssffff}".FormatWith(DateTime.Now));
+                File.Move(filePath, filePath + ".{0:yyyyMMddHHmmssffff}".format_with(DateTime.Now));
             }
 
             using (var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
@@ -153,12 +151,12 @@ namespace chocolatey.package.verifier.infrastructure.services
         /// </summary>
         /// <param name="filePath">The file path.</param>
         /// <returns>The Stream for the input file path</returns>
-        public Stream GetStream(string filePath)
+        public Stream get_stream(string filePath)
         {
             Ensure.That(() => filePath).IsNotNullOrWhiteSpace();
-            filePath = this.GetFullPath(filePath);
+            filePath = get_full_path(filePath);
 
-            if (this.FileExists(filePath))
+            if (file_exists(filePath))
             {
                 return new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             }
@@ -171,12 +169,12 @@ namespace chocolatey.package.verifier.infrastructure.services
         /// </summary>
         /// <param name="filePath">The file path.</param>
         /// <returns>The file text</returns>
-        public string GetFileText(string filePath)
+        public string get_file_text(string filePath)
         {
             Ensure.That(() => filePath).IsNotNullOrWhiteSpace();
-            filePath = this.GetFullPath(filePath);
+            filePath = get_full_path(filePath);
 
-            if (this.FileExists(filePath))
+            if (file_exists(filePath))
             {
                 return File.ReadAllText(filePath);
             }
