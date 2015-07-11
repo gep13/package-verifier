@@ -1,11 +1,13 @@
-﻿// Copyright © 2015 - Present RealDimensions Software, LLC
+﻿// <copyright company="RealDimensions Software, LLC" file="Program.cs">
+//   Copyright 2015 - Present RealDimensions Software, LLC
+// </copyright>
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// 	http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,8 +23,9 @@ namespace chocolatey.package.verifier.Host
     internal static class Program
     {
         /// <summary>
-        ///   The main entry point for the application.
+        /// The main entry point for the application.
         /// </summary>
+        /// <param name="args">The args.</param>
         private static void Main(string[] args)
         {
             if ((args.Length > 0) && (Array.IndexOf(args, "/console") != -1))
@@ -32,12 +35,12 @@ namespace chocolatey.package.verifier.Host
             }
             else
             {
-                ServiceBase[] ServicesToRun;
-                ServicesToRun = new ServiceBase[]
+                ServiceBase[] servicesToRun;
+                servicesToRun = new ServiceBase[]
                     {
                         new Service()
                     };
-                ServiceBase.Run(ServicesToRun);
+                ServiceBase.Run(servicesToRun);
             }
         }
     }

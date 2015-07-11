@@ -1,11 +1,13 @@
-﻿// Copyright © 2015 - Present RealDimensions Software, LLC
+﻿// <copyright company="RealDimensions Software, LLC" file="IFileSystem.cs">
+//   Copyright 2015 - Present RealDimensions Software, LLC
+// </copyright>
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// 	http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -85,8 +87,8 @@ namespace chocolatey.package.verifier.Infrastructure.FileSystem
         /// <summary>
         ///   Copies an existing file to a new file. Overwriting a file of the same name is allowed.
         /// </summary>
-        /// <param name="sourceFilePath">The source file path. Teh File to copy.</param>
-        /// <param name="destFilePath">The dest file path.</param>
+        /// <param name="sourceFilePath">The source file path. The File to copy.</param>
+        /// <param name="destFilePath">The destination file path.</param>
         /// <param name="overWriteExisting">true if the destination file can be overwritten; otherwise, false.</param>
         void FileCopy(string sourceFilePath, string destFilePath, bool overWriteExisting);
 

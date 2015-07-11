@@ -1,11 +1,13 @@
-﻿// Copyright © 2015 - Present RealDimensions Software, LLC
+﻿// <copyright company="RealDimensions Software, LLC" file="Log.cs">
+//   Copyright 2015 - Present RealDimensions Software, LLC
+// </copyright>
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// 	http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,7 +24,7 @@ namespace chocolatey.package.verifier.Infrastructure.Logging
     /// </summary>
     public static class Log
     {
-        private static Type _logType = typeof (NullLog);
+        private static Type _logType = typeof(NullLog);
         private static ILog _logger;
 
         /// <summary>
@@ -31,7 +33,7 @@ namespace chocolatey.package.verifier.Infrastructure.Logging
         /// <typeparam name="T">The type of ILog for the application to use</typeparam>
         public static void InitializeWith<T>() where T : ILog, new()
         {
-            _logType = typeof (T);
+            _logType = typeof(T);
         }
 
         /// <summary>
@@ -50,7 +52,7 @@ namespace chocolatey.package.verifier.Infrastructure.Logging
         ///   This should be done only once per object name.
         /// </summary>
         /// <param name="objectName">Name of the object.</param>
-        /// <returns>ILog instance for an object if log type has been intialized; otherwise null</returns>
+        /// <returns>ILog instance for an object if log type has been initialized; otherwise null</returns>
         public static ILog GetLoggerFor(string objectName)
         {
             var logger = _logger;

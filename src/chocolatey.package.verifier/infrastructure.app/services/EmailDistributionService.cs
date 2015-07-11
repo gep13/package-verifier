@@ -1,11 +1,13 @@
-// Copyright © 2015 - Present RealDimensions Software, LLC
+// <copyright company="RealDimensions Software, LLC" file="EmailDistributionService.cs">
+//   Copyright 2015 - Present RealDimensions Software, LLC
+// </copyright>
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// 	http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,7 +27,7 @@ namespace chocolatey.package.verifier.Infrastructure.App.Services
     /// </summary>
     public class EmailDistributionService : IEmailDistributionService
     {
-        private readonly IMessageService _messageService;
+        private readonly IMessageService messageService;
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="EmailDistributionService" /> class.
@@ -33,7 +35,7 @@ namespace chocolatey.package.verifier.Infrastructure.App.Services
         /// <param name="messageService">The message service.</param>
         public EmailDistributionService(IMessageService messageService)
         {
-            _messageService = messageService;
+            this.messageService = messageService;
         }
 
         /// <summary>
@@ -46,7 +48,7 @@ namespace chocolatey.package.verifier.Infrastructure.App.Services
         {
             Ensure.That(() => emailAddress).IsNotNullOrWhiteSpace();
 
-            SendMessage(new List<string> {emailAddress}, subject, message, null);
+            this.SendMessage(new List<string> { emailAddress }, subject, message, null);
         }
 
         /// <summary>
@@ -57,7 +59,7 @@ namespace chocolatey.package.verifier.Infrastructure.App.Services
         /// <param name="message">The message.</param>
         public void SendMessage(IEnumerable<string> emailAddresses, string subject, string message)
         {
-            SendMessage(emailAddresses, subject, message, null);
+            this.SendMessage(emailAddresses, subject, message, null);
         }
 
         /// <summary>
@@ -69,13 +71,16 @@ namespace chocolatey.package.verifier.Infrastructure.App.Services
         /// <param name="attachments">The attachments.</param>
         public void SendMessage(IEnumerable<string> emailAddresses, string subject, string message, IEnumerable<Attachment> attachments)
         {
-            if (emailAddresses.OrEmptyListIfNull().Count() != 0) _messageService.Send(emailAddresses, subject, message, attachments);
+            if (emailAddresses.OrEmptyListIfNull().Count() != 0)
+            {
+                this.messageService.Send(emailAddresses, subject, message, attachments);
+            }
         }
 
         /// <summary>
         ///   Sends the reset password message.
         /// </summary>
-        /// <param name="to">To.</param>
+        /// <param name="to">The recipient.</param>
         /// <param name="resetCode">The reset code.</param>
         public void SendResetPasswordMessage(string to, string resetCode)
         {
@@ -88,10 +93,9 @@ It was recently requested to have your password reset for {1}. If you did not in
 ".FormatWith(
                 ApplicationParameters.Name,
                 to,
-                "{0}/Account/ResetPassword/?resetCode={1}".FormatWith(ApplicationParameters.SiteUrl, resetCode)
-                );
+                "{0}/Account/ResetPassword/?resetCode={1}".FormatWith(ApplicationParameters.SiteUrl, resetCode));
 
-            SendMessage(to, subject, message);
+            this.SendMessage(to, subject, message);
         }
     }
 }

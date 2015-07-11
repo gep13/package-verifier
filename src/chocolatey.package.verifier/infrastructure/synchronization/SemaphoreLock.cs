@@ -1,11 +1,13 @@
-// Copyright © 2015 - Present RealDimensions Software, LLC
+// <copyright company="RealDimensions Software, LLC" file="SemaphoreLock.cs">
+//   Copyright 2015 - Present RealDimensions Software, LLC
+// </copyright>
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// 	http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,30 +25,17 @@ namespace chocolatey.package.verifier.Infrastructure.Synchronization
     /// </summary>
     public static class SemaphoreLock
     {
-        private static int _poolCount = 2;
-        private static Semaphore _resourcePool;
-
-        /// <summary>
-        ///   Initializes the semaphore if not initialized.
-        /// </summary>
-        private static void initialize_semaphore_if_not_initialized()
-        {
-            if (_resourcePool == null)
-            {
-                _poolCount = 4; //Config.GetConfigurationSettings().PoolCount;
-                _resourcePool = new Semaphore(_poolCount, _poolCount);
-            }
-        }
-
+        private static int poolCount = 2;
+        private static Semaphore resourcePool;
 
         /// <summary>
         ///   Enters lock setting  the specified seconds to timeout.
         /// </summary>
         /// <param name="secondsToTimeout">The seconds to timeout.</param>
         /// <param name="action">The action.</param>
-        public static void enter(int? secondsToTimeout, Action action)
+        public static void Enter(int? secondsToTimeout, Action action)
         {
-            if (acquire(secondsToTimeout))
+            if (Acquire(secondsToTimeout))
             {
                 try
                 {
@@ -54,45 +43,44 @@ namespace chocolatey.package.verifier.Infrastructure.Synchronization
                 }
                 finally
                 {
-                    release();
+                    Release();
                 }
             }
         }
-
 
         /// <summary>
         ///   Acquires the  lock with the specified seconds to timeout.
         /// </summary>
         /// <param name="secondsToTimeout">The seconds to timeout.</param>
-        /// <returns></returns>
-        public static bool acquire(int? secondsToTimeout)
+        /// <returns>The acquired lock</returns>
+        public static bool Acquire(int? secondsToTimeout)
         {
-            initialize_semaphore_if_not_initialized();
+            InitializeSemaphoreIfNotInitialized();
 
             if (secondsToTimeout.HasValue)
             {
-                return _resourcePool.WaitOne((int) TimeSpan.FromSeconds(secondsToTimeout.GetValueOrDefault(0)).TotalMilliseconds);
+                return resourcePool.WaitOne((int)TimeSpan.FromSeconds(secondsToTimeout.GetValueOrDefault(0)).TotalMilliseconds);
             }
             else
             {
-                return _resourcePool.WaitOne();
+                return resourcePool.WaitOne();
             }
         }
 
         /// <summary>
         ///   Releases locks.
         /// </summary>
-        public static void release()
+        public static void Release()
         {
-            if (_resourcePool != null)
+            if (resourcePool != null)
             {
                 try
                 {
-                    _resourcePool.Release();
+                    resourcePool.Release();
                 }
                 catch (Exception)
                 {
-                    "SemaphoreLock".Log().Warn(string.Format("Wonky error when trying to release lock to semaphore. Should be safe to ignore."));
+                    "SemaphoreLock".Log().Warn(string.Format("Wonky error when trying to Release lock to semaphore. Should be safe to ignore."));
                 }
             }
         }
@@ -100,11 +88,23 @@ namespace chocolatey.package.verifier.Infrastructure.Synchronization
         /// <summary>
         ///   Kills this instance.
         /// </summary>
-        public static void kill()
+        public static void Kill()
         {
-            if (!acquire(2))
+            if (!Acquire(2))
             {
-                _resourcePool.Release(_poolCount);
+                resourcePool.Release(poolCount);
+            }
+        }
+
+        /// <summary>
+        ///   Initializes the semaphore if not initialized.
+        /// </summary>
+        private static void InitializeSemaphoreIfNotInitialized()
+        {
+            if (resourcePool == null)
+            {
+                poolCount = 4; // Config.GetConfigurationSettings().PoolCount;
+                resourcePool = new Semaphore(poolCount, poolCount);
             }
         }
     }

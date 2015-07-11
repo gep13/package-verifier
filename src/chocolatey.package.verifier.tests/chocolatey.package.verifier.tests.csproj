@@ -64,7 +64,10 @@
     <Compile Include="..\SolutionVersion.cs">
       <Link>Properties\SolutionVersion.cs</Link>
     </Compile>
+    <Compile Include="ConcernForAttribute.cs" />
+    <Compile Include="FactAttribute.cs" />
     <Compile Include="MockLogger.cs" />
+    <Compile Include="ObservationAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TinySpec.cs" />
   </ItemGroup>

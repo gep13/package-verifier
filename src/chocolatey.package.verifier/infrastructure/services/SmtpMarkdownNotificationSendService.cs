@@ -1,11 +1,13 @@
-// Copyright © 2015 - Present RealDimensions Software, LLC
+// <copyright company="RealDimensions Software, LLC" file="SmtpMarkdownNotificationSendService.cs">
+//   Copyright 2015 - Present RealDimensions Software, LLC
+// </copyright>
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// 	http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,45 +32,45 @@ namespace chocolatey.package.verifier.Infrastructure.Services
         /// <summary>
         ///   Sends a message.
         /// </summary>
-        /// <param name="from">From.</param>
-        /// <param name="to">To.</param>
+        /// <param name="from">The sender.</param>
+        /// <param name="to">The recipient.</param>
         /// <param name="subject">The subject.</param>
         /// <param name="message">The message.</param>
         public void Send(string @from, string to, string subject, string message)
         {
-            Send(@from, new List<string> {to}, subject, message, null, useHtmlBody: false);
+            this.Send(@from, new List<string> { to }, subject, message, null, useHtmlBody: false);
         }
 
         /// <summary>
         ///   Sends a message
         /// </summary>
-        /// <param name="from">From.</param>
-        /// <param name="to">To.</param>
+        /// <param name="from">The sender.</param>
+        /// <param name="to">The recipient.</param>
         /// <param name="subject">The subject.</param>
         /// <param name="message">The message.</param>
         public void Send(string @from, IEnumerable<string> to, string subject, string message)
         {
-            Send(@from, to, subject, message, null, useHtmlBody: false);
+            this.Send(@from, to, subject, message, null, useHtmlBody: false);
         }
 
         /// <summary>
         ///   Sends a message.
         /// </summary>
-        /// <param name="from">From.</param>
-        /// <param name="to">To.</param>
+        /// <param name="from">The sender.</param>
+        /// <param name="to">The recipient.</param>
         /// <param name="subject">The subject.</param>
         /// <param name="message">The message.</param>
         /// <param name="useHtmlBody">Whether to use html or not.</param>
         public void Send(string @from, IEnumerable<string> to, string subject, string message, bool useHtmlBody)
         {
-            Send(@from, to, subject, message, null, useHtmlBody);
+            this.Send(@from, to, subject, message, null, useHtmlBody);
         }
 
         /// <summary>
         ///   Sends a message
         /// </summary>
-        /// <param name="from">From.</param>
-        /// <param name="to">To.</param>
+        /// <param name="from">The sender.</param>
+        /// <param name="to">The recipient.</param>
         /// <param name="subject">The subject.</param>
         /// <param name="message">The message.</param>
         /// <param name="attachments">The attachments.</param>
@@ -105,7 +107,7 @@ namespace chocolatey.package.verifier.Infrastructure.Services
                 emailMessage.Attachments.Add(attachment);
             }
 
-            this.Log().Info(() => "Sending '{0}' a message from '{1}': {2}{3}{4}".FormatWith(String.Join(",", to), @from, subject, Environment.NewLine, message));
+            this.Log().Info(() => "Sending '{0}' a message from '{1}': {2}{3}{4}".FormatWith(string.Join(",", to), @from, subject, Environment.NewLine, message));
 
             try
             {

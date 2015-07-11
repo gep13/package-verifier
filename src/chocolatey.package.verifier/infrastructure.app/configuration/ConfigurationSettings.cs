@@ -1,12 +1,14 @@
-// Copyright © 2015 - Present RealDimensions Software, LLC
-// 
+// <copyright company="RealDimensions Software, LLC" file="ConfigurationSettings.cs">
+//   Copyright 2015 - Present RealDimensions Software, LLC
+// </copyright>
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
-// 
+//
 // You may obtain a copy of the License at
-// 
-// 	http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,6 +30,185 @@ namespace chocolatey.package.verifier.Infrastructure.App.Configuration
     public class ConfigurationSettings : IConfigurationSettings
     {
         /// <summary>
+        ///   Gets a value indicating whether this instance is in debug mode.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is debug mode; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsDebugMode
+        {
+            get
+            {
+                return this.GetApplicationSettingsValue("IsDebugMode").Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase);
+            }
+        }
+
+        /// <summary>
+        ///   Gets a value indicating whether to run profilers.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [run profiler]; otherwise, <c>false</c>.
+        /// </value>
+        public bool RunProfiler
+        {
+            get
+            {
+                return this.GetApplicationSettingsValue("RunProfiler").Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase);
+            }
+        }
+
+        /// <summary>
+        ///   Gets a value indicating whether to allow JavaScript.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [allow JavaScript]; otherwise, <c>false</c>.
+        /// </value>
+        public bool AllowJavascript
+        {
+            get
+            {
+                return this.GetApplicationSettingsValue("AllowJavascript").Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase);
+            }
+        }
+
+        /// <summary>
+        ///   Gets the files path.
+        /// </summary>
+        public string FilesPath
+        {
+            get
+            {
+                return this.GetApplicationSettingsValue("Path.Files");
+            }
+        }
+
+        /// <summary>
+        ///   Gets the remote folders for FTP task.
+        /// </summary>
+        /// <value>The remote folders for FTP task.</value>
+        public IList<IKnownFolder> RemoteFoldersForFtpTask
+        {
+            get
+            {
+                return this.GetListOfKnownFolders("FtpTask.RemoteFolders");
+            }
+        }
+
+        /// <summary>
+        ///   Gets the ignored folders for FTP task.
+        /// </summary>
+        /// <value>The ignored folders for FTP task.</value>
+        public IList<IKnownFolder> IgnoredFoldersForFtpTask
+        {
+            get
+            {
+                return this.GetListOfKnownFolders("FtpTask.IgnoredFolders");
+            }
+        }
+
+        /// <summary>
+        ///   Gets the site URL.
+        /// </summary>
+        public string SiteUrl
+        {
+            get
+            {
+                var siteUrl = this.GetApplicationSettingsValue("Site.Url");
+                if (string.IsNullOrWhiteSpace(siteUrl))
+                {
+                    if (HttpContext.Current != null)
+                    {
+                        var url = HttpContext.Current.Request.Url;
+
+                        siteUrl = "{0}://{1}:{2}".FormatWith(this.UrlScheme, url.Host, url.Port);
+                    }
+                }
+
+                return siteUrl;
+            }
+        }
+
+        /// <summary>
+        ///   Gets a value indicating whether [use caching].
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [use caching]; otherwise, <c>false</c>.
+        /// </value>
+        public bool UseCaching
+        {
+            get
+            {
+                return this.GetApplicationSettingsValue("UseCaching").Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase);
+            }
+        }
+
+        /// <summary>
+        ///   Gets the system email address.
+        /// </summary>
+        public string SystemEmailAddress
+        {
+            get
+            {
+                return this.GetSmtpEmailFromMailSettingsSection(this.GetConfigurationSection<SmtpSection>("system.net/mailSettings/smtp"));
+            }
+        }
+
+        /// <summary>
+        ///   Gets an email to use as an override instead of the provided email. If null, use the provided email.
+        /// </summary>
+        public string TestEmailOverride
+        {
+            get
+            {
+                return this.GetApplicationSettingsValue("TestingEmailOverride");
+            }
+        }
+
+        /// <summary>
+        ///   Gets a value indicating whether SSL is required
+        /// </summary>
+        public bool ForceSSL
+        {
+            get
+            {
+                return this.GetApplicationSettingsValue("ForceSSL").Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase);
+            }
+        }
+
+        /// <summary>
+        ///   Gets the URL scheme to be used when created absolute URL's
+        /// </summary>
+        public string UrlScheme
+        {
+            get
+            {
+                return this.GetApplicationSettingsValue("UrlScheme");
+            }
+        }
+
+        /// <summary>
+        ///   Gets the cache Interval in minutes for repository caching
+        /// </summary>
+        public int RepositoryCacheIntervalMinutes
+        {
+            get
+            {
+                return int.Parse(this.GetApplicationSettingsValue("RepositoryCacheIntervalMinutes"));
+            }
+        }
+
+        /// <summary>
+        ///   Gets the number of minutes that the forms authentication ticket is valid
+        /// </summary>
+        public int FormsAuthenticationExpirationInMinutes
+        {
+            get
+            {
+                return int.Parse(this.GetApplicationSettingsValue("FormsAuthenticationExpirationInMinutes"));
+            }
+        }
+
+        /// <summary>
         ///   Gets the application settings value.
         /// </summary>
         /// <param name="name">The name.</param>
@@ -40,13 +221,15 @@ namespace chocolatey.package.verifier.Infrastructure.App.Configuration
         /// <summary>
         ///   Gets the configuration section.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">The configuration section type</typeparam>
         /// <param name="section">The section.</param>
         /// <returns>The configuration section requested as a strong type; otherwise null</returns>
         public T GetConfigurationSection<T>(string section) where T : ConfigurationSection
         {
             return ConfigurationManager.GetSection(section) as T;
-            //var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);//return config.GetSectionGroup(section) as T;
+
+            // var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            // return config.GetSectionGroup(section) as T;
         }
 
         /// <summary>
@@ -58,7 +241,10 @@ namespace chocolatey.package.verifier.Infrastructure.App.Configuration
         /// </returns>
         public string GetSmtpEmailFromMailSettingsSection(SmtpSection settings)
         {
-            if (settings == null) return string.Empty;
+            if (settings == null)
+            {
+                return string.Empty;
+            }
 
             return settings.From;
         }
@@ -67,15 +253,17 @@ namespace chocolatey.package.verifier.Infrastructure.App.Configuration
         ///   Gets the list of known folders.
         /// </summary>
         /// <param name="configFileSetting">The config file setting.</param>
-        /// <returns></returns>
+        /// <returns>List of known folders</returns>
         public IList<IKnownFolder> GetListOfKnownFolders(string configFileSetting)
         {
-            var folders = GetApplicationSettingsValue(configFileSetting).Split(new[]
+            var folders = this.GetApplicationSettingsValue(configFileSetting).Split(
+                new[]
                 {
                     "|"
-                }, StringSplitOptions.RemoveEmptyEntries);
+                },
+                StringSplitOptions.RemoveEmptyEntries);
 
-            var knownFolders = new List<IKnownFolder> {};
+            var knownFolders = new List<IKnownFolder> { };
 
             foreach (var folder in folders)
             {
@@ -96,147 +284,6 @@ namespace chocolatey.package.verifier.Infrastructure.App.Configuration
             }
 
             return result;
-        }
-
-        /// <summary>
-        ///   Gets a value indicating whether this instance is in debug mode.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if this instance is debug mode; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsDebugMode
-        {
-            get { return GetApplicationSettingsValue("IsDebugMode").Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase); }
-        }
-
-        /// <summary>
-        ///   Gets a value indicating whether to run profilers.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if [run profiler]; otherwise, <c>false</c>.
-        /// </value>
-        public bool RunProfiler
-        {
-            get { return GetApplicationSettingsValue("RunProfiler").Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase); }
-        }
-
-        /// <summary>
-        ///   Gets a value indicating whether to allow javascript.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if [allow javascript]; otherwise, <c>false</c>.
-        /// </value>
-        public bool AllowJavascript
-        {
-            get { return GetApplicationSettingsValue("AllowJavascript").Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase); }
-        }
-
-        /// <summary>
-        ///   Gets the files path.
-        /// </summary>
-        public string FilesPath
-        {
-            get { return GetApplicationSettingsValue("Path.Files"); }
-        }
-
-
-        /// <summary>
-        ///   Gets the remote folders for FTP task.
-        /// </summary>
-        /// <value>The remote folders for FTP task.</value>
-        public IList<IKnownFolder> RemoteFoldersForFtpTask
-        {
-            get { return GetListOfKnownFolders("FtpTask.RemoteFolders"); }
-        }
-
-        /// <summary>
-        ///   Gets the ignored folders for FTP task.
-        /// </summary>
-        /// <value>The ignored folders for FTP task.</value>
-        public IList<IKnownFolder> IgnoredFoldersForFtpTask
-        {
-            get { return GetListOfKnownFolders("FtpTask.IgnoredFolders"); }
-        }
-
-        /// <summary>
-        ///   Gets the site URL.
-        /// </summary>
-        public string SiteUrl
-        {
-            get
-            {
-                var siteUrl = GetApplicationSettingsValue("Site.Url");
-                if (string.IsNullOrWhiteSpace(siteUrl))
-                {
-                    if (HttpContext.Current != null)
-                    {
-                        var url = HttpContext.Current.Request.Url;
-
-                        siteUrl = "{0}://{1}:{2}".FormatWith(UrlScheme, url.Host, url.Port);
-                    }
-                }
-
-                return siteUrl;
-            }
-        }
-
-        /// <summary>
-        ///   Gets a value indicating whether [use caching].
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if [use caching]; otherwise, <c>false</c>.
-        /// </value>
-        public bool UseCaching
-        {
-            get { return GetApplicationSettingsValue("UseCaching").Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase); }
-        }
-
-        /// <summary>
-        ///   Gets the system email address.
-        /// </summary>
-        public string SystemEmailAddress
-        {
-            get { return GetSmtpEmailFromMailSettingsSection(GetConfigurationSection<SmtpSection>("system.net/mailSettings/smtp")); }
-        }
-
-        /// <summary>
-        ///   Gets an email to use as an override instead of the provided email. If null, use the provided email.
-        /// </summary>
-        public string TestEmailOverride
-        {
-            get { return GetApplicationSettingsValue("TestingEmailOverride"); }
-        }
-
-        /// <summary>
-        ///   Gets a value indicating if ssl is required
-        /// </summary>
-        public bool ForceSSL
-        {
-            get { return GetApplicationSettingsValue("ForceSSL").Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase); }
-        }
-
-        /// <summary>
-        ///   Gets the url scheme to be used when created absolute urls
-        /// </summary>
-        public string UrlScheme
-        {
-            get { return GetApplicationSettingsValue("UrlScheme"); }
-        }
-
-        /// <summary>
-        ///   Gets the cache interval in minutes for repository caching
-        /// </summary>
-        public int RepositoryCacheIntervalMinutes
-        {
-            get { return int.Parse(GetApplicationSettingsValue("RepositoryCacheIntervalMinutes")); }
-        }
-
-        /// <summary>
-        ///   Gets the number of minutes that the forms authentication ticket is valid
-        /// </summary>
-        public int FormsAuthenticationExpirationInMinutes
-        {
-            get { return int.Parse(GetApplicationSettingsValue("FormsAuthenticationExpirationInMinutes")); }
         }
     }
 }

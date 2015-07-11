@@ -1,11 +1,13 @@
-﻿// Copyright © 2015 - Present RealDimensions Software, LLC
+﻿// <copyright company="RealDimensions Software, LLC" file="Bootstrap.cs">
+//   Copyright 2015 - Present RealDimensions Software, LLC
+// </copyright>
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// 	http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,16 +35,25 @@ namespace chocolatey.package.verifier.Infrastructure.App.Registration
     /// </summary>
     public class Bootstrap
     {
-        private static readonly ILog _logger = LogManager.GetLogger(typeof (Bootstrap));
-        private static readonly Lazy<Timer> _timer = new Lazy<Timer>(() => new Timer());
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(Bootstrap));
+        private static readonly Lazy<Timer> Timer = new Lazy<Timer>(() => new Timer());
+        private static Lazy<ConcurrentDictionary<Type, IList<Exception>>> exceptions = new Lazy<ConcurrentDictionary<Type, IList<Exception>>>(() => new ConcurrentDictionary<Type, IList<Exception>>());
+
+        /// <summary>
+        ///   Gets the Exceptions dictionary
+        /// </summary>
+        protected static ConcurrentDictionary<Type, IList<Exception>> Exceptions
+        {
+            get { return exceptions.Value; }
+        }
 
         /// <summary>
         ///   Initializes this instance.
         /// </summary>
         public static void Initialize()
         {
-            //initialization code 
-            _logger.Debug("XmlConfiguration is now operational");
+            // initialization code 
+            Logger.Debug("XmlConfiguration is now operational");
         }
 
         /// <summary>
@@ -50,57 +61,25 @@ namespace chocolatey.package.verifier.Infrastructure.App.Registration
         /// </summary>
         public static void Startup()
         {
-            _logger.InfoFormat("Performing bootstrapping operations for '{0}'.", ApplicationParameters.Name);
+            Logger.InfoFormat("Performing bootstrapping operations for '{0}'.", ApplicationParameters.Name);
 
             AppDomain.CurrentDomain.UnhandledException += DomainUnhandledException;
             MailSettingsSmtpFolderConverter.ConvertRelativeToAbsolutePickupDirectoryLocation();
 
-            //todo: move this out to a config value
-            _timer.Value.Interval = TimeSpan.FromMinutes(5).TotalMilliseconds;
-            _timer.Value.Elapsed += CheckAndSendErrorSummary;
-            _timer.Value.Start();
+            // todo: move this out to a config value
+            Timer.Value.Interval = TimeSpan.FromMinutes(5).TotalMilliseconds;
+            Timer.Value.Elapsed += CheckAndSendErrorSummary;
+            Timer.Value.Start();
         }
 
         /// <summary>
-        ///   Checks the exceptions dictionary and send error summary.
+        ///   Shutdowns this instance.
         /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">
-        ///   The <see cref="System.Timers.ElapsedEventArgs" /> instance containing the event data.
-        /// </param>
-        private static void CheckAndSendErrorSummary(object sender, ElapsedEventArgs e)
+        public static void Shutdown()
         {
-            var exceptionMessage = new StringBuilder();
-            foreach (KeyValuePair<Type, IList<Exception>> exceptionList in Exceptions.ToList().OrEmptyListIfNull())
-            {
-                if (exceptionList.Value != null && exceptionList.Value.Count != 0)
-                {
-                    exceptionMessage.Clear();
-                    exceptionMessage.Append("There are {0} exceptions of '{1}'.".FormatWith(exceptionList.Value.Count, exceptionList.Key.Name));
-                    exceptionMessage.Append(exceptionList.Value[0]);
-
-                    _logger.ErrorFormat("{0} had error(s) on {1} (with user {2}):{3}{4}",
-                                        ApplicationParameters.Name,
-                                        Environment.MachineName,
-                                        Environment.UserName,
-                                        Environment.NewLine,
-                                        exceptionMessage
-                        );
-                }
-
-                IList<Exception> tempExceptions = new List<Exception>();
-                Exceptions.TryRemove(exceptionList.Key, out tempExceptions);
-            }
-        }
-
-        private static readonly Lazy<ConcurrentDictionary<Type, IList<Exception>>> _exceptions = new Lazy<ConcurrentDictionary<Type, IList<Exception>>>(() => new ConcurrentDictionary<Type, IList<Exception>>());
-
-        /// <summary>
-        ///   Exceptions dictionary
-        /// </summary>
-        protected static ConcurrentDictionary<Type, IList<Exception>> Exceptions
-        {
-            get { return _exceptions.Value; }
+            Logger.InfoFormat("Performing Shutdown operations for '{0}'.", ApplicationParameters.Name);
+            Timer.Value.Stop();
+            Timer.Value.Dispose();
         }
 
         /// <summary>
@@ -121,13 +100,13 @@ namespace chocolatey.package.verifier.Infrastructure.App.Registration
                 var exceptions = Exceptions.GetOrAdd(ex.GetType(), CreateExceptionList);
                 exceptions.Add(ex);
 
-                _logger.WarnFormat("{0} had an error on {1} (with user {2}):{3}{4}",
-                                   ApplicationParameters.Name,
-                                   Environment.MachineName,
-                                   Environment.UserName,
-                                   Environment.NewLine,
-                                   exceptionMessage
-                    );
+                Logger.WarnFormat(
+                    "{0} had an error on {1} (with user {2}):{3}{4}",
+                    ApplicationParameters.Name,
+                    Environment.MachineName,
+                    Environment.UserName,
+                    Environment.NewLine,
+                    exceptionMessage);
             }
         }
 
@@ -135,20 +114,42 @@ namespace chocolatey.package.verifier.Infrastructure.App.Registration
         ///   Creates the exception list.
         /// </summary>
         /// <param name="e">The e.</param>
-        /// <returns></returns>
+        /// <returns>New List of Exceptions</returns>
         private static IList<Exception> CreateExceptionList(Type e)
         {
             return new List<Exception>();
         }
 
         /// <summary>
-        ///   Shutdowns this instance.
+        ///   Checks the exceptions dictionary and send error summary.
         /// </summary>
-        public static void Shutdown()
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">
+        ///   The <see cref="System.Timers.ElapsedEventArgs" /> instance containing the event data.
+        /// </param>
+        private static void CheckAndSendErrorSummary(object sender, ElapsedEventArgs e)
         {
-            _logger.InfoFormat("Performing shutdown operations for '{0}'.", ApplicationParameters.Name);
-            _timer.Value.Stop();
-            _timer.Value.Dispose();
+            var exceptionMessage = new StringBuilder();
+            foreach (KeyValuePair<Type, IList<Exception>> exceptionList in Exceptions.ToList().OrEmptyListIfNull())
+            {
+                if (exceptionList.Value != null && exceptionList.Value.Count != 0)
+                {
+                    exceptionMessage.Clear();
+                    exceptionMessage.Append("There are {0} exceptions of '{1}'.".FormatWith(exceptionList.Value.Count, exceptionList.Key.Name));
+                    exceptionMessage.Append(exceptionList.Value[0]);
+
+                    Logger.ErrorFormat(
+                        "{0} had error(s) on {1} (with user {2}):{3}{4}",
+                        ApplicationParameters.Name,
+                        Environment.MachineName,
+                        Environment.UserName,
+                        Environment.NewLine,
+                        exceptionMessage);
+                }
+
+                IList<Exception> tempExceptions = new List<Exception>();
+                Exceptions.TryRemove(exceptionList.Key, out tempExceptions);
+            }
         }
     }
 }

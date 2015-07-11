@@ -1,9 +1,7 @@
-// ==============================================================================
-// 
-// Fervent Coder Copyright ? 2011 - Released under the Apache 2.0 License
-// 
-// Copyright 2007-2008 The Apache Software Foundation.
-//  
+// <copyright company="RealDimensions Software, LLC" file="TinySpec.cs">
+//   Copyright 2015 - Present RealDimensions Software, LLC
+// </copyright>
+//
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
 // License at 
@@ -31,24 +29,26 @@ namespace chocolatey.package.verifier.Tests
     public abstract class TinySpec
     {
         public MockLogger Logger { get; set; }
+
         public string CurrentDirectory { get; private set; }
-        //public Mock<ILog> Logger { get; set; }
+
         public Mock<IConfigurationSettings> ConfigurationSettings { get; set; }
 
         [TestFixtureSetUp]
         public void Setup()
         {
-            CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            this.CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-            ConfigurationSettings = new Mock<IConfigurationSettings>();
-            Config.InitializeWith(ConfigurationSettings.Object);
-            Logger = new MockLogger();
-            Log.InitializeWith(Logger);
-            //Logger = new Mock<ILog>();
-            //Log.InitializeWith(Logger.Object);
+            this.ConfigurationSettings = new Mock<IConfigurationSettings>();
+            Config.InitializeWith(this.ConfigurationSettings.Object);
+            this.Logger = new MockLogger();
+            Log.InitializeWith(this.Logger);
+            
+            //// Logger = new Mock<ILog>();
+            //// Log.InitializeWith(Logger.Object);
 
-            Context();
-            Because();
+            this.Context();
+            this.Because();
         }
 
         public abstract void Context();
@@ -58,12 +58,12 @@ namespace chocolatey.package.verifier.Tests
         [TestFixtureTearDown]
         public void TearDown()
         {
-            AfterObservations();
+            this.AfterObservations();
         }
 
         public virtual void AfterObservations()
         {
-            foreach (var messageGroup in Logger.Messages)
+            foreach (var messageGroup in this.Logger.Messages)
             {
                 foreach (var message in messageGroup.Value)
                 {
@@ -75,25 +75,7 @@ namespace chocolatey.package.verifier.Tests
         [Fact]
         public void should_complete_without_error()
         {
-            //nothing to test here
-        }
-    }
-
-    public class ObservationAttribute : TestAttribute
-    {
-    }
-
-    public class FactAttribute : TestAttribute
-    {
-    }
-
-    public class ConcernForAttribute : Attribute
-    {
-        public string Name { get; set; }
-
-        public ConcernForAttribute(string name)
-        {
-            Name = name;
+            // nothing to test here
         }
     }
 }

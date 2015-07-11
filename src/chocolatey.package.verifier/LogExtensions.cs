@@ -1,11 +1,13 @@
-﻿// Copyright © 2015 - Present RealDimensions Software, LLC
+﻿// <copyright company="RealDimensions Software, LLC" file="LogExtensions.cs">
+//   Copyright 2015 - Present RealDimensions Software, LLC
+// </copyright>
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// 	http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,7 +29,7 @@ namespace chocolatey.package.verifier
         /// <summary>
         ///   Concurrent dictionary that ensures only one instance of a logger for a type.
         /// </summary>
-        private static readonly Lazy<ConcurrentDictionary<string, ILog>> _dictionary = new Lazy<ConcurrentDictionary<string, ILog>>(() => new ConcurrentDictionary<string, ILog>());
+        private static readonly Lazy<ConcurrentDictionary<string, ILog>> Dictionary = new Lazy<ConcurrentDictionary<string, ILog>>(() => new ConcurrentDictionary<string, ILog>());
 
         // /// <summary>
         // /// Gets the logger for the specified object
@@ -38,17 +40,17 @@ namespace chocolatey.package.verifier
         // {
         //     string objectName = obj.GetType().FullName;
         //     return Log(objectName);
-        //}
+        // }
 
         /// <summary>
         ///   Gets the logger for <see cref="T" />.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">The logger type</typeparam>
         /// <param name="type">The type to get the logger for.</param>
         /// <returns>Instance of a logger for the object.</returns>
         public static ILog Log<T>(this T type)
         {
-            string objectName = typeof (T).FullName;
+            string objectName = typeof(T).FullName;
             return Log(objectName);
         }
 
@@ -59,7 +61,7 @@ namespace chocolatey.package.verifier
         /// <returns>Instance of a logger for the object.</returns>
         public static ILog Log(this string objectName)
         {
-            return _dictionary.Value.GetOrAdd(objectName, Infrastructure.Logging.Log.GetLoggerFor);
+            return Dictionary.Value.GetOrAdd(objectName, Infrastructure.Logging.Log.GetLoggerFor);
         }
     }
 }

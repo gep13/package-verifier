@@ -1,11 +1,13 @@
-﻿// Copyright © 2015 - Present RealDimensions Software, LLC
+﻿// <copyright company="RealDimensions Software, LLC" file="INotificationSendService.cs">
+//   Copyright 2015 - Present RealDimensions Software, LLC
+// </copyright>
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // 
 // You may obtain a copy of the License at
 // 
-// 	http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 // 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,8 +28,8 @@ namespace chocolatey.package.verifier.Infrastructure.Services
         /// <summary>
         ///   Sends a message.
         /// </summary>
-        /// <param name="from">From.</param>
-        /// <param name="to">To.</param>
+        /// <param name="from">The sender.</param>
+        /// <param name="to">The recipient.</param>
         /// <param name="subject">The subject.</param>
         /// <param name="message">The message.</param>
         void Send(string @from, string to, string subject, string message);
@@ -35,8 +37,8 @@ namespace chocolatey.package.verifier.Infrastructure.Services
         /// <summary>
         ///   Sends a message.
         /// </summary>
-        /// <param name="from">From.</param>
-        /// <param name="to">To.</param>
+        /// <param name="from">The sender.</param>
+        /// <param name="to">The recipient.</param>
         /// <param name="subject">The subject.</param>
         /// <param name="message">The message.</param>
         void Send(string @from, IEnumerable<string> to, string subject, string message);
@@ -44,8 +46,8 @@ namespace chocolatey.package.verifier.Infrastructure.Services
         /// <summary>
         ///   Sends a message.
         /// </summary>
-        /// <param name="from">From.</param>
-        /// <param name="to">To.</param>
+        /// <param name="from">The sender.</param>
+        /// <param name="to">The recipient.</param>
         /// <param name="subject">The subject.</param>
         /// <param name="message">The message.</param>
         /// <param name="useHtmlBody">Whether to use html or not.</param>
@@ -54,8 +56,8 @@ namespace chocolatey.package.verifier.Infrastructure.Services
         /// <summary>
         ///   Sends a message
         /// </summary>
-        /// <param name="from">From.</param>
-        /// <param name="to">To.</param>
+        /// <param name="from">The sender.</param>
+        /// <param name="to">The recipient.</param>
         /// <param name="subject">The subject.</param>
         /// <param name="message">The message.</param>
         /// <param name="attachments">The attachments.</param>
