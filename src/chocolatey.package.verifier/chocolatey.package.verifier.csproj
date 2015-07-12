@@ -128,6 +128,7 @@
     <Compile Include="infrastructure.app\messaging\ImportFilesCompleteMessage.cs" />
     <Compile Include="infrastructure.app\messaging\ShutdownMessage.cs" />
     <Compile Include="infrastructure.app\messaging\StartupMessage.cs" />
+    <Compile Include="infrastructure.app\services\VagrantService.cs" />
     <Compile Include="infrastructure.app\tasks\CreateGistTask.cs" />
     <Compile Include="infrastructure.app\tasks\ShutdownAfterWorkCompletedTask.cs" />
     <Compile Include="infrastructure.app\tasks\StartupTask.cs" />
