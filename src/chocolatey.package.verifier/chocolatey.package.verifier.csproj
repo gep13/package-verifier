@@ -152,6 +152,11 @@
     <Compile Include="infrastructure\logging\log4netappenders\SmtpCustomAppender.cs" />
     <Compile Include="infrastructure\messaging\EventManager.cs" />
     <Compile Include="infrastructure\messaging\IMessage.cs" />
+    <Compile Include="infrastructure\results\IResults.cs" />
+    <Compile Include="infrastructure\results\Result.cs" />
+    <Compile Include="infrastructure\results\ResultMessage.cs" />
+    <Compile Include="infrastructure\results\ResultType.cs" />
+    <Compile Include="infrastructure\results\UploadResults.cs" />
     <Compile Include="infrastructure\schedules\IntervalOccurred.cs" />
     <Compile Include="infrastructure\schedules\ISchedule.cs" />
     <Compile Include="infrastructure\services\IFileServingService.cs" />
