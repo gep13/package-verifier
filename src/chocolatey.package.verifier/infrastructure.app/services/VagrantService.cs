@@ -15,7 +15,50 @@
 
 namespace chocolatey.package.verifier.infrastructure.app.services
 {
-    public class VagrantService
+    public class VagrantService : IVagrantService
     {
+        public void prep()
+        {
+            /*
+             place and update vagrantfile
+             vagrant up
+
+             rename %CHOCOLATEYINSTALL%\logs\chocolatey.log chocolatey.log.old
+             vagrant sandbox on
+              
+vagrant provision
+
+choco install -dvy
+rename chocolatey.log.install
+rename chocolatey.log.uninstall
+
+grab files
+vagrant sandbox rollback
+swap vagrantfile for next install
+             */
+        }
+
+        public void dosomething()
+        {
+            /*
+            swap choco action file
+            vagrant provision
+
+            rename chocolatey.log.install
+            rename chocolatey.log.uninstall
+
+            grab files
+            vagrant sandbox rollback
+            swap vagrantfile for next install
+             */
+        }
+
+        public void reset()
+        {
+            /*
+             vagrant sandbox rollback
+             swap vagrantfile for next install
+             */
+        }
     }
 }
