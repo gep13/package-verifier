@@ -57,8 +57,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                 }
 
                 this.Log().Info("Still waiting on the following tasks: {0}".format_with(activeTasks.ToString()));
-            }
-            else
+            } else
             {
                 this.Log().Info("Signalling for shutdown... all tasks have completed.");
                 EventManager.publish(new ShutdownMessage());
@@ -74,10 +73,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
         /// </summary>
         public void shutdown()
         {
-            if (_subscription != null)
-            {
-                _subscription.Dispose();
-            }
+            if (_subscription != null) _subscription.Dispose();
 
             if (_timer != null)
             {
@@ -91,7 +87,10 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             _timer.Interval = TimeSpan.FromMinutes(DEFAULT_MINUTES).TotalMilliseconds;
             _timer.Elapsed += (sender, args) => synchronize();
             _timer.Start();
-            this.Log().Info(() => "{0} will check back in {1} minutes to see if the system can shut down".format_with(GetType().Name, DEFAULT_MINUTES));
+            this.Log().Info(
+                () =>
+                "{0} will check back in {1} minutes to see if the system can shut down".format_with(
+                    GetType().Name, DEFAULT_MINUTES));
         }
     }
 }

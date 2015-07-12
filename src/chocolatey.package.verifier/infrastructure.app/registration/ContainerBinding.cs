@@ -31,7 +31,7 @@ namespace chocolatey.package.verifier.infrastructure.app.registration
         ///   Loads the module into the kernel.
         /// </summary>
         /// <param name="container">The container.</param>
-        public void RegisterComponents(Container container)
+        public void register_components(Container container)
         {
             Log.InitializeWith<Log4NetLog>();
 

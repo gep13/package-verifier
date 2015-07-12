@@ -29,17 +29,15 @@ namespace chocolatey.package.verifier.infrastructure.app.registration
     /// </summary>
     public class Bootstrap
     {
-        private static readonly ILog _logger = LogManager.GetLogger(typeof (Bootstrap));
+        private static readonly ILog _logger = LogManager.GetLogger(typeof(Bootstrap));
         private static readonly Lazy<Timer> _timer = new Lazy<Timer>(() => new Timer());
-        private static readonly Lazy<ConcurrentDictionary<Type, IList<Exception>>> _exceptions = new Lazy<ConcurrentDictionary<Type, IList<Exception>>>(() => new ConcurrentDictionary<Type, IList<Exception>>());
+        private static readonly Lazy<ConcurrentDictionary<Type, IList<Exception>>> _exceptions =
+            new Lazy<ConcurrentDictionary<Type, IList<Exception>>>(() => new ConcurrentDictionary<Type, IList<Exception>>());
 
         /// <summary>
         ///   Gets the Exceptions dictionary
         /// </summary>
-        protected static ConcurrentDictionary<Type, IList<Exception>> Exceptions
-        {
-            get { return _exceptions.Value; }
-        }
+        protected static ConcurrentDictionary<Type, IList<Exception>> Exceptions { get { return _exceptions.Value; } }
 
         /// <summary>
         ///   Initializes this instance.
@@ -129,7 +127,8 @@ namespace chocolatey.package.verifier.infrastructure.app.registration
                 if (exceptionList.Value != null && exceptionList.Value.Count != 0)
                 {
                     exceptionMessage.Clear();
-                    exceptionMessage.Append("There are {0} exceptions of '{1}'.".format_with(exceptionList.Value.Count, exceptionList.Key.Name));
+                    exceptionMessage.Append(
+                        "There are {0} exceptions of '{1}'.".format_with(exceptionList.Value.Count, exceptionList.Key.Name));
                     exceptionMessage.Append(exceptionList.Value[0]);
 
                     _logger.ErrorFormat(

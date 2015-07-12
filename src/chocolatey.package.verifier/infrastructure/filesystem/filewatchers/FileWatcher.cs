@@ -59,17 +59,9 @@ namespace chocolatey.package.verifier.infrastructure.filesystem.filewatchers
         ///   Gets the file path.
         /// </summary>
         /// <value>The file path.</value>
-        public string FilePath
-        {
-            get { return _filePath; }
-        }
+        public string FilePath { get { return _filePath; } }
 
-        public bool RenameFile
-        {
-            get { return _renameFile; }
-
-            set { _renameFile = value; }
-        }
+        public bool RenameFile { get { return _renameFile; } set { _renameFile = value; } }
 
         /// <summary>
         ///   Gets or sets the Interval in seconds.
@@ -95,17 +87,8 @@ namespace chocolatey.package.verifier.infrastructure.filesystem.filewatchers
             {
                 IList<string> filesToProcess = new List<string>();
 
-                if (is_directory(FilePath))
-                {
-                    filesToProcess = _fileSystem.get_files(FilePath, "*.*", SearchOption.AllDirectories).ToList();
-                }
-                else
-                {
-                    if (_fileSystem.file_exists(FilePath))
-                    {
-                        filesToProcess.Add(FilePath);
-                    }
-                }
+                if (is_directory(FilePath)) filesToProcess = _fileSystem.get_files(FilePath, "*.*", SearchOption.AllDirectories).ToList();
+                else if (_fileSystem.file_exists(FilePath)) filesToProcess.Add(FilePath);
 
                 if (filesToProcess.Count != 0)
                 {
@@ -125,16 +108,12 @@ namespace chocolatey.package.verifier.infrastructure.filesystem.filewatchers
                         file_found_event.Invoke(new FileFoundEventArgs(tempFile));
                     }
                 }
-            }
-            catch (Exception ex)
+            } catch (Exception ex)
             {
                 this.Log()
                     .Error(
                         () =>
-                        string.Format(
-                            "Exception caught when watching for trigger files:{0}{1}",
-                            Environment.NewLine,
-                            ex));
+                        string.Format("Exception caught when watching for trigger files:{0}{1}", Environment.NewLine, ex));
             }
         }
 

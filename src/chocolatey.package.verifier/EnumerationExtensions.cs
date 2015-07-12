@@ -39,33 +39,29 @@ namespace chocolatey.package.verifier
 
             if (memInfo != null && memInfo.Length > 0)
             {
-                var attrib = memInfo[0].GetCustomAttributes(typeof (DescriptionAttribute), false).Cast<DescriptionAttribute>().SingleOrDefault();
+                var attrib =
+                    memInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false)
+                              .Cast<DescriptionAttribute>()
+                              .SingleOrDefault();
 
-                if (attrib != null)
-                {
-                    description = attrib.Description;
-                }
+                if (attrib != null) description = attrib.Description;
             }
 
             return description;
         }
 
-        public static TEnum parse_enum_from_description<TEnum>(this string description)
-            where TEnum : struct
+        public static TEnum parse_enum_from_description<TEnum>(this string description) where TEnum : struct
         {
-            if (!typeof (TEnum).IsEnum)
-            {
-                throw new InvalidEnumArgumentException("TEnum must be of type Enum");
-            }
+            if (!typeof(TEnum).IsEnum) throw new InvalidEnumArgumentException("TEnum must be of type Enum");
 
-            Type type = typeof (TEnum);
+            Type type = typeof(TEnum);
             foreach (var fieldInfo in type.GetFields())
             {
-                var attr = fieldInfo.GetCustomAttributes(typeof (DescriptionAttribute), false).Cast<DescriptionAttribute>().SingleOrDefault();
-                if (attr != null && attr.Description.Equals(description))
-                {
-                    return (TEnum) fieldInfo.GetValue(null);
-                }
+                var attr =
+                    fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), false)
+                             .Cast<DescriptionAttribute>()
+                             .SingleOrDefault();
+                if (attr != null && attr.Description.Equals(description)) return (TEnum)fieldInfo.GetValue(null);
             }
 
             return default(TEnum);

@@ -39,7 +39,7 @@ namespace chocolatey.package.verifier.Host
         {
             InitializeComponent();
             Bootstrap.initialize();
-            _logger = LogManager.GetLogger(typeof (Service));
+            _logger = LogManager.GetLogger(typeof(Service));
         }
 
         /// <summary>
@@ -80,8 +80,7 @@ namespace chocolatey.package.verifier.Host
                     Console.WriteLine("Press any key to continue...");
                     Console.ReadKey();
                 }
-            }
-            catch (Exception ex)
+            } catch (Exception ex)
             {
                 _logger.ErrorFormat(
                     "{0} service had an error on {1} (with user {2}):{3}{4}",
@@ -115,8 +114,7 @@ namespace chocolatey.package.verifier.Host
                 SimpleInjectorContainer.stop();
 
                 _logger.InfoFormat("{0} service has shut down.", ApplicationParameters.Name);
-            }
-            catch (Exception ex)
+            } catch (Exception ex)
             {
                 _logger.ErrorFormat(
                     "{0} service had an error on {1} (with user {2}):{3}{4}",

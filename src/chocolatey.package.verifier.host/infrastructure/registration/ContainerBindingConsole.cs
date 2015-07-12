@@ -41,16 +41,16 @@ namespace chocolatey.package.verifier.host.infrastructure.registration
 
             container.Register<IEnumerable<ITask>>(
                 () =>
+                {
+                    var list = new List<ITask>
                     {
-                        var list = new List<ITask>
-                            {
-                                new StartupTask(),
-                                new ShutdownAfterWorkCompletedTask(),
-                                new CreateGistTask()
-                            };
+                        new StartupTask(),
+                        new ShutdownAfterWorkCompletedTask(),
+                        new CreateGistTask()
+                    };
 
-                        return list.AsReadOnly();
-                    },
+                    return list.AsReadOnly();
+                },
                 Lifestyle.Singleton);
         }
     }

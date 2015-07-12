@@ -21,14 +21,15 @@ namespace chocolatey.package.verifier.host.infrastructure.registration
 
     public static class SimpleInjectorExtensions
     {
-        public static void register_all<TService>(this Container container, IEnumerable<Func<TService>> instanceCreators) where TService : class
+        public static void register_all<TService>(this Container container, IEnumerable<Func<TService>> instanceCreators)
+            where TService : class
         {
             foreach (var instanceCreator in instanceCreators.or_empty_list_if_null())
             {
-                container.RegisterSingle(typeof (TService), instanceCreator);
+                container.RegisterSingle(typeof(TService), instanceCreator);
             }
 
-            container.RegisterAll<TService>(typeof (TService));
+            container.RegisterAll<TService>(typeof(TService));
         }
     }
 }

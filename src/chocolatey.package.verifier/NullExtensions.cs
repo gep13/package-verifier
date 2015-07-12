@@ -24,19 +24,18 @@ namespace chocolatey.package.verifier
     /// </summary>
     public static class NullExtensions
     {
-        public static TValue value_or_default<TSource, TValue>(this TSource instance, Expression<Func<TSource, TValue>> expression)
+        public static TValue value_or_default<TSource, TValue>(
+            this TSource instance, Expression<Func<TSource, TValue>> expression)
         {
             return value_or_default(instance, expression, true);
         }
 
-        internal static TProperty evaluate_expression<TSource, TProperty>(TSource source, Expression<Func<TSource, TProperty>> expression)
+        internal static TProperty evaluate_expression<TSource, TProperty>(
+            TSource source, Expression<Func<TSource, TProperty>> expression)
         {
             var method = expression.Body as MethodCallExpression;
 
-            if (method != null)
-            {
-                return value_or_default(source, expression, false);
-            }
+            if (method != null) return value_or_default(source, expression, false);
 
             var body = expression.Body as MemberExpression;
 
@@ -49,20 +48,14 @@ namespace chocolatey.package.verifier
 
             object value = evaluate_member_expression(source, body);
 
-            if (ReferenceEquals(value, null))
-            {
-                return default(TProperty);
-            }
+            if (ReferenceEquals(value, null)) return default(TProperty);
 
-            return (TProperty) value;
+            return (TProperty)value;
         }
 
         private static object evaluate_member_expression(object instance, MemberExpression memberExpression)
         {
-            if (memberExpression == null)
-            {
-                return instance;
-            }
+            if (memberExpression == null) return instance;
 
             instance = evaluate_member_expression(instance, memberExpression.Expression as MemberExpression);
             var propertyInfo = memberExpression.Member as PropertyInfo;
@@ -70,13 +63,12 @@ namespace chocolatey.package.verifier
             return instance;
         }
 
-        private static TValue value_or_default<TSource, TValue>(this TSource instance, Expression<Func<TSource, TValue>> expression, bool nested)
+        private static TValue value_or_default<TSource, TValue>(
+            this TSource instance, Expression<Func<TSource, TValue>> expression, bool nested)
         {
             return ReferenceEquals(instance, default(TSource))
                        ? default(TValue)
-                       : nested
-                             ? evaluate_expression(instance, expression)
-                             : expression.Compile()(instance);
+                       : nested ? evaluate_expression(instance, expression) : expression.Compile()(instance);
         }
     }
 }

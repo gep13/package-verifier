@@ -22,25 +22,24 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
     public class CreateGistTask : ITask
     {
-        private IDisposable subscription;
+        private IDisposable _subscription;
 
         public void initialize()
         {
-            subscription = EventManager.subscribe<CreateGistMessage>(CreateGist, null, null);
+            _subscription = EventManager.subscribe<CreateGistMessage>(create_gist, null, null);
             this.Log().Info(() => "{0} is now ready and waiting for CreateGistMessage".format_with(GetType().Name));
         }
 
         public void shutdown()
         {
-            if (subscription != null)
-            {
-                subscription.Dispose();
-            }
+            if (_subscription != null) _subscription.Dispose();
         }
 
-        private void CreateGist(CreateGistMessage message)
+        private void create_gist(CreateGistMessage message)
         {
-            this.Log().Info(() => "Creating gist with install log from: {0} and uninstall log from: {1}".format_with(message.InstallationLog, message.UninstallationLog));
+            this.Log().Info(
+                () => "Creating gist with install log from: {0} and uninstall log from: {1}"
+                          .format_with(message.InstallationLog, message.UninstallationLog));
         }
     }
 }

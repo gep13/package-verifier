@@ -38,8 +38,7 @@ namespace chocolatey.package.verifier.infrastructure.synchronization
                 try
                 {
                     action.Invoke();
-                }
-                finally
+                } finally
                 {
                     release();
                 }
@@ -57,12 +56,9 @@ namespace chocolatey.package.verifier.infrastructure.synchronization
 
             if (secondsToTimeout.HasValue)
             {
-                return _resourcePool.WaitOne((int) TimeSpan.FromSeconds(secondsToTimeout.GetValueOrDefault(0)).TotalMilliseconds);
-            }
-            else
-            {
-                return _resourcePool.WaitOne();
-            }
+                return
+                    _resourcePool.WaitOne((int)TimeSpan.FromSeconds(secondsToTimeout.GetValueOrDefault(0)).TotalMilliseconds);
+            } else return _resourcePool.WaitOne();
         }
 
         /// <summary>
@@ -75,10 +71,12 @@ namespace chocolatey.package.verifier.infrastructure.synchronization
                 try
                 {
                     _resourcePool.Release();
-                }
-                catch (Exception)
+                } catch (Exception)
                 {
-                    "SemaphoreLock".Log().Warn(string.Format("Wonky error when trying to Release lock to semaphore. Should be safe to ignore."));
+                    "SemaphoreLock".Log()
+                                   .Warn(
+                                       string.Format(
+                                           "Wonky error when trying to Release lock to semaphore. Should be safe to ignore."));
                 }
             }
         }
@@ -88,10 +86,7 @@ namespace chocolatey.package.verifier.infrastructure.synchronization
         /// </summary>
         public static void kill()
         {
-            if (!acquire(2))
-            {
-                _resourcePool.Release(_poolCount);
-            }
+            if (!acquire(2)) _resourcePool.Release(_poolCount);
         }
 
         /// <summary>

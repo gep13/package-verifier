@@ -78,7 +78,8 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
         /// <param name="pattern">The search pattern.</param>
         /// <param name="option">The option specifies whether the search operation should include all subdirectories or only the current directory.</param>
         /// <returns>Returns the names of files (including their paths).</returns>
-        IEnumerable<string> get_files(string directoryPath, string pattern = "*.*", SearchOption option = SearchOption.TopDirectoryOnly);
+        IEnumerable<string> get_files(
+            string directoryPath, string pattern = "*.*", SearchOption option = SearchOption.TopDirectoryOnly);
 
         /// <summary>
         ///   Gets a list of files inside an existing directory with extensions and optionally recursive search option.
@@ -87,7 +88,8 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
         /// <param name="extensions">The extensions.</param>
         /// <param name="option">The option.</param>
         /// <returns>Returns the names of files (including their paths).</returns>
-        IEnumerable<string> get_files(string directoryPath, string[] extensions, SearchOption option = SearchOption.TopDirectoryOnly);
+        IEnumerable<string> get_files(
+            string directoryPath, string[] extensions, SearchOption option = SearchOption.TopDirectoryOnly);
 
         /// <summary>
         ///   Does the file exist?
@@ -270,7 +272,8 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
         /// <param name="pattern">The search pattern.</param>
         /// <param name="option">The option specifies whether the search operation should include all subdirectories or only the current directory.</param>
         /// <returns>Returns the names of directories (including their paths).</returns>
-        IEnumerable<string> get_directories(string directoryPath, string pattern, SearchOption option = SearchOption.TopDirectoryOnly);
+        IEnumerable<string> get_directories(
+            string directoryPath, string pattern, SearchOption option = SearchOption.TopDirectoryOnly);
 
         /// <summary>
         ///   Determines whether the given path refers to an existing directory on disk.

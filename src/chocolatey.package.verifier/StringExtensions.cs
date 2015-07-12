@@ -38,10 +38,14 @@ namespace chocolatey.package.verifier
             try
             {
                 return string.Format(input, formatting);
-            }
-            catch (Exception ex)
+            } catch (Exception ex)
             {
-                ApplicationParameters.Name.Log().Error("{0} had an error formatting string:{1} {2}", ApplicationParameters.Name, Environment.NewLine, ex.Message);
+                ApplicationParameters.Name.Log()
+                                     .Error(
+                                         "{0} had an error formatting string:{1} {2}",
+                                         ApplicationParameters.Name,
+                                         Environment.NewLine,
+                                         ex.Message);
                 return input;
             }
         }
@@ -93,10 +97,7 @@ namespace chocolatey.package.verifier
         {
             if (string.IsNullOrWhiteSpace(input)) return input;
 
-            if (_spacePattern.IsMatch(input))
-            {
-                return "\"{0}\"".format_with(input);
-            }
+            if (_spacePattern.IsMatch(input)) return "\"{0}\"".format_with(input);
 
             return input;
         }
@@ -121,22 +122,17 @@ namespace chocolatey.package.verifier
         {
             if (string.IsNullOrWhiteSpace(input)) return string.Empty;
 
-            if (input.StartsWith(" "))
-            {
-                input = input.trim_safe();
-            }
+            if (input.StartsWith(" ")) input = input.trim_safe();
 
-            if ((input.StartsWith("\"") && input.EndsWith("\""))
-                || (input.StartsWith("'") && input.EndsWith("'")))
-            {
-                input = input.Remove(0, 1).Remove(input.Length - 2, 1);
-            }
+            if ((input.StartsWith("\"") && input.EndsWith("\"")) || (input.StartsWith("'") && input.EndsWith("'"))) input = input.Remove(0, 1).Remove(input.Length - 2, 1);
 
             return input;
         }
 
-        private static readonly Regex _openBraceRegex = new Regex("(?<!{){(?!{)", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Compiled);
-        private static readonly Regex _closeBraceRegex = new Regex("(?<!})}(?!})", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Compiled);
+        private static readonly Regex _openBraceRegex = new Regex(
+            "(?<!{){(?!{)", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Compiled);
+        private static readonly Regex _closeBraceRegex = new Regex(
+            "(?<!})}(?!})", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Compiled);
 
         public static string escape_curly_braces(this string input)
         {

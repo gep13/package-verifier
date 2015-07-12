@@ -42,7 +42,7 @@ namespace chocolatey.package.verifier
                 var formatter = new BinaryFormatter();
                 formatter.Serialize(ms, other);
                 ms.Position = 0;
-                return (T) formatter.Deserialize(ms);
+                return (T)formatter.Deserialize(ms);
             }
         }
     }

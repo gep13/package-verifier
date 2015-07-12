@@ -29,7 +29,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
         /// <param name="to">The recipient.</param>
         /// <param name="subject">The subject.</param>
         /// <param name="message">The message.</param>
-        void Send(string to, string subject, string message);
+        void send(string to, string subject, string message);
 
         /// <summary>
         ///   Sends a message
@@ -37,7 +37,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
         /// <param name="to">List of addresses to.</param>
         /// <param name="subject">The subject.</param>
         /// <param name="message">The message.</param>
-        void Send(IEnumerable<string> to, string subject, string message);
+        void send(IEnumerable<string> to, string subject, string message);
 
         /// <summary>
         ///   Sends a message
@@ -46,6 +46,6 @@ namespace chocolatey.package.verifier.infrastructure.app.services
         /// <param name="subject">The subject.</param>
         /// <param name="message">The message.</param>
         /// <param name="attachments">The attachments.</param>
-        void Send(IEnumerable<string> to, string subject, string message, IEnumerable<Attachment> attachments);
+        void send(IEnumerable<string> to, string subject, string message, IEnumerable<Attachment> attachments);
     }
 }

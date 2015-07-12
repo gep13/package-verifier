@@ -25,12 +25,10 @@ namespace chocolatey.package.verifier
         {
             string name = prop.Name;
 
-            var attrib = prop.GetCustomAttributes(typeof (DescriptionAttribute), false).Cast<DescriptionAttribute>().SingleOrDefault();
+            var attrib =
+                prop.GetCustomAttributes(typeof(DescriptionAttribute), false).Cast<DescriptionAttribute>().SingleOrDefault();
 
-            if (attrib != null)
-            {
-                name = attrib.Description;
-            }
+            if (attrib != null) name = attrib.Description;
 
             return name;
         }

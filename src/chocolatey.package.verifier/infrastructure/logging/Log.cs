@@ -24,7 +24,7 @@ namespace chocolatey.package.verifier.infrastructure.logging
     /// </summary>
     public static class Log
     {
-        private static Type _logType = typeof (NullLog);
+        private static Type _logType = typeof(NullLog);
         private static ILog _logger;
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace chocolatey.package.verifier.infrastructure.logging
         /// <typeparam name="T">The type of ILog for the application to use</typeparam>
         public static void InitializeWith<T>() where T : ILog, new()
         {
-            _logType = typeof (T);
+            _logType = typeof(T);
         }
 
         /// <summary>
@@ -60,10 +60,7 @@ namespace chocolatey.package.verifier.infrastructure.logging
             if (_logger == null)
             {
                 logger = Activator.CreateInstance(_logType) as ILog;
-                if (logger != null)
-                {
-                    logger.InitializeFor(objectName);
-                }
+                if (logger != null) logger.InitializeFor(objectName);
             }
 
             return logger;

@@ -51,10 +51,7 @@ namespace chocolatey.package.verifier.infrastructure.configuration
 
         public static void convert_relative_to_absolute_pickup_directory_location()
         {
-            if (IsUsingPickupDirectory)
-            {
-                set_pickup_directory_location();
-            }
+            if (IsUsingPickupDirectory) set_pickup_directory_location();
         }
 
         /// <summary>
@@ -70,7 +67,7 @@ namespace chocolatey.package.verifier.infrastructure.configuration
             object mailConfiguration, smtp, specifiedPickupDirectory;
 
             // get static internal property: MailConfiguration
-            prop = typeof (SmtpClient).GetProperty("MailConfiguration", BindingFlags.Static | BindingFlags.NonPublic);
+            prop = typeof(SmtpClient).GetProperty("MailConfiguration", BindingFlags.Static | BindingFlags.NonPublic);
             mailConfiguration = prop.GetValue(null, null);
 
             // get internal property: Smtp
@@ -83,13 +80,10 @@ namespace chocolatey.package.verifier.infrastructure.configuration
 
             FieldInfo field = specifiedPickupDirectory.GetType().GetField("pickupDirectoryLocation", instanceFlags);
 
-            var path = (string) field.GetValue(specifiedPickupDirectory);
+            var path = (string)field.GetValue(specifiedPickupDirectory);
             var absolutePath = Path.GetFullPath(path);
 
-            if (HttpContext.Current != null)
-            {
-                absolutePath = HttpContext.Current.Server.MapPath(path);
-            }
+            if (HttpContext.Current != null) absolutePath = HttpContext.Current.Server.MapPath(path);
 
             field.SetValue(specifiedPickupDirectory, absolutePath);
         }

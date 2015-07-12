@@ -29,7 +29,8 @@ namespace chocolatey.package.verifier.infrastructure.logging.log4netappenders
     ///   <para>http://stackoverflow.com/questions/13741312/does-log4net-haven-an-smtp-appender-that-support-tls-encryption</para>
     ///   <para>http://stackoverflow.com/questions/12530128/log4net-smtpappender-for-webemail-not-sending</para>
     /// </remarks>
-    [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
+    [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly",
+        Justification = "Reviewed. Suppression is OK here.")]
     public class SmtpCustomAppender : SmtpAppender
     {
         public SmtpCustomAppender()
@@ -51,29 +52,26 @@ namespace chocolatey.package.verifier.infrastructure.logging.log4netappenders
         {
             var client = new SmtpClient();
 
-            if (!string.IsNullOrEmpty(SmtpHost))
-            {
-                client.Host = SmtpHost;
-            }
+            if (!string.IsNullOrEmpty(SmtpHost)) client.Host = SmtpHost;
 
             client.Port = Port;
             client.EnableSsl = EnableSsl;
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
             switch (Authentication)
             {
-                case SmtpAuthentication.Basic:
+                case SmtpAuthentication.Basic :
                     client.Credentials = new NetworkCredential(Username, Password);
                     break;
-                case SmtpAuthentication.Ntlm:
+                case SmtpAuthentication.Ntlm :
                     client.Credentials = CredentialCache.DefaultNetworkCredentials;
                     break;
             }
 
             var message = new MailMessage
-                {
-                    Body = messageBody,
-                    From = new MailAddress(From)
-                };
+            {
+                Body = messageBody,
+                From = new MailAddress(From)
+            };
             message.To.Add(To);
             message.Subject = Subject;
             message.Priority = Priority;

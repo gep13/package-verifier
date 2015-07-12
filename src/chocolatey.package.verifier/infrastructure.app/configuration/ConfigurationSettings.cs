@@ -35,7 +35,11 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         /// </value>
         public bool IsDebugMode
         {
-            get { return get_application_settings_value("IsDebugMode").Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase); }
+            get
+            {
+                return get_application_settings_value("IsDebugMode")
+                    .Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase);
+            }
         }
 
         /// <summary>
@@ -46,7 +50,11 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         /// </value>
         public bool RunProfiler
         {
-            get { return get_application_settings_value("RunProfiler").Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase); }
+            get
+            {
+                return get_application_settings_value("RunProfiler")
+                    .Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase);
+            }
         }
 
         /// <summary>
@@ -57,34 +65,29 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         /// </value>
         public bool AllowJavascript
         {
-            get { return get_application_settings_value("AllowJavascript").Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase); }
+            get
+            {
+                return get_application_settings_value("AllowJavascript")
+                    .Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase);
+            }
         }
 
         /// <summary>
         ///   Gets the files path.
         /// </summary>
-        public string FilesPath
-        {
-            get { return get_application_settings_value("Path.Files"); }
-        }
+        public string FilesPath { get { return get_application_settings_value("Path.Files"); } }
 
         /// <summary>
         ///   Gets the remote folders for FTP task.
         /// </summary>
         /// <value>The remote folders for FTP task.</value>
-        public IList<IKnownFolder> RemoteFoldersForFtpTask
-        {
-            get { return get_list_of_known_folders("FtpTask.RemoteFolders"); }
-        }
+        public IList<IKnownFolder> RemoteFoldersForFtpTask { get { return get_list_of_known_folders("FtpTask.RemoteFolders"); } }
 
         /// <summary>
         ///   Gets the ignored folders for FTP task.
         /// </summary>
         /// <value>The ignored folders for FTP task.</value>
-        public IList<IKnownFolder> IgnoredFoldersForFtpTask
-        {
-            get { return get_list_of_known_folders("FtpTask.IgnoredFolders"); }
-        }
+        public IList<IKnownFolder> IgnoredFoldersForFtpTask { get { return get_list_of_known_folders("FtpTask.IgnoredFolders"); } }
 
         /// <summary>
         ///   Gets the site URL.
@@ -116,7 +119,11 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         /// </value>
         public bool UseCaching
         {
-            get { return get_application_settings_value("UseCaching").Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase); }
+            get
+            {
+                return get_application_settings_value("UseCaching")
+                    .Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase);
+            }
         }
 
         /// <summary>
@@ -124,48 +131,45 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         /// </summary>
         public string SystemEmailAddress
         {
-            get { return get_smtp_email_from_mail_settings_section(get_configuration_section<SmtpSection>("system.net/mailSettings/smtp")); }
+            get
+            {
+                return
+                    get_smtp_email_from_mail_settings_section(
+                        get_configuration_section<SmtpSection>("system.net/mailSettings/smtp"));
+            }
         }
 
         /// <summary>
         ///   Gets an email to use as an override instead of the provided email. If null, use the provided email.
         /// </summary>
-        public string TestEmailOverride
-        {
-            get { return get_application_settings_value("TestingEmailOverride"); }
-        }
+        public string TestEmailOverride { get { return get_application_settings_value("TestingEmailOverride"); } }
 
         /// <summary>
         ///   Gets a value indicating whether SSL is required
         /// </summary>
         public bool ForceSsl
         {
-            get { return get_application_settings_value("ForceSSL").Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase); }
+            get
+            {
+                return get_application_settings_value("ForceSSL")
+                    .Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase);
+            }
         }
 
         /// <summary>
         ///   Gets the URL scheme to be used when created absolute URL's
         /// </summary>
-        public string UrlScheme
-        {
-            get { return get_application_settings_value("UrlScheme"); }
-        }
+        public string UrlScheme { get { return get_application_settings_value("UrlScheme"); } }
 
         /// <summary>
         ///   Gets the cache Interval in minutes for repository caching
         /// </summary>
-        public int RepositoryCacheIntervalMinutes
-        {
-            get { return int.Parse(get_application_settings_value("RepositoryCacheIntervalMinutes")); }
-        }
+        public int RepositoryCacheIntervalMinutes { get { return int.Parse(get_application_settings_value("RepositoryCacheIntervalMinutes")); } }
 
         /// <summary>
         ///   Gets the number of minutes that the forms authentication ticket is valid
         /// </summary>
-        public int FormsAuthenticationExpirationInMinutes
-        {
-            get { return int.Parse(get_application_settings_value("FormsAuthenticationExpirationInMinutes")); }
-        }
+        public int FormsAuthenticationExpirationInMinutes { get { return int.Parse(get_application_settings_value("FormsAuthenticationExpirationInMinutes")); } }
 
         /// <summary>
         ///   Gets the application settings value.
@@ -200,10 +204,7 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         /// </returns>
         public string get_smtp_email_from_mail_settings_section(SmtpSection settings)
         {
-            if (settings == null)
-            {
-                return string.Empty;
-            }
+            if (settings == null) return string.Empty;
 
             return settings.From;
         }
@@ -215,14 +216,12 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         /// <returns>List of known folders</returns>
         public IList<IKnownFolder> get_list_of_known_folders(string configFileSetting)
         {
-            var folders = get_application_settings_value(configFileSetting).Split(
-                new[]
-                    {
-                        "|"
-                    },
-                StringSplitOptions.RemoveEmptyEntries);
+            var folders = get_application_settings_value(configFileSetting)
+                .Split(new[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
 
-            var knownFolders = new List<IKnownFolder> {};
+            var knownFolders = new List<IKnownFolder>
+            {
+            };
 
             foreach (var folder in folders)
             {

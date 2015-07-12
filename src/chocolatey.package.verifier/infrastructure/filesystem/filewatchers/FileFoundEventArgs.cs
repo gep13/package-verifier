@@ -35,9 +35,6 @@ namespace chocolatey.package.verifier.infrastructure.filesystem.filewatchers
         ///   Gets the file path.
         /// </summary>
         /// <value>The file path.</value>
-        public string FilePath
-        {
-            get { return _filePath; }
-        }
+        public string FilePath { get { return _filePath; } }
     }
 }

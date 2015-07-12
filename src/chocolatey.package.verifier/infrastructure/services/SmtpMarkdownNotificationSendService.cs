@@ -36,7 +36,16 @@ namespace chocolatey.package.verifier.infrastructure.services
         /// <param name="message">The message.</param>
         public void send(string @from, string to, string subject, string message)
         {
-            send(@from, new List<string> {to}, subject, message, null, useHtmlBody: false);
+            send(
+                @from,
+                new List<string>
+                {
+                    to
+                },
+                subject,
+                message,
+                null,
+                useHtmlBody: false);
         }
 
         /// <summary>
@@ -75,7 +84,13 @@ namespace chocolatey.package.verifier.infrastructure.services
         /// <param name="useHtmlBody">
         ///   if set to <c>true</c> [use HTML body].
         /// </param>
-        public void send(string @from, IEnumerable<string> to, string subject, string message, IEnumerable<Attachment> attachments, bool useHtmlBody)
+        public void send(
+            string @from,
+            IEnumerable<string> to,
+            string subject,
+            string message,
+            IEnumerable<Attachment> attachments,
+            bool useHtmlBody)
         {
             var config = Config.get_configuration_settings();
 
@@ -88,8 +103,7 @@ namespace chocolatey.package.verifier.infrastructure.services
                 {
                     emailMessage.To.Add(emailAddress);
                 }
-            }
-            else
+            } else
             {
                 foreach (var emailTo in to)
                 {
@@ -105,17 +119,24 @@ namespace chocolatey.package.verifier.infrastructure.services
                 emailMessage.Attachments.Add(attachment);
             }
 
-            this.Log().Info(() => "Sending '{0}' a message from '{1}': {2}{3}{4}".format_with(string.Join(",", to), @from, subject, Environment.NewLine, message));
+            this.Log()
+                .Info(
+                    () =>
+                    "Sending '{0}' a message from '{1}': {2}{3}{4}".format_with(
+                        string.Join(",", to), @from, subject, Environment.NewLine, message));
 
             try
             {
                 var mailSender = new MailSender();
 
                 mailSender.Send(emailMessage);
-            }
-            catch (Exception ex)
+            } catch (Exception ex)
             {
-                this.Log().Error(() => "Error sending email to '{0}' with subject '{1}':{2}{3}".format_with(emailMessage.To.ToString(), emailMessage.Subject, Environment.NewLine, ex));
+                this.Log()
+                    .Error(
+                        () =>
+                        "Error sending email to '{0}' with subject '{1}':{2}{3}".format_with(
+                            emailMessage.To.ToString(), emailMessage.Subject, Environment.NewLine, ex));
                 ErrorSignal.FromCurrentContext().Raise(ex);
             }
         }

@@ -114,10 +114,7 @@ namespace chocolatey.package.verifier.infrastructure.services
 
             directory = Path.GetFullPath(directory);
 
-            if (!Directory.Exists(directory))
-            {
-                Directory.CreateDirectory(directory);
-            }
+            if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
         }
 
         /// <summary>
@@ -132,10 +129,7 @@ namespace chocolatey.package.verifier.infrastructure.services
             filePath = get_full_path(filePath);
             create_directory_if_not_exists(get_directory_name(filePath));
 
-            if (file_exists(filePath))
-            {
-                File.Move(filePath, filePath + ".{0:yyyyMMddHHmmssffff}".format_with(DateTime.Now));
-            }
+            if (file_exists(filePath)) File.Move(filePath, filePath + ".{0:yyyyMMddHHmmssffff}".format_with(DateTime.Now));
 
             using (var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
             {
@@ -156,10 +150,7 @@ namespace chocolatey.package.verifier.infrastructure.services
             Ensure.That(() => filePath).IsNotNullOrWhiteSpace();
             filePath = get_full_path(filePath);
 
-            if (file_exists(filePath))
-            {
-                return new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            }
+            if (file_exists(filePath)) return new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
             return null;
         }
@@ -174,10 +165,7 @@ namespace chocolatey.package.verifier.infrastructure.services
             Ensure.That(() => filePath).IsNotNullOrWhiteSpace();
             filePath = get_full_path(filePath);
 
-            if (file_exists(filePath))
-            {
-                return File.ReadAllText(filePath);
-            }
+            if (file_exists(filePath)) return File.ReadAllText(filePath);
 
             return string.Empty;
         }

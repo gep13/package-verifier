@@ -25,6 +25,6 @@ namespace chocolatey.package.verifier.infrastructure.app.services
         /// </summary>
         /// <param name="to">The recipient.</param>
         /// <param name="resetCode">The reset code.</param>
-        void SendResetPasswordMessage(string to, string resetCode);
+        void send_reset_password_message(string to, string resetCode);
     }
 }

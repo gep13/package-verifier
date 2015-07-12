@@ -29,7 +29,8 @@ namespace chocolatey.package.verifier
         /// <summary>
         ///   Concurrent dictionary that ensures only one instance of a logger for a type.
         /// </summary>
-        private static readonly Lazy<ConcurrentDictionary<string, ILog>> _dictionary = new Lazy<ConcurrentDictionary<string, ILog>>(() => new ConcurrentDictionary<string, ILog>());
+        private static readonly Lazy<ConcurrentDictionary<string, ILog>> _dictionary =
+            new Lazy<ConcurrentDictionary<string, ILog>>(() => new ConcurrentDictionary<string, ILog>());
 
         // /// <summary>
         // /// Gets the logger for the specified object
@@ -50,7 +51,7 @@ namespace chocolatey.package.verifier
         /// <returns>Instance of a logger for the object.</returns>
         public static ILog Log<T>(this T type)
         {
-            string objectName = typeof (T).FullName;
+            string objectName = typeof(T).FullName;
             return Log(objectName);
         }
 

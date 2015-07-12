@@ -25,7 +25,13 @@ namespace chocolatey.package.verifier
         {
             var collectionString = new StringBuilder();
 
-            var items = collection.AllKeys.SelectMany(collection.GetValues, (k, v) => new {key = k, value = v});
+            var items = collection.AllKeys.SelectMany(
+                collection.GetValues,
+                (k, v) => new
+                {
+                    key = k,
+                    value = v
+                });
             foreach (var item in items)
             {
                 collectionString.AppendFormat("{0}={1}{2}", item.key, item.value, separator);

@@ -38,6 +38,8 @@ namespace chocolatey.package.verifier.infrastructure.services
         /// <param name="handleError">The error handler.</param>
         /// <param name="filter">The message filter.</param>
         /// <returns>The subscription as Disposable</returns>
-        IDisposable subscribe<TMessage>(Action<TMessage> handleMessage, Action<Exception> handleError, Func<TMessage, bool> filter) where TMessage : class, IMessage;
+        IDisposable subscribe<TMessage>(
+            Action<TMessage> handleMessage, Action<Exception> handleError, Func<TMessage, bool> filter)
+            where TMessage : class, IMessage;
     }
 }

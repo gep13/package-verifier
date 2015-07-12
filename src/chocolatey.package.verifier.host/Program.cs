@@ -30,14 +30,10 @@ namespace chocolatey.package.verifier.Host
             {
                 var service = new Service();
                 service.run_as_console(args);
-            }
-            else
+            } else
             {
                 ServiceBase[] servicesToRun;
-                servicesToRun = new ServiceBase[]
-                    {
-                        new Service()
-                    };
+                servicesToRun = new ServiceBase[] { new Service() };
                 ServiceBase.Run(servicesToRun);
             }
         }

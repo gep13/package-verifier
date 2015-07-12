@@ -24,8 +24,8 @@ namespace chocolatey.package.verifier.infrastructure.app.services
     /// </summary>
     public class MessageService : IMessageService
     {
-        private readonly INotificationSendService sendService;
-        private readonly string messageFrom;
+        private readonly INotificationSendService _sendService;
+        private readonly string _messageFrom;
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="MessageService" /> class.
@@ -33,8 +33,8 @@ namespace chocolatey.package.verifier.infrastructure.app.services
         /// <param name="sendService">The send service.</param>
         public MessageService(INotificationSendService sendService)
         {
-            this.sendService = sendService;
-            messageFrom = ApplicationParameters.get_system_email_address();
+            _sendService = sendService;
+            _messageFrom = ApplicationParameters.get_system_email_address();
         }
 
         /// <summary>
@@ -43,9 +43,9 @@ namespace chocolatey.package.verifier.infrastructure.app.services
         /// <param name="to">The recipient.</param>
         /// <param name="subject">The subject.</param>
         /// <param name="message">The message.</param>
-        public void Send(string to, string subject, string message)
+        public void send(string to, string subject, string message)
         {
-            sendService.send(messageFrom, to, subject, message);
+            _sendService.send(_messageFrom, to, subject, message);
         }
 
         /// <summary>
@@ -54,9 +54,9 @@ namespace chocolatey.package.verifier.infrastructure.app.services
         /// <param name="to">List of addresses to.</param>
         /// <param name="subject">The subject.</param>
         /// <param name="message">The message.</param>
-        public void Send(IEnumerable<string> to, string subject, string message)
+        public void send(IEnumerable<string> to, string subject, string message)
         {
-            sendService.send(messageFrom, to, subject, message);
+            _sendService.send(_messageFrom, to, subject, message);
         }
 
         /// <summary>
@@ -66,9 +66,9 @@ namespace chocolatey.package.verifier.infrastructure.app.services
         /// <param name="subject">The subject.</param>
         /// <param name="message">The message.</param>
         /// <param name="attachments">The attachments.</param>
-        public void Send(IEnumerable<string> to, string subject, string message, IEnumerable<Attachment> attachments)
+        public void send(IEnumerable<string> to, string subject, string message, IEnumerable<Attachment> attachments)
         {
-            sendService.send(messageFrom, to, subject, message, attachments, useHtmlBody: false);
+            _sendService.send(_messageFrom, to, subject, message, attachments, useHtmlBody: false);
         }
     }
 }

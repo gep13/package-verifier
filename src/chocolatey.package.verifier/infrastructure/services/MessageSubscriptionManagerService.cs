@@ -49,7 +49,8 @@ namespace chocolatey.package.verifier.infrastructure.services
         {
             Ensure.That(() => message).IsNotNull();
 
-            this.Log().Debug(() => "Sending message '{0}' out if there are subscribers...".format_with(typeof (TMessage).Name));
+            this.Log()
+                .Debug(() => "Sending message '{0}' out if there are subscribers...".format_with(typeof(TMessage).Name));
 
             _eventAggregator.Publish(message);
         }
@@ -64,21 +65,15 @@ namespace chocolatey.package.verifier.infrastructure.services
         /// <returns>
         ///   The <see cref="IDisposable" />.
         /// </returns>
-        public IDisposable subscribe<TMessage>(Action<TMessage> handleMessage, Action<Exception> handleError, Func<TMessage, bool> filter) where TMessage : class, IMessage
+        public IDisposable subscribe<TMessage>(
+            Action<TMessage> handleMessage, Action<Exception> handleError, Func<TMessage, bool> filter)
+            where TMessage : class, IMessage
         {
-            if (filter == null)
-            {
-                filter = (message) => true;
-            }
+            if (filter == null) filter = (message) => true;
 
-            if (handleError == null)
-            {
-                handleError = (ex) => { };
-            }
+            if (handleError == null) handleError = (ex) => { };
 
-            var subscription = _eventAggregator.GetEvent<TMessage>()
-                                               .Where(filter)
-                                               .Subscribe(handleMessage, handleError);
+            var subscription = _eventAggregator.GetEvent<TMessage>().Where(filter).Subscribe(handleMessage, handleError);
 
             return subscription;
         }

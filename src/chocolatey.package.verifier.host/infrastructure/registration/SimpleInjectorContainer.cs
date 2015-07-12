@@ -31,10 +31,7 @@ namespace chocolatey.package.verifier.host.infrastructure.registration
         /// <summary>
         ///   Gets the container.
         /// </summary>
-        public static Container Container
-        {
-            get { return _container.Value; }
-        }
+        public static Container Container { get { return _container.Value; } }
 
         /// <summary>
         ///   Initializes the container
@@ -45,14 +42,12 @@ namespace chocolatey.package.verifier.host.infrastructure.registration
 
             Container.Options.AllowOverridingRegistrations = true;
             var originalConstructorResolutionBehavior = Container.Options.ConstructorResolutionBehavior;
-            Container.Options.ConstructorResolutionBehavior = new SimpleInjectorContainerResolutionBehavior(originalConstructorResolutionBehavior);
+            Container.Options.ConstructorResolutionBehavior =
+                new SimpleInjectorContainerResolutionBehavior(originalConstructorResolutionBehavior);
 
             initialize_container(Container);
 
-            if (ApplicationParameters.IsDebug)
-            {
-                Container.Verify();
-            }
+            if (ApplicationParameters.IsDebug) Container.Verify();
         }
 
         /// <summary>
@@ -66,7 +61,7 @@ namespace chocolatey.package.verifier.host.infrastructure.registration
         private static void initialize_container(Container container)
         {
             var binding = new ContainerBinding();
-            binding.RegisterComponents(container);
+            binding.register_components(container);
             var bindingClient = new ContainerBindingConsole();
             bindingClient.register_components(container);
         }

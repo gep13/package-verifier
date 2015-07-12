@@ -26,7 +26,8 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
     public class TaskTracker
     {
         private const string TASK_TRACKER_NAME = "TaskTracker_31235688345";
-        private static readonly Lazy<ConcurrentDictionary<string, int>> _activeTasks = new Lazy<ConcurrentDictionary<string, int>>(() => new ConcurrentDictionary<string, int>());
+        private static readonly Lazy<ConcurrentDictionary<string, int>> _activeTasks =
+            new Lazy<ConcurrentDictionary<string, int>>(() => new ConcurrentDictionary<string, int>());
         private static int _activeTasksCount;
 
         /// <summary>
@@ -39,10 +40,10 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             TransactionLock.enter(
                 TASK_TRACKER_NAME,
                 () =>
-                    {
-                        _activeTasksCount += 1;
-                        _activeTasks.Value.AddOrUpdate(taskName, 1, (key, oldValue) => oldValue + 1);
-                    });
+                {
+                    _activeTasksCount += 1;
+                    _activeTasks.Value.AddOrUpdate(taskName, 1, (key, oldValue) => oldValue + 1);
+                });
         }
 
         /// <summary>
@@ -55,16 +56,16 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             TransactionLock.enter(
                 TASK_TRACKER_NAME,
                 () =>
+                {
+                    _activeTasksCount -= 1;
+                    var taskCount = 0;
+                    _activeTasks.Value.TryRemove(taskName, out taskCount);
+                    if (taskCount != 0)
                     {
-                        _activeTasksCount -= 1;
-                        var taskCount = 0;
-                        _activeTasks.Value.TryRemove(taskName, out taskCount);
-                        if (taskCount != 0)
-                        {
-                            taskCount -= 1;
-                            _activeTasks.Value.AddOrUpdate(taskName, taskCount, (key, oldValue) => taskCount);
-                        }
-                    });
+                        taskCount -= 1;
+                        _activeTasks.Value.AddOrUpdate(taskName, taskCount, (key, oldValue) => taskCount);
+                    }
+                });
         }
 
         /// <summary>
@@ -78,12 +79,12 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             TransactionLock.enter(
                 TASK_TRACKER_NAME,
                 () =>
+                {
+                    foreach (var task in _activeTasks.Value)
                     {
-                        foreach (var task in _activeTasks.Value)
-                        {
-                            activeTasks.Add(task.Key);
-                        }
-                    });
+                        activeTasks.Add(task.Key);
+                    }
+                });
 
             return activeTasks;
         }
@@ -96,16 +97,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
         {
             bool activeTasksRunning = true;
 
-            TransactionLock.enter(
-                TASK_TRACKER_NAME,
-                1,
-                () =>
-                    {
-                        if (_activeTasksCount == 0)
-                        {
-                            activeTasksRunning = false;
-                        }
-                    });
+            TransactionLock.enter(TASK_TRACKER_NAME, 1, () => { if (_activeTasksCount == 0) activeTasksRunning = false; });
 
             return activeTasksRunning;
         }

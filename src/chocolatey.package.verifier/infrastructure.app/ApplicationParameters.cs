@@ -56,18 +56,12 @@ namespace chocolatey.package.verifier.infrastructure.app
 
         public const char WebSeparatorChar = '/';
 
-        public static int RepositoryCacheIntervalMinutes
-        {
-            get { return Config.get_configuration_settings().RepositoryCacheIntervalMinutes; }
-        }
+        public static int RepositoryCacheIntervalMinutes { get { return Config.get_configuration_settings().RepositoryCacheIntervalMinutes; } }
 
         /// <summary>
         ///   Gets a value indicating whether we are in Debug Mode?
         /// </summary>
-        public static bool IsDebug
-        {
-            get { return try_get_config(() => Config.get_configuration_settings().IsDebugMode, false); }
-        }
+        public static bool IsDebug { get { return try_get_config(() => Config.get_configuration_settings().IsDebugMode, false); } }
 
         /// <summary>
         ///   Gets a value indicating whether OVLP should insert test data. This should be false unless locally testing.
@@ -80,26 +74,19 @@ namespace chocolatey.package.verifier.infrastructure.app
             get
             {
                 return ConfigurationManager.AppSettings["InsertTestData"].Equals(
-                    bool.TrueString,
-                    StringComparison.InvariantCultureIgnoreCase);
+                    bool.TrueString, StringComparison.InvariantCultureIgnoreCase);
             }
         }
 
         /// <summary>
         ///   Gets the connection string.
         /// </summary>
-        public static string ConnectionString
-        {
-            get { return ConfigurationManager.ConnectionStrings[ConnectionStringName].ConnectionString; }
-        }
+        public static string ConnectionString { get { return ConfigurationManager.ConnectionStrings[ConnectionStringName].ConnectionString; } }
 
         /// <summary>
         ///   Gets the site URL.
         /// </summary>
-        public static string SiteUrl
-        {
-            get { return Config.get_configuration_settings().SiteUrl; }
-        }
+        public static string SiteUrl { get { return Config.get_configuration_settings().SiteUrl; } }
 
         /// <summary>
         ///   Gets the file version.
@@ -130,10 +117,7 @@ namespace chocolatey.package.verifier.infrastructure.app
             if (HttpContext.Current != null)
             {
                 var httpUser = HttpContext.Current.User;
-                if (httpUser != null && httpUser.Identity != null)
-                {
-                    userName = httpUser.Identity.Name;
-                }
+                if (httpUser != null && httpUser.Identity != null) userName = httpUser.Identity.Name;
             }
 
             return userName;
@@ -153,8 +137,7 @@ namespace chocolatey.package.verifier.infrastructure.app
             try
             {
                 return func.Invoke();
-            }
-            catch (Exception)
+            } catch (Exception)
             {
                 return defaultValue;
             }

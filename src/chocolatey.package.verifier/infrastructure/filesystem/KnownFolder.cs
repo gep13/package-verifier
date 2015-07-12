@@ -35,9 +35,6 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
         ///   Gets the directory path for a known folder.
         /// </summary>
         /// <value>The directory path for a known folder.</value>
-        public string Directory
-        {
-            get { return _directory; }
-        }
+        public string Directory { get { return _directory; } }
     }
 }

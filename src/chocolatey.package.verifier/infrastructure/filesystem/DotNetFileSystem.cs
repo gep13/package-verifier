@@ -38,17 +38,17 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
             var combinedPath = leftItem;
             foreach (var rightItem in rightItems)
             {
-                if (rightItem.Contains(":")) throw new ApplicationException("Cannot combine a path with ':' attempted to combine '{0}' with '{1}'".format_with(rightItem, combinedPath));
+                if (rightItem.Contains(":"))
+                {
+                    throw new ApplicationException(
+                        "Cannot combine a path with ':' attempted to combine '{0}' with '{1}'".format_with(
+                            rightItem, combinedPath));
+                }
 
                 var rightSide = rightItem;
-                if (rightSide.StartsWith(Path.DirectorySeparatorChar.to_string()) || rightSide.StartsWith(Path.AltDirectorySeparatorChar.to_string()))
-                {
-                    combinedPath = Path.Combine(combinedPath, rightSide.Substring(1));
-                }
-                else
-                {
-                    combinedPath = Path.Combine(combinedPath, rightSide);
-                }
+                if (rightSide.StartsWith(Path.DirectorySeparatorChar.to_string())
+                    || rightSide.StartsWith(Path.AltDirectorySeparatorChar.to_string())) combinedPath = Path.Combine(combinedPath, rightSide.Substring(1));
+                else combinedPath = Path.Combine(combinedPath, rightSide);
             }
 
             return combinedPath;
@@ -84,7 +84,9 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
 
             if (get_file_name_without_extension(executableName).is_equal_to(executableName))
             {
-                var pathExtensions = Environment.GetEnvironmentVariable("PATHEXT").to_string().Split(new[] {";"}, StringSplitOptions.RemoveEmptyEntries);
+                var pathExtensions = Environment.GetEnvironmentVariable("PATHEXT")
+                                                .to_string()
+                                                .Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var extension in pathExtensions.or_empty_list_if_null())
                 {
                     extensions.Add(extension.StartsWith(".") ? extension : ".{0}".format_with(extension));
@@ -100,7 +102,10 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
             var searchPaths = new List<string>();
             searchPaths.Add(get_current_directory());
             searchPaths.Add(get_directory_name(get_current_assembly_path()));
-            searchPaths.AddRange(Environment.GetEnvironmentVariable("Path").to_string().Split(new[] {get_path_separator()}, StringSplitOptions.RemoveEmptyEntries));
+            searchPaths.AddRange(
+                Environment.GetEnvironmentVariable("Path")
+                           .to_string()
+                           .Split(new[] { get_path_separator() }, StringSplitOptions.RemoveEmptyEntries));
 
             foreach (var path in searchPaths.or_empty_list_if_null())
             {
@@ -125,15 +130,18 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
 
         #region File
 
-        public IEnumerable<string> get_files(string directoryPath, string pattern = "*.*", SearchOption option = SearchOption.TopDirectoryOnly)
+        public IEnumerable<string> get_files(
+            string directoryPath, string pattern = "*.*", SearchOption option = SearchOption.TopDirectoryOnly)
         {
             return Directory.EnumerateFiles(directoryPath, pattern, option);
         }
 
-        public IEnumerable<string> get_files(string directoryPath, string[] extensions, SearchOption option = SearchOption.TopDirectoryOnly)
+        public IEnumerable<string> get_files(
+            string directoryPath, string[] extensions, SearchOption option = SearchOption.TopDirectoryOnly)
         {
-            return Directory.EnumerateFiles(directoryPath, "*.*", option)
-                            .Where(f => extensions.Any(x => f.EndsWith(x, StringComparison.OrdinalIgnoreCase)));
+            return
+                Directory.EnumerateFiles(directoryPath, "*.*", option)
+                         .Where(f => extensions.Any(x => f.EndsWith(x, StringComparison.OrdinalIgnoreCase)));
         }
 
         public bool file_exists(string filePath)
@@ -184,12 +192,12 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
                 //check the directory to be sure
                 DirectoryInfo directoryInfo = get_directory_info_for(file.DirectoryName);
                 isSystemFile = ((directoryInfo.Attributes & FileAttributes.System) == FileAttributes.System);
-                this.Log().Debug(() => "Is directory \"{0}\" a system directory? {1}".format_with(file.DirectoryName, isSystemFile.to_string()));
-            }
-            else
-            {
-                this.Log().Debug(() => "File \"{0}\" is a system file.".format_with(file.FullName));
-            }
+                this.Log()
+                    .Debug(
+                        () =>
+                        "Is directory \"{0}\" a system directory? {1}".format_with(
+                            file.DirectoryName, isSystemFile.to_string()));
+            } else this.Log().Debug(() => "File \"{0}\" is a system file.".format_with(file.FullName));
 
             return isSystemFile;
         }
@@ -197,7 +205,8 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
         public bool is_encrypted_file(FileInfo file)
         {
             bool isEncrypted = ((file.Attributes & FileAttributes.Encrypted) == FileAttributes.Encrypted);
-            this.Log().Debug(() => "Is file \"{0}\" an encrypted file? {1}".format_with(file.FullName, isEncrypted.to_string()));
+            this.Log()
+                .Debug(() => "Is file \"{0}\" an encrypted file? {1}".format_with(file.FullName, isEncrypted.to_string()));
             return isEncrypted;
         }
 
@@ -215,7 +224,11 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
 
         public void copy_file(string sourceFilePath, string destinationFilePath, bool overwriteExisting)
         {
-            this.Log().Debug(() => "Attempting to copy \"{0}\"{1} to \"{2}\".".format_with(sourceFilePath, Environment.NewLine, destinationFilePath));
+            this.Log()
+                .Debug(
+                    () =>
+                    "Attempting to copy \"{0}\"{1} to \"{2}\".".format_with(
+                        sourceFilePath, Environment.NewLine, destinationFilePath));
             create_directory_if_not_exists(get_directory_name(destinationFilePath), ignoreError: true);
 
             File.Copy(sourceFilePath, destinationFilePath, overwriteExisting);
@@ -223,7 +236,8 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
 
         public bool copy_file_unsafe(string sourceFilePath, string destinationFilePath, bool overwriteExisting)
         {
-            this.Log().Debug(() => "Attempting to copy from \"{0}\" to \"{1}\".".format_with(sourceFilePath, destinationFilePath));
+            this.Log()
+                .Debug(() => "Attempting to copy from \"{0}\" to \"{1}\".".format_with(sourceFilePath, destinationFilePath));
             create_directory_if_not_exists(get_directory_name(destinationFilePath), ignoreError: true);
 
             //Private Declare Function apiCopyFile Lib "kernel32" Alias "CopyFileA" _
@@ -256,10 +270,7 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
         public void delete_file(string filePath)
         {
             this.Log().Debug(() => "Attempting to delete file \"{0}\".".format_with(filePath));
-            if (file_exists(filePath))
-            {
-                File.Delete(filePath);
-            }
+            if (file_exists(filePath)) File.Delete(filePath);
         }
 
         public FileStream create_file(string filePath)
@@ -290,22 +301,26 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
         public void write_file(string filePath, string fileText, Encoding encoding)
         {
             using (FileStream fileStream = File.Open(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
-            using (var streamWriter = new StreamWriter(fileStream, encoding))
             {
-                streamWriter.Write(fileText);
-                streamWriter.Flush();
-                streamWriter.Close();
-                fileStream.Close();
+                using (var streamWriter = new StreamWriter(fileStream, encoding))
+                {
+                    streamWriter.Write(fileText);
+                    streamWriter.Flush();
+                    streamWriter.Close();
+                    fileStream.Close();
+                }
             }
         }
 
         public void write_file(string filePath, Func<Stream> getStream)
         {
             using (Stream incomingStream = getStream())
-            using (Stream fileStream = File.Create(filePath))
             {
-                incomingStream.CopyTo(fileStream);
-                fileStream.Close();
+                using (Stream fileStream = File.Create(filePath))
+                {
+                    incomingStream.CopyTo(fileStream);
+                    fileStream.Close();
+                }
             }
         }
 
@@ -325,7 +340,8 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
             return Directory.EnumerateDirectories(directoryPath);
         }
 
-        public IEnumerable<string> get_directories(string directoryPath, string pattern, SearchOption option = SearchOption.TopDirectoryOnly)
+        public IEnumerable<string> get_directories(
+            string directoryPath, string pattern, SearchOption option = SearchOption.TopDirectoryOnly)
         {
             if (!directory_exists(directoryPath)) return new List<string>();
 
@@ -361,16 +377,21 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
         public void move_directory(string directoryPath, string newDirectoryPath)
         {
             if (string.IsNullOrWhiteSpace(directoryPath) || string.IsNullOrWhiteSpace(newDirectoryPath)) throw new ApplicationException("You must provide a directory to move from or to.");
-            if (combine_paths(directoryPath, "").is_equal_to(combine_paths(Environment.GetEnvironmentVariable("SystemDrive"), ""))) throw new ApplicationException("Cannot move or delete the root of the system drive");
+            if (
+                combine_paths(directoryPath, "")
+                    .is_equal_to(combine_paths(Environment.GetEnvironmentVariable("SystemDrive"), ""))) throw new ApplicationException("Cannot move or delete the root of the system drive");
 
             try
             {
-                this.Log().Debug("Moving '{0}'{1} to '{2}'".format_with(directoryPath, Environment.NewLine, newDirectoryPath));
+                this.Log()
+                    .Debug("Moving '{0}'{1} to '{2}'".format_with(directoryPath, Environment.NewLine, newDirectoryPath));
                 Directory.Move(directoryPath, newDirectoryPath);
-            }
-            catch (Exception ex)
+            } catch (Exception ex)
             {
-                this.Log().Warn("Move failed with message:{0} {1}{0} Attempting backup move method.".format_with(Environment.NewLine, ex.Message));
+                this.Log()
+                    .Warn(
+                        "Move failed with message:{0} {1}{0} Attempting backup move method.".format_with(
+                            Environment.NewLine, ex.Message));
 
                 create_directory_if_not_exists(newDirectoryPath, ignoreError: true);
                 foreach (var file in get_files(directoryPath, "*.*", SearchOption.AllDirectories).or_empty_list_if_null())
@@ -417,12 +438,16 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
                 try
                 {
                     create_directory(directoryPath);
-                }
-                catch (SystemException e)
+                } catch (SystemException e)
                 {
                     if (!ignoreError)
                     {
-                        this.Log().Error("Cannot create directory \"{0}\". Error was:{1}{2}", get_full_path(directoryPath), Environment.NewLine, e);
+                        this.Log()
+                            .Error(
+                                "Cannot create directory \"{0}\". Error was:{1}{2}",
+                                get_full_path(directoryPath),
+                                Environment.NewLine,
+                                e);
                         throw;
                     }
                 }
@@ -432,7 +457,9 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
         public void delete_directory(string directoryPath, bool recursive)
         {
             if (string.IsNullOrWhiteSpace(directoryPath)) throw new ApplicationException("You must provide a directory to delete.");
-            if (combine_paths(directoryPath, "").is_equal_to(combine_paths(Environment.GetEnvironmentVariable("SystemDrive"), ""))) throw new ApplicationException("Cannot move or delete the root of the system drive");
+            if (
+                combine_paths(directoryPath, "")
+                    .is_equal_to(combine_paths(Environment.GetEnvironmentVariable("SystemDrive"), ""))) throw new ApplicationException("Cannot move or delete the root of the system drive");
 
             this.Log().Debug(() => "Attempting to delete directory \"{0}\".".format_with(get_full_path(directoryPath)));
             Directory.Delete(directoryPath, recursive);
@@ -440,10 +467,7 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
 
         public void delete_directory_if_exists(string directoryPath, bool recursive)
         {
-            if (directory_exists(directoryPath))
-            {
-                delete_directory(directoryPath, recursive);
-            }
+            if (directory_exists(directoryPath)) delete_directory(directoryPath, recursive);
         }
 
         #endregion
@@ -453,18 +477,12 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
             if (directory_exists(path))
             {
                 var directoryInfo = get_directory_info_for(path);
-                if ((directoryInfo.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
-                {
-                    directoryInfo.Attributes |= FileAttributes.Hidden;
-                }
+                if ((directoryInfo.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden) directoryInfo.Attributes |= FileAttributes.Hidden;
             }
             if (file_exists(path))
             {
                 var fileInfo = get_file_info_for(path);
-                if ((fileInfo.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
-                {
-                    fileInfo.Attributes |= FileAttributes.Hidden;
-                }
+                if ((fileInfo.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden) fileInfo.Attributes |= FileAttributes.Hidden;
             }
         }
 
@@ -485,14 +503,10 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
             file.Read(buffer, 0, 5);
             file.Close();
 
-            if (buffer[0] == 0xef && buffer[1] == 0xbb && buffer[2] == 0xbf)
-                enc = Encoding.UTF8;
-            else if (buffer[0] == 0xfe && buffer[1] == 0xff)
-                enc = Encoding.Unicode;
-            else if (buffer[0] == 0 && buffer[1] == 0 && buffer[2] == 0xfe && buffer[3] == 0xff)
-                enc = Encoding.UTF32;
-            else if (buffer[0] == 0x2b && buffer[1] == 0x2f && buffer[2] == 0x76)
-                enc = Encoding.UTF7;
+            if (buffer[0] == 0xef && buffer[1] == 0xbb && buffer[2] == 0xbf) enc = Encoding.UTF8;
+            else if (buffer[0] == 0xfe && buffer[1] == 0xff) enc = Encoding.Unicode;
+            else if (buffer[0] == 0 && buffer[1] == 0 && buffer[2] == 0xfe && buffer[3] == 0xff) enc = Encoding.UTF32;
+            else if (buffer[0] == 0x2b && buffer[1] == 0x2f && buffer[2] == 0x76) enc = Encoding.UTF7;
 
             return enc;
         }

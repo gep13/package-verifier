@@ -43,12 +43,10 @@ namespace chocolatey.package.verifier.tests
 
         public bool LogMessagesToConsole { get; set; }
 
-        private readonly Lazy<ConcurrentDictionary<string, IList<string>>> _messages = new Lazy<ConcurrentDictionary<string, IList<string>>>();
+        private readonly Lazy<ConcurrentDictionary<string, IList<string>>> _messages =
+            new Lazy<ConcurrentDictionary<string, IList<string>>>();
 
-        public ConcurrentDictionary<string, IList<string>> Messages
-        {
-            get { return _messages.Value; }
-        }
+        public ConcurrentDictionary<string, IList<string>> Messages { get { return _messages.Value; } }
 
         public IList<string> MessagesFor(LogLevel logLevel)
         {
@@ -63,10 +61,7 @@ namespace chocolatey.package.verifier.tests
         {
             var list = _messages.Value.GetOrAdd(logLevel.ToString(), new List<string>());
             list.Add(message);
-            if (LogMessagesToConsole)
-            {
-                Console.WriteLine("[{0}] {1}".format_with(logLevel.to_string(), message));
-            }
+            if (LogMessagesToConsole) Console.WriteLine("[{0}] {1}".format_with(logLevel.to_string(), message));
         }
 
         public void Debug(string message, params object[] formatting)

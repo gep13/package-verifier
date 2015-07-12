@@ -57,10 +57,7 @@ namespace chocolatey.package.verifier.infrastructure.container
                                           orderby constructor.GetParameters().Count() descending
                                           select constructor).Take(1);
 
-                if (longestConstructor.Any())
-                {
-                    return longestConstructor.First();
-                }
+                if (longestConstructor.Any()) return longestConstructor.First();
             }
 
             // fall back to the container's default behavior.

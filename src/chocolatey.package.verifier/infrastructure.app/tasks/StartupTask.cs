@@ -24,29 +24,30 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
     public class StartupTask : ITask
     {
-        private const double TimerInterval = 15000;
-        private readonly Timer timer = new Timer();
+        private const double TIMER_INTERVAL = 15000;
+        private readonly Timer _timer = new Timer();
 
         public void initialize()
         {
-            timer.Interval = TimerInterval;
-            timer.Elapsed += TimerElapsed;
-            timer.Start();
-            this.Log().Info(() => "{0} will send startup message in {1} milliseconds".format_with(GetType().Name, TimerInterval));
+            _timer.Interval = TIMER_INTERVAL;
+            _timer.Elapsed += timer_elapsed;
+            _timer.Start();
+            this.Log().Info
+                (() => "{0} will send startup message in {1} milliseconds".format_with(GetType().Name, TIMER_INTERVAL));
         }
 
         public void shutdown()
         {
-            if (timer != null)
+            if (_timer != null)
             {
-                timer.Stop();
-                timer.Dispose();
+                _timer.Stop();
+                _timer.Dispose();
             }
         }
 
-        private void TimerElapsed(object sender, ElapsedEventArgs e)
+        private void timer_elapsed(object sender, ElapsedEventArgs e)
         {
-            timer.Stop();
+            _timer.Stop();
 
             this.Log().Info(() => "{0} is sending startup message".format_with(GetType().Name));
 
@@ -59,7 +60,8 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
             EventManager.publish(new StartupMessage());
             //todo:summary
-            EventManager.publish(new CreateGistMessage(@"C:\temp\install.log", @"C:\temp\uninstall.log", summary: "passed/failed"));
+            EventManager.publish(
+                new CreateGistMessage(@"C:\temp\install.log", @"C:\temp\uninstall.log", summary: "passed/failed"));
         }
     }
 }

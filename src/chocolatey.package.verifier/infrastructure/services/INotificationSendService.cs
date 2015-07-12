@@ -62,6 +62,12 @@ namespace chocolatey.package.verifier.infrastructure.services
         /// <param name="useHtmlBody">
         ///   if set to <c>true</c> [use HTML body].
         /// </param>
-        void send(string @from, IEnumerable<string> to, string subject, string message, IEnumerable<Attachment> attachments, bool useHtmlBody);
+        void send(
+            string @from,
+            IEnumerable<string> to,
+            string subject,
+            string message,
+            IEnumerable<Attachment> attachments,
+            bool useHtmlBody);
     }
 }

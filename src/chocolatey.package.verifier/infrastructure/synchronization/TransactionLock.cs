@@ -25,7 +25,8 @@ namespace chocolatey.package.verifier.infrastructure.synchronization
     /// </summary>
     public class TransactionLock
     {
-        private static readonly ConcurrentDictionary<string, TransactionLockObject> _lockDictionary = new ConcurrentDictionary<string, TransactionLockObject>();
+        private static readonly ConcurrentDictionary<string, TransactionLockObject> _lockDictionary =
+            new ConcurrentDictionary<string, TransactionLockObject>();
         private const int DEFAULT_SECONDS = 120;
         private static int _activeLocks;
         private static object _localLock = new object();
@@ -52,20 +53,16 @@ namespace chocolatey.package.verifier.infrastructure.synchronization
             try
             {
                 lockTaken = acquire(name, secondsToTimeout);
-                if (lockTaken)
-                {
-                    action.Invoke();
-                }
+                if (lockTaken) action.Invoke();
                 else
                 {
-                    throw new ApplicationException("Was not able to Acquire a lock on '{0}' within '{1}' seconds.".format_with(name, secondsToTimeout));
+                    throw new ApplicationException(
+                        "Was not able to Acquire a lock on '{0}' within '{1}' seconds.".format_with(name, secondsToTimeout));
                 }
-            }
-            catch (Exception)
+            } catch (Exception)
             {
                 throw;
-            }
-            finally
+            } finally
             {
                 release(name, lockTaken);
             }
@@ -97,20 +94,16 @@ namespace chocolatey.package.verifier.infrastructure.synchronization
             try
             {
                 lockTaken = acquire(name, secondsToTimeout);
-                if (lockTaken)
-                {
-                    return func.Invoke();
-                }
+                if (lockTaken) return func.Invoke();
                 else
                 {
-                    throw new ApplicationException("Was not able to Acquire a lock on '{0}' within '{1}' seconds.".format_with(name, secondsToTimeout));
+                    throw new ApplicationException(
+                        "Was not able to Acquire a lock on '{0}' within '{1}' seconds.".format_with(name, secondsToTimeout));
                 }
-            }
-            catch (Exception)
+            } catch (Exception)
             {
                 throw;
-            }
-            finally
+            } finally
             {
                 release(name, lockTaken);
             }
@@ -131,17 +124,18 @@ namespace chocolatey.package.verifier.infrastructure.synchronization
 
             if (secondsToTimeout.HasValue)
             {
-                Monitor.TryEnter(lockingObject, (int) TimeSpan.FromSeconds(secondsToTimeout.GetValueOrDefault(0)).TotalMilliseconds, ref lockTaken);
-            }
-            else
-            {
-                Monitor.Enter(lockingObject, ref lockTaken);
-            }
+                Monitor.TryEnter(
+                    lockingObject,
+                    (int)TimeSpan.FromSeconds(secondsToTimeout.GetValueOrDefault(0)).TotalMilliseconds,
+                    ref lockTaken);
+            } else Monitor.Enter(lockingObject, ref lockTaken);
 
             if (lockTaken)
             {
                 _activeLocks += 1;
-                "TransactionLock".Log().Debug("Entered lock for '{0}'. There are {1} active locks.".format_with(name, _activeLocks));
+                "TransactionLock".Log()
+                                 .Debug(
+                                     "Entered lock for '{0}'. There are {1} active locks.".format_with(name, _activeLocks));
                 return true;
             }
 
@@ -156,10 +150,7 @@ namespace chocolatey.package.verifier.infrastructure.synchronization
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static void release(string name, bool lockTaken)
         {
-            if (_localLock == null)
-            {
-                _localLock = new object();
-            }
+            if (_localLock == null) _localLock = new object();
 
             try
             {
@@ -172,16 +163,21 @@ namespace chocolatey.package.verifier.infrastructure.synchronization
                         Monitor.Pulse(lockingObject);
                         Monitor.Exit(lockingObject);
                         _activeLocks -= 1;
-                        "TransactionLock".Log().Debug("Exited lock for '{0}'. There are {1} active locks".format_with(name, _activeLocks));
+                        "TransactionLock".Log()
+                                         .Debug(
+                                             "Exited lock for '{0}'. There are {1} active locks".format_with(
+                                                 name, _activeLocks));
                     }
 
                     Monitor.Pulse(_localLock);
                 }
-            }
-            catch (Exception ex)
+            } catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                "TransactionLock".Log().Warn("An error occurred when releasing lock for '{0}':{1}{2}".format_with(name, Environment.NewLine, ex));
+                "TransactionLock".Log()
+                                 .Warn(
+                                     "An error occurred when releasing lock for '{0}':{1}{2}".format_with(
+                                         name, Environment.NewLine, ex));
             }
         }
 
@@ -195,8 +191,7 @@ namespace chocolatey.package.verifier.infrastructure.synchronization
             try
             {
                 acquire(name, 2);
-            }
-            finally
+            } finally
             {
                 release(name, true);
             }

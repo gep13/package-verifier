@@ -17,6 +17,6 @@ namespace chocolatey.package.verifier.infrastructure.app.services
 {
     public interface ISampleJobService
     {
-        void Run();
+        void run();
     }
 }
