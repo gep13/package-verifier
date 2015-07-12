@@ -132,6 +132,9 @@
     <Compile Include="infrastructure.app\tasks\ShutdownAfterWorkCompletedTask.cs" />
     <Compile Include="infrastructure.app\tasks\StartupTask.cs" />
     <Compile Include="infrastructure.app\tasks\TaskTracker.cs" />
+    <Compile Include="infrastructure\commands\CommandExecutor.cs" />
+    <Compile Include="infrastructure\commands\ICommandExecutor.cs" />
+    <Compile Include="infrastructure\commands\PowershellExecutor.cs" />
     <Compile Include="infrastructure\container\SimpleInjectorContainerResolutionBehavior.cs" />
     <Compile Include="infrastructure.app\services\EmailDistributionService.cs" />
     <Compile Include="infrastructure.app\services\IEmailDistributionService.cs" />
