@@ -19,14 +19,16 @@ namespace chocolatey.package.verifier.infrastructure.app.messaging
 
     public class CreateGistMessage : IMessage
     {
-        public CreateGistMessage(string installationLog, string uninstallationLog, string summary)
+        public CreateGistMessage(string installationLog, string upgradeLog, string uninstallationLog, string summary)
         {
             InstallationLog = installationLog;
+            UpgradeLog = upgradeLog;
             UninstallationLog = uninstallationLog;
             Summary = summary;
         }
 
         public string InstallationLog { get; private set; }
+        public string UpgradeLog { get; private set; }
         public string UninstallationLog { get; private set; }
         public string Summary { get; private set; }
     }

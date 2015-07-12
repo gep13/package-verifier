@@ -61,7 +61,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             EventManager.publish(new StartupMessage());
             //todo:summary
             EventManager.publish(
-                new CreateGistMessage(@"C:\temp\install.log", @"C:\temp\uninstall.log", summary: "passed/failed"));
+                new CreateGistMessage(@"C:\temp\install.log","upgrade log", @"C:\temp\uninstall.log", summary: "passed/failed"));
         }
     }
 }
