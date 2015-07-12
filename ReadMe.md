@@ -39,3 +39,13 @@ Build Process:
  * Run `build.bat`.
 
 Running the build on Windows should produce an artifact that is tested and ready to be used.
+
+
+## Setup
+
+You need the following installed on a machine that you will use the verifier with:
+
+* Vagrant (right now 1.6.5 or 1.7.3 is recommended) - you should verify it works.
+* The vagrant box(es) should be already installed on the machine. 1 box at a time currently supported.
+* The configuration file has the rest of what is necessary for config.
+* Install the service and let it run.
