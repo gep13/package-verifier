@@ -130,7 +130,6 @@
     <None Include="chocolatey.package.verifier.Host.exe.config.template">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Content Include="files\shell\ChocolateyInstall.ps1">
     <Content Include="files\shell\InstallChocolatey.ps1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
