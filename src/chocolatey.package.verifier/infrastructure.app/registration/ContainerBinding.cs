@@ -15,12 +15,17 @@
 
 namespace chocolatey.package.verifier.infrastructure.app.registration
 {
+    using System.Collections.Generic;
+    using Reactive.EventAggregator;
     using SimpleInjector;
     using configuration;
     using infrastructure.configuration;
+    using infrastructure.messaging;
     using infrastructure.services;
+    using infrastructure.tasks;
     using logging;
     using services;
+    using tasks;
 
     /// <summary>
     ///   The main inversion container registration for the application. Look for other container bindings in client projects.
@@ -39,6 +44,10 @@ namespace chocolatey.package.verifier.infrastructure.app.registration
             Config.initialize_with(configuration);
 
             container.Register(() => configuration, Lifestyle.Singleton);
+
+            container.Register<IEventAggregator, EventAggregator>(Lifestyle.Singleton);
+            container.Register<IMessageSubscriptionManagerService, MessageSubscriptionManagerService>(Lifestyle.Singleton);
+            EventManager.initialize_with(container.GetInstance<IMessageSubscriptionManagerService>);
 
             container.Register<INotificationSendService, SmtpMarkdownNotificationSendService>(Lifestyle.Singleton);
             container.Register<IMessageService, MessageService>(Lifestyle.Singleton);
