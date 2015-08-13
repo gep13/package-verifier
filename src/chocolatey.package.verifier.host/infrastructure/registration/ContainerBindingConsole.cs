@@ -45,7 +45,7 @@ namespace chocolatey.package.verifier.host.infrastructure.registration
                     var list = new List<ITask>
                     {
                         new StartupTask(),
-                        new ShutdownAfterWorkCompletedTask(),
+                        new CheckForSubmittedPackagesTask(),
                         new CreateGistTask()
                     };
 
