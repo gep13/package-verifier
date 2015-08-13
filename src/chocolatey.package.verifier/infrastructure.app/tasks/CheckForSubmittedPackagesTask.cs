@@ -37,7 +37,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             this.Log().Info
                 (
                     () =>
-                    "{0} will check for new package submssions every {1} minutes".format_with(
+                    "{0} will check for new package submissions every {1} minutes".format_with(
                         GetType().Name, TIMER_INTERVAL / 60000));
         }
 
