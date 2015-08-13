@@ -15,9 +15,7 @@
 
 namespace chocolatey.package.verifier.infrastructure.app.tasks
 {
-    using System;
     using System.Timers;
-    using ChocolateySubmittedFeedService;
     using infrastructure.messaging;
     using infrastructure.tasks;
     using messaging;
@@ -50,18 +48,8 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             _timer.Stop();
 
             this.Log().Info(() => "{0} is sending startup message".format_with(GetType().Name));
-
-            var service = new FeedContext_x0060_1(new Uri("http://chocolatey.org/api/v2/submitted/"));
-
-            foreach (var package in service.Packages)
-            {
-                this.Log().Info(() => "{0} found in submitted state.".format_with(package.Title));
-            }
-
+            
             EventManager.publish(new StartupMessage());
-            //todo:summary
-            EventManager.publish(
-                new CreateGistMessage(@"C:\temp\install.log","upgrade log", @"C:\temp\uninstall.log", summary: "passed/failed"));
         }
     }
 }
