@@ -20,7 +20,9 @@ namespace chocolatey.package.verifier.Host
     using SimpleInjector;
     using host.infrastructure.registration;
     using infrastructure.app;
+    using infrastructure.app.messaging;
     using infrastructure.app.registration;
+    using infrastructure.messaging;
     using infrastructure.tasks;
     using log4net;
 
@@ -31,6 +33,7 @@ namespace chocolatey.package.verifier.Host
     {
         private readonly ILog _logger;
         private Container _container;
+        private IDisposable _subscription;
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="Service" /> class.
@@ -63,9 +66,11 @@ namespace chocolatey.package.verifier.Host
             try
             {
                 Bootstrap.startup();
-                ////AutoMapperInitializer.Initialize();
+                //AutoMapperInitializer.Initialize();
                 SimpleInjectorContainer.start();
                 _container = SimpleInjectorContainer.Container;
+
+                _subscription = EventManager.subscribe<ShutdownMessage>((message) => OnStop(), null, null);
 
                 var tasks = _container.GetAllInstances<ITask>();
                 foreach (var task in tasks)
@@ -100,7 +105,11 @@ namespace chocolatey.package.verifier.Host
             try
             {
                 _logger.InfoFormat("Stopping {0} service.", ApplicationParameters.Name);
-
+                if (_subscription != null)
+                {
+                    _subscription.Dispose();
+                }
+                
                 if (_container != null)
                 {
                     var tasks = _container.GetAllInstances<ITask>();
