@@ -55,6 +55,7 @@ namespace chocolatey.package.verifier.infrastructure.app.registration
             container.Register<IDateTimeService, SystemDateTimeUtcService>(Lifestyle.Singleton);
             container.Register<IFileSystemService, FileSystemService>(Lifestyle.Singleton);
             container.Register<IRegularExpressionService, RegularExpressionService>(Lifestyle.Singleton);
+            container.Register<IGistService, GistService>(Lifestyle.Singleton);
 
             RegisterOverrideableComponents(container, configuration);
         }

@@ -53,10 +53,10 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                 message.PackageId,
                 message.PackageVersion);
 
-            var createdGistUrl = _gistService.CreateGist(
+            var createdGistUrl = await _gistService.CreateGist(
                 gistDescription,
                 true,
-                new List<string> { message.InstallationLog, message.UninstallationLog });
+                message.Logs);
 
             // TODO: Should perhaps change the message to use a Uri, rather than a string
             EventManager.publish(new GistCreateMessage(createdGistUrl.ToString()));

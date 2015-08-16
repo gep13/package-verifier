@@ -132,6 +132,8 @@
     <Compile Include="infrastructure.app\messaging\WebsiteUpdateMessage.cs" />
     <Compile Include="infrastructure.app\results\PackageTestResult.cs" />
     <Compile Include="infrastructure.app\messaging\PackageTestResultMessage.cs" />
+    <Compile Include="infrastructure.app\services\GistService.cs" />
+    <Compile Include="infrastructure.app\services\IGistService.cs" />
     <Compile Include="infrastructure.app\services\IPackageCheckService.cs" />
     <Compile Include="infrastructure.app\services\IPackageSubmitResultsService.cs" />
     <Compile Include="infrastructure.app\services\IVagrantService.cs" />
