@@ -18,7 +18,7 @@ namespace chocolatey.package.verifier.infrastructure.services
     using System;
     using System.Collections.Generic;
     using System.Net.Mail;
-    using AnglicanGeek.MarkdownMailer;
+    using MarkdownMailer;
     using Elmah;
     using configuration;
 
