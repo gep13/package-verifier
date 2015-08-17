@@ -112,6 +112,32 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         }
 
         /// <summary>
+        ///   Gets the UserName for accessing GitHub.
+        /// </summary>
+        public string GitHubUserName
+        {
+            get
+            {
+                var gitHubUserName = get_application_settings_value("GitHub.UserName");
+
+                return gitHubUserName;
+            }
+        }
+
+        /// <summary>
+        ///   Gets the Password for accessing GitHub.
+        /// </summary>
+        public string GitHubPassword
+        {
+            get
+            {
+                var gitHubPassword = get_application_settings_value("GitHub.Password");
+
+                return gitHubPassword;
+            }
+        }
+
+        /// <summary>
         ///   Gets a value indicating whether [use caching].
         /// </summary>
         /// <value>

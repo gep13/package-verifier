@@ -67,6 +67,16 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         string SiteUrl { get; }
 
         /// <summary>
+        ///   Gets the UserName for accessing GitHub.
+        /// </summary>
+        string GitHubUserName { get; }
+
+        /// <summary>
+        ///   Gets the Password for accessing GitHub.
+        /// </summary>
+        string GitHubPassword { get; }
+
+        /// <summary>
         ///   Gets a value indicating whether [use caching].
         /// </summary>
         /// <value>
