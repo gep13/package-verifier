@@ -1,12 +1,12 @@
 ﻿// Copyright © 2015 - Present RealDimensions Software, LLC
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
-// 
+//
 // You may obtain a copy of the License at
-// 
+//
 // 	http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,6 +16,7 @@
 namespace chocolatey.package.verifier.infrastructure.app.tasks
 {
     using System;
+    using System.Linq;
     using System.Timers;
     using ChocolateySubmittedFeedService;
     using infrastructure.messaging;
@@ -37,7 +38,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             this.Log().Info
                 (
                     () =>
-                    "{0} will check for new package submssions every {1} minutes".format_with(
+                    "{0} will check for new package submissions every {1} minutes".format_with(
                         GetType().Name, TIMER_INTERVAL / 60000));
         }
 
@@ -60,17 +61,16 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
             var service = new FeedContext_x0060_1(new Uri("http://chocolatey.org/api/v2/submitted/"));
 
-            //todo: break this down to a message that sends to check the package.
-            foreach (var package in service.Packages)
-            {
-                this.Log().Info(() => "{0} found in submitted state.".format_with(package.Title));
-            }
+            // For testing purposes, let's only use the first package in the queue
+            var package = service.Packages.First();
+
+            this.Log().Info(() => "{0} found in submitted state.".format_with(package.Title));
 
             EventManager.publish(
-                new CreateGistMessage(
-                    @"C:\temp\install.log", "upgrade log", @"C:\temp\uninstall.log", summary: "passed/failed"));
+                new SubmitPackageMessage(
+                    package.Id, package.Version));
 
-            _timer.Stop();
+            _timer.Start();
         }
     }
 }

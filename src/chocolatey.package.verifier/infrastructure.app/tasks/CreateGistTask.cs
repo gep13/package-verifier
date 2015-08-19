@@ -1,12 +1,12 @@
 ﻿// Copyright © 2015 - Present RealDimensions Software, LLC
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
-// 
+//
 // You may obtain a copy of the License at
-// 
+//
 // 	http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,6 +16,8 @@
 namespace chocolatey.package.verifier.infrastructure.app.tasks
 {
     using System;
+    using System.Collections.Generic;
+    using infrastructure.app.services;
     using infrastructure.messaging;
     using infrastructure.tasks;
     using messaging;
@@ -23,11 +25,17 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
     public class CreateGistTask : ITask
     {
         private IDisposable _subscription;
+        private readonly IGistService _gistService;
+
+        public CreateGistTask(IGistService gistService)
+        {
+            _gistService = gistService;
+        }
 
         public void initialize()
         {
-            _subscription = EventManager.subscribe<CreateGistMessage>(create_gist, null, null);
-            this.Log().Info(() => "{0} is now ready and waiting for CreateGistMessage".format_with(GetType().Name));
+            _subscription = EventManager.subscribe<PackageTestResultMessage>(create_gist, null, null);
+            this.Log().Info(() => "{0} is now ready and waiting for PackageTestResultMessage".format_with(GetType().Name));
         }
 
         public void shutdown()
@@ -35,11 +43,23 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             if (_subscription != null) _subscription.Dispose();
         }
 
-        private void create_gist(CreateGistMessage message)
+        private async void create_gist(PackageTestResultMessage message)
         {
             this.Log().Info(
-                () => "Creating gist with install log from: {0} and uninstall log from: {1}"
-                          .format_with(message.InstallationLog, message.UninstallationLog));
+                () => "Creating gist for Package: {0} Version: {1}"
+                          .format_with(message.PackageId, message.PackageVersion));
+
+            var gistDescription = "Test results for {0} Version {1}".format_with(
+                message.PackageId,
+                message.PackageVersion);
+
+            var createdGistUrl = await _gistService.CreateGist(
+                gistDescription,
+                true,
+                message.Logs);
+
+            // TODO: Should perhaps change the message to use a Uri, rather than a string
+            EventManager.publish(new GistCreateMessage(createdGistUrl.ToString()));
         }
     }
 }

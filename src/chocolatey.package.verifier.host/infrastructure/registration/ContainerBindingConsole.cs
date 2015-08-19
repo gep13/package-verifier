@@ -1,12 +1,12 @@
 ﻿// Copyright © 2015 - Present RealDimensions Software, LLC
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
-// 
+//
 // You may obtain a copy of the License at
-// 
+//
 // 	http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,6 +17,7 @@ namespace chocolatey.package.verifier.host.infrastructure.registration
 {
     using System.Collections.Generic;
     using SimpleInjector;
+    using verifier.infrastructure.app.services;
     using verifier.infrastructure.app.tasks;
     using verifier.infrastructure.configuration;
     using verifier.infrastructure.filesystem;
@@ -46,7 +47,9 @@ namespace chocolatey.package.verifier.host.infrastructure.registration
                     {
                         new StartupTask(),
                         new CheckForSubmittedPackagesTask(),
-                        new CreateGistTask()
+                        new TestPackageTask(),
+                        new CreateGistTask(container.GetInstance<IGistService>()),
+                        new UpdateWebsiteInformationTask()
                     };
 
                     return list.AsReadOnly();
