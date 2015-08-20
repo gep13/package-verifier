@@ -22,6 +22,6 @@ namespace chocolatey.package.verifier.infrastructure.app.services
 
     public interface IGistService
     {
-        Task<Uri> CreateGist(string description, bool isPublic, IList<PackageTestLog> logs);
+        Task<Uri> create_gist(string description, bool isPublic, IList<PackageTestLog> logs);
     }
 }

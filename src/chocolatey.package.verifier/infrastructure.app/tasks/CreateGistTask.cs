@@ -49,7 +49,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
             var gistDescription = "Test results for {0} Version {1}".format_with(message.PackageId, message.PackageVersion);
 
-            var createdGistUrl = await _gistService.CreateGist(gistDescription, true, message.Logs);
+            var createdGistUrl = await _gistService.create_gist(gistDescription, true, message.Logs);
 
             EventManager.publish(new GistCreateMessage(createdGistUrl.ToString()));
         }
