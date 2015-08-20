@@ -17,5 +17,9 @@ namespace chocolatey.package.verifier.infrastructure.app.services
 {
     public interface IVagrantService
     {
+        void prep();
+        void reset();
+        string run(string command);
+        void shutdown();
     }
 }

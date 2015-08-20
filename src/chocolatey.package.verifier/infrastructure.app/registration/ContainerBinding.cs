@@ -16,6 +16,7 @@
 namespace chocolatey.package.verifier.infrastructure.app.registration
 {
     using configuration;
+    using filesystem;
     using infrastructure.configuration;
     using infrastructure.messaging;
     using infrastructure.services;
@@ -51,8 +52,10 @@ namespace chocolatey.package.verifier.infrastructure.app.registration
             container.Register<IEmailDistributionService, EmailDistributionService>(Lifestyle.Singleton);
             container.Register<IDateTimeService, SystemDateTimeUtcService>(Lifestyle.Singleton);
             container.Register<IFileSystemService, FileSystemService>(Lifestyle.Singleton);
+            container.Register<IFileSystem, DotNetFileSystem>(Lifestyle.Singleton);
             container.Register<IRegularExpressionService, RegularExpressionService>(Lifestyle.Singleton);
             container.Register<IGistService, GistService>(Lifestyle.Singleton);
+            container.Register<IVagrantService, VagrantService>(Lifestyle.Singleton);
 
             RegisterOverrideableComponents(container, configuration);
         }

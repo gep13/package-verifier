@@ -21,10 +21,17 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
     using infrastructure.messaging;
     using infrastructure.tasks;
     using messaging;
+    using services;
 
     public class TestPackageTask : ITask
     {
+        private readonly IVagrantService _vagrantService;
         private IDisposable _subscription;
+
+        public TestPackageTask(IVagrantService vagrantService)
+        {
+            _vagrantService = vagrantService;
+        }
 
         public void initialize()
         {
@@ -35,6 +42,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
         public void shutdown()
         {
             if (_subscription != null) _subscription.Dispose();
+            _vagrantService.shutdown();
         }
 
         private void moderate_package(SubmitPackageMessage message)
@@ -42,13 +50,17 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             this.Log().Info(
                 () => "Moderating Package: {0} Version: {1}".format_with(message.PackageId, message.PackageVersion));
 
-            // TODO: Put the work of moderating the package, i.e. the vagrant portion here
+            _vagrantService.prep();
+            _vagrantService.reset();
+            var installLog = _vagrantService.run("install");
+            //var upgradeLog = _vagrantService.run("upgrade");
+            var uninstallLog = _vagrantService.run("uninstall");
 
             var logs = new List<PackageTestLog>();
 
-            var installationLog = new PackageTestLog("Install", "Install log messages go here");
-            var uninstallationLog = new PackageTestLog("Uninstall", "Uninstall log messages go here");
-            var upgradeLog = new PackageTestLog("Upgrade", "Upgrade log messages go here");
+            var installationLog = new PackageTestLog("Install.txt", installLog);
+            var uninstallationLog = new PackageTestLog("Uninstall.txt", uninstallLog);
+            var upgradeLog = new PackageTestLog("Upgrade.txt", "Not yet implemented");
 
             logs.Add(installationLog);
             logs.Add(uninstallationLog);
@@ -58,8 +70,8 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                 new PackageTestResultMessage(
                     message.PackageId,
                     message.PackageVersion,
-                    "Windows7",
-                    "MachineName1",
+                    "Windows2012R2 x64",
+                    "win2012r2x64",
                     DateTime.UtcNow,
                     logs,
                     true));

@@ -19,6 +19,8 @@ namespace chocolatey.package.verifier.infrastructure.app.services
     {
         public void prep()
         {
+            //if vagrant status - on then we return quickly
+
             /*
              place and update vagrantfile
              vagrant up
@@ -38,26 +40,34 @@ swap vagrantfile for next install
              */
         }
 
-        public void dosomething()
-        {
-            /*
-            swap choco action file
-            vagrant provision
-
-            rename chocolatey.log.install
-            rename chocolatey.log.uninstall
-
-            grab files
-            vagrant sandbox rollback
-            swap vagrantfile for next install
-             */
-        }
-
         public void reset()
         {
             /*
              vagrant sandbox rollback
              swap vagrantfile for next install
+             */
+        }
+
+        public string run(string command)
+        {
+            /*
+             swap choco action file
+             vagrant provision
+
+             rename chocolatey.log.install
+             rename chocolatey.log.uninstall
+
+             grab files
+             vagrant sandbox rollback
+             swap vagrantfile for next install
+              */
+            return "";
+        }
+
+        public void shutdown()
+        {
+            /*
+             vagrant halt
              */
         }
     }
