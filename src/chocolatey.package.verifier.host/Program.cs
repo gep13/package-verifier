@@ -18,6 +18,8 @@ namespace chocolatey.package.verifier.Host
     using System;
     using System.ServiceProcess;
 
+    // ReSharper disable InconsistentNaming
+
     internal static class Program
     {
         /// <summary>
@@ -32,10 +34,11 @@ namespace chocolatey.package.verifier.Host
                 service.run_as_console(args);
             } else
             {
-                ServiceBase[] servicesToRun;
-                servicesToRun = new ServiceBase[] { new Service() };
+                var servicesToRun = new ServiceBase[] { new Service() };
                 ServiceBase.Run(servicesToRun);
             }
         }
     }
+
+    // ReSharper restore InconsistentNaming
 }
