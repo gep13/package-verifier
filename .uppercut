@@ -31,7 +31,7 @@
   <property name="test.framework" value="nunit" overwrite="false" />
   <property name="cover.framework" value="opencover" overwrite="false" />
 
-  <property name="run.environmentbuilder" value="false" overwrite="false" />
+  <property name="run.environmentbuilder" value="true" overwrite="false" />
   <property name="run.deploymentbuilder" value="false" overwrite="false" />
   <property name="run.gems" value="false" overwrite="false" />
   <property name="run.metrics" value="false" overwrite="false" />
