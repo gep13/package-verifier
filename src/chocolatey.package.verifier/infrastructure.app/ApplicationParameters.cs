@@ -69,10 +69,6 @@ namespace chocolatey.package.verifier.infrastructure.app
             get { return try_get_config(() => Config.get_configuration_settings().IsDebugMode, false); }
         }
 
-        public static string GitHubUserName { get { return Config.get_configuration_settings().GitHubUserName; } }
-
-        public static string GitHubPassword { get { return Config.get_configuration_settings().GitHubPassword; } }
-
         /// <summary>
         ///   Gets a value indicating whether OVLP should insert test data. This should be false unless locally testing.
         /// </summary>
