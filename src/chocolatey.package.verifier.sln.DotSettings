@@ -1,6 +1,7 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/GeneratedFilesAndFolders/=EF68EBF7_002D4521_002D4997_002DA839_002D8A1E3C53FE19_002Ff_003ATinySpec_002Ecs/@EntryIndexedValue">EF68EBF7-4521-4997-A839-8A1E3C53FE19/f:TinySpec.cs</s:String>
 	<s:String x:Key="/Default/CodeInspection/GeneratedCode/GeneratedFileMasks/=SolutionVersion_002Ecs/@EntryIndexedValue">SolutionVersion.cs</s:String>
+	<s:Int64 x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/WRAP_LIMIT/@EntryValue">130</s:Int64>
 	<s:String x:Key="/Default/CodeStyle/FileHeader/FileHeaderText/@EntryValue">Copyright © 2015 - Present RealDimensions Software, LLC&#xD;
 &#xD;
 Licensed under the Apache License, Version 2.0 (the "License");&#xD;

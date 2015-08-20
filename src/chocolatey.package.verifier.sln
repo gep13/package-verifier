@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "chocolatey.package.verifier", "chocolatey.package.verifier\chocolatey.package.verifier.csproj", "{6FFB1930-80C3-4B7E-B4C8-8A610583E496}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "chocolatey.package.verifier.tests", "chocolatey.package.verifier.tests\chocolatey.package.verifier.tests.csproj", "{EF68EBF7-4521-4997-A839-8A1E3C53FE19}"
