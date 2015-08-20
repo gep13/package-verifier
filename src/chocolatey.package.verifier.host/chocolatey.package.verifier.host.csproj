@@ -122,13 +122,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="package-verifier.exe.config.template">
+    <Content Include="package-verifier.exe.config.template">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </Content>
     <None Include="app.config" />
-    <None Include="chocolatey.package.verifier.Host.exe.config.template">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <Content Include="shell\InstallChocolatey.ps1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -141,7 +138,9 @@
     <Content Include="Vagrantfile">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="shell\ChocolateyAction.ps1" />
+    <Content Include="shell\ChocolateyAction.ps1">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="shell\PrepareMachine.ps1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
