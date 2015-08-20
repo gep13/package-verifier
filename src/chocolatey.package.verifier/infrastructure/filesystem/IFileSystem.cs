@@ -54,7 +54,8 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
         char get_path_directory_separator_char();
 
         /// <summary>
-        ///   Gets the path to an executable based on looking in current directory, next to the running process, then among the derivatives of Path and Pathext variables
+        ///   Gets the path to an executable based on looking in current directory, next to the running process, then among the
+        ///   derivatives of Path and Pathext variables
         /// </summary>
         /// <param name="executableName">Name of the executable.</param>
         /// <remarks>Based loosely on http://stackoverflow.com/a/5471032/18475</remarks>
@@ -76,10 +77,15 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
         /// </summary>
         /// <param name="directoryPath">The path to a specified directory.</param>
         /// <param name="pattern">The search pattern.</param>
-        /// <param name="option">The option specifies whether the search operation should include all subdirectories or only the current directory.</param>
+        /// <param name="option">
+        ///   The option specifies whether the search operation should include all subdirectories or only the
+        ///   current directory.
+        /// </param>
         /// <returns>Returns the names of files (including their paths).</returns>
         IEnumerable<string> get_files(
-            string directoryPath, string pattern = "*.*", SearchOption option = SearchOption.TopDirectoryOnly);
+            string directoryPath,
+            string pattern = "*.*",
+            SearchOption option = SearchOption.TopDirectoryOnly);
 
         /// <summary>
         ///   Gets a list of files inside an existing directory with extensions and optionally recursive search option.
@@ -89,20 +95,28 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
         /// <param name="option">The option.</param>
         /// <returns>Returns the names of files (including their paths).</returns>
         IEnumerable<string> get_files(
-            string directoryPath, string[] extensions, SearchOption option = SearchOption.TopDirectoryOnly);
+            string directoryPath,
+            string[] extensions,
+            SearchOption option = SearchOption.TopDirectoryOnly);
 
         /// <summary>
         ///   Does the file exist?
         /// </summary>
         /// <param name="filePath">The file to check.</param>
-        /// <returns>Boolean - true if the caller has the required permissions and path contains the name of an existing file; otherwise, false.</returns>
+        /// <returns>
+        ///   Boolean - true if the caller has the required permissions and path contains the name of an existing file;
+        ///   otherwise, false.
+        /// </returns>
         bool file_exists(string filePath);
 
         /// <summary>
         ///   Returns the file name and extension of the specified path string.
         /// </summary>
         /// <param name="filePath">The file path.</param>
-        /// <returns>The characters after the last directory character in path. If the last character of path is a directory or volume separator character, this method returns String.Empty. If path is Nothing, this method returns Nothing.</returns>
+        /// <returns>
+        ///   The characters after the last directory character in path. If the last character of path is a directory or
+        ///   volume separator character, this method returns String.Empty. If path is Nothing, this method returns Nothing.
+        /// </returns>
         string get_file_name(string filePath);
 
         /// <summary>
@@ -116,7 +130,11 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
         ///   Gets the extension.
         /// </summary>
         /// <param name="filePath">The file path.</param>
-        /// <returns>he extension of the specified path (including the period "."), or Nothing, or String.Empty. If path is Nothing, get_file_extension returns Nothing. If path does not have extension information, get_file_extension returns String.Empty.</returns>
+        /// <returns>
+        ///   he extension of the specified path (including the period "."), or Nothing, or String.Empty. If path is
+        ///   Nothing, get_file_extension returns Nothing. If path does not have extension information, get_file_extension returns
+        ///   String.Empty.
+        /// </returns>
         string get_file_extension(string filePath);
 
         /// <summary>
@@ -270,10 +288,15 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
         /// </summary>
         /// <param name="directoryPath">The parent path</param>
         /// <param name="pattern">The search pattern.</param>
-        /// <param name="option">The option specifies whether the search operation should include all subdirectories or only the current directory.</param>
+        /// <param name="option">
+        ///   The option specifies whether the search operation should include all subdirectories or only the
+        ///   current directory.
+        /// </param>
         /// <returns>Returns the names of directories (including their paths).</returns>
         IEnumerable<string> get_directories(
-            string directoryPath, string pattern, SearchOption option = SearchOption.TopDirectoryOnly);
+            string directoryPath,
+            string pattern,
+            SearchOption option = SearchOption.TopDirectoryOnly);
 
         /// <summary>
         ///   Determines whether the given path refers to an existing directory on disk.
@@ -286,7 +309,10 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
         ///   Gets the name of the directory.
         /// </summary>
         /// <param name="filePath">The file path.</param>
-        /// <returns>Directory information for path, or Nothing if path denotes a root directory or is null. Returns String.Empty if path does not contain directory information.</returns>
+        /// <returns>
+        ///   Directory information for path, or Nothing if path denotes a root directory or is null. Returns String.Empty
+        ///   if path does not contain directory information.
+        /// </returns>
         string get_directory_name(string filePath);
 
         /// <summary>

@@ -134,8 +134,8 @@ namespace chocolatey.package.verifier.infrastructure.synchronization
             {
                 _activeLocks += 1;
                 "TransactionLock".Log()
-                                 .Debug(
-                                     "Entered lock for '{0}'. There are {1} active locks.".format_with(name, _activeLocks));
+                    .Debug(
+                        "Entered lock for '{0}'. There are {1} active locks.".format_with(name, _activeLocks));
                 return true;
             }
 
@@ -164,9 +164,10 @@ namespace chocolatey.package.verifier.infrastructure.synchronization
                         Monitor.Exit(lockingObject);
                         _activeLocks -= 1;
                         "TransactionLock".Log()
-                                         .Debug(
-                                             "Exited lock for '{0}'. There are {1} active locks".format_with(
-                                                 name, _activeLocks));
+                            .Debug(
+                                "Exited lock for '{0}'. There are {1} active locks".format_with(
+                                    name,
+                                    _activeLocks));
                     }
 
                     Monitor.Pulse(_localLock);
@@ -175,9 +176,11 @@ namespace chocolatey.package.verifier.infrastructure.synchronization
             {
                 Console.WriteLine(ex.ToString());
                 "TransactionLock".Log()
-                                 .Warn(
-                                     "An error occurred when releasing lock for '{0}':{1}{2}".format_with(
-                                         name, Environment.NewLine, ex));
+                    .Warn(
+                        "An error occurred when releasing lock for '{0}':{1}{2}".format_with(
+                            name,
+                            Environment.NewLine,
+                            ex));
             }
         }
 

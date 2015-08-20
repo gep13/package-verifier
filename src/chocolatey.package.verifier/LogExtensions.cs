@@ -58,7 +58,10 @@ namespace chocolatey.package.verifier
         /// <summary>
         ///   Gets the logger for the specified object name.
         /// </summary>
-        /// <param name="objectName">Either use the fully qualified object name or the short. If used with Log&lt;T&gt;() you must use the fully qualified object name"/></param>
+        /// <param name="objectName">
+        ///   Either use the fully qualified object name or the short. If used with Log&lt;T&gt;() you must
+        ///   use the fully qualified object name"/>
+        /// </param>
         /// <returns>Instance of a logger for the object.</returns>
         public static ILog Log(this string objectName)
         {

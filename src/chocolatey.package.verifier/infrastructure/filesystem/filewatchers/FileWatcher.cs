@@ -113,7 +113,7 @@ namespace chocolatey.package.verifier.infrastructure.filesystem.filewatchers
                 this.Log()
                     .Error(
                         () =>
-                        string.Format("Exception caught when watching for trigger files:{0}{1}", Environment.NewLine, ex));
+                            string.Format("Exception caught when watching for trigger files:{0}{1}", Environment.NewLine, ex));
             }
         }
 

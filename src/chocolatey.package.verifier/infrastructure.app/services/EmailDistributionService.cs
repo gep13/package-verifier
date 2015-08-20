@@ -75,7 +75,10 @@ namespace chocolatey.package.verifier.infrastructure.app.services
         /// <param name="message">The message.</param>
         /// <param name="attachments">The attachments.</param>
         public void send_message(
-            IEnumerable<string> emailAddresses, string subject, string message, IEnumerable<Attachment> attachments)
+            IEnumerable<string> emailAddresses,
+            string subject,
+            string message,
+            IEnumerable<Attachment> attachments)
         {
             if (emailAddresses.or_empty_list_if_null().Count() != 0) _messageService.send(emailAddresses, subject, message, attachments);
         }

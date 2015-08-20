@@ -41,8 +41,8 @@ namespace chocolatey.package.verifier
             {
                 var attrib =
                     memInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false)
-                              .Cast<DescriptionAttribute>()
-                              .SingleOrDefault();
+                        .Cast<DescriptionAttribute>()
+                        .SingleOrDefault();
 
                 if (attrib != null) description = attrib.Description;
             }
@@ -59,8 +59,8 @@ namespace chocolatey.package.verifier
             {
                 var attr =
                     fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), false)
-                             .Cast<DescriptionAttribute>()
-                             .SingleOrDefault();
+                        .Cast<DescriptionAttribute>()
+                        .SingleOrDefault();
                 if (attr != null && attr.Description.Equals(description)) return (TEnum)fieldInfo.GetValue(null);
             }
 

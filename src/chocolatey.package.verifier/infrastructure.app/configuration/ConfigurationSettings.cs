@@ -1,12 +1,12 @@
-// Copyright © 2015 - Present RealDimensions Software, LLC
-//
+// Copyright Â© 2015 - Present RealDimensions Software, LLC
+// 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
-//
+// 
 // You may obtain a copy of the License at
-//
+// 
 // 	http://www.apache.org/licenses/LICENSE-2.0
-//
+// 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -81,13 +81,19 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         ///   Gets the remote folders for FTP task.
         /// </summary>
         /// <value>The remote folders for FTP task.</value>
-        public IList<IKnownFolder> RemoteFoldersForFtpTask { get { return get_list_of_known_folders("FtpTask.RemoteFolders"); } }
+        public IList<IKnownFolder> RemoteFoldersForFtpTask
+        {
+            get { return get_list_of_known_folders("FtpTask.RemoteFolders"); }
+        }
 
         /// <summary>
         ///   Gets the ignored folders for FTP task.
         /// </summary>
         /// <value>The ignored folders for FTP task.</value>
-        public IList<IKnownFolder> IgnoredFoldersForFtpTask { get { return get_list_of_known_folders("FtpTask.IgnoredFolders"); } }
+        public IList<IKnownFolder> IgnoredFoldersForFtpTask
+        {
+            get { return get_list_of_known_folders("FtpTask.IgnoredFolders"); }
+        }
 
         /// <summary>
         ///   Gets the site URL.
@@ -190,12 +196,18 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         /// <summary>
         ///   Gets the cache Interval in minutes for repository caching
         /// </summary>
-        public int RepositoryCacheIntervalMinutes { get { return int.Parse(get_application_settings_value("RepositoryCacheIntervalMinutes")); } }
+        public int RepositoryCacheIntervalMinutes
+        {
+            get { return int.Parse(get_application_settings_value("RepositoryCacheIntervalMinutes")); }
+        }
 
         /// <summary>
         ///   Gets the number of minutes that the forms authentication ticket is valid
         /// </summary>
-        public int FormsAuthenticationExpirationInMinutes { get { return int.Parse(get_application_settings_value("FormsAuthenticationExpirationInMinutes")); } }
+        public int FormsAuthenticationExpirationInMinutes
+        {
+            get { return int.Parse(get_application_settings_value("FormsAuthenticationExpirationInMinutes")); }
+        }
 
         /// <summary>
         ///   Gets the application settings value.

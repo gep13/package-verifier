@@ -17,8 +17,8 @@ namespace chocolatey.package.verifier.infrastructure.services
 {
     using System;
     using System.IO;
-    using EnsureThat;
     using app.configuration;
+    using EnsureThat;
 
     /// <summary>
     ///   File System Service for interacting with files/directories/etc

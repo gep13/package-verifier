@@ -1,12 +1,12 @@
 // Copyright © 2015 - Present RealDimensions Software, LLC
-//
+// 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
-//
+// 
 // You may obtain a copy of the License at
-//
+// 
 // 	http://www.apache.org/licenses/LICENSE-2.0
-//
+// 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,9 +18,9 @@ namespace chocolatey.package.verifier.infrastructure.services
     using System;
     using System.Collections.Generic;
     using System.Net.Mail;
-    using MarkdownMailer;
-    using Elmah;
     using configuration;
+    using Elmah;
+    using MarkdownMailer;
 
     /// <summary>
     ///   Sends a markdown formatted message with Smtp
@@ -122,8 +122,12 @@ namespace chocolatey.package.verifier.infrastructure.services
             this.Log()
                 .Info(
                     () =>
-                    "Sending '{0}' a message from '{1}': {2}{3}{4}".format_with(
-                        string.Join(",", to), @from, subject, Environment.NewLine, message));
+                        "Sending '{0}' a message from '{1}': {2}{3}{4}".format_with(
+                            string.Join(",", to),
+                            @from,
+                            subject,
+                            Environment.NewLine,
+                            message));
 
             try
             {
@@ -135,8 +139,11 @@ namespace chocolatey.package.verifier.infrastructure.services
                 this.Log()
                     .Error(
                         () =>
-                        "Error sending email to '{0}' with subject '{1}':{2}{3}".format_with(
-                            emailMessage.To.ToString(), emailMessage.Subject, Environment.NewLine, ex));
+                            "Error sending email to '{0}' with subject '{1}':{2}{3}".format_with(
+                                emailMessage.To.ToString(),
+                                emailMessage.Subject,
+                                Environment.NewLine,
+                                ex));
                 ErrorSignal.FromCurrentContext().Raise(ex);
             }
         }

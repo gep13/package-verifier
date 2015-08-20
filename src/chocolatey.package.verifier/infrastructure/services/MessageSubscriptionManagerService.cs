@@ -18,8 +18,8 @@ namespace chocolatey.package.verifier.infrastructure.services
     using System;
     using System.Reactive.Linq;
     using EnsureThat;
-    using Reactive.EventAggregator;
     using messaging;
+    using Reactive.EventAggregator;
 
     /// <summary>
     ///   Implementation of IMessageSubscriptionManagerService
@@ -66,7 +66,9 @@ namespace chocolatey.package.verifier.infrastructure.services
         ///   The <see cref="IDisposable" />.
         /// </returns>
         public IDisposable subscribe<TMessage>(
-            Action<TMessage> handleMessage, Action<Exception> handleError, Func<TMessage, bool> filter)
+            Action<TMessage> handleMessage,
+            Action<Exception> handleError,
+            Func<TMessage, bool> filter)
             where TMessage : class, IMessage
         {
             if (filter == null) filter = (message) => true;

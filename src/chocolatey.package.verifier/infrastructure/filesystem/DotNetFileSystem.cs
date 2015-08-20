@@ -42,7 +42,8 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
                 {
                     throw new ApplicationException(
                         "Cannot combine a path with ':' attempted to combine '{0}' with '{1}'".format_with(
-                            rightItem, combinedPath));
+                            rightItem,
+                            combinedPath));
                 }
 
                 var rightSide = rightItem;
@@ -85,8 +86,8 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
             if (get_file_name_without_extension(executableName).is_equal_to(executableName))
             {
                 var pathExtensions = Environment.GetEnvironmentVariable("PATHEXT")
-                                                .to_string()
-                                                .Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+                    .to_string()
+                    .Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var extension in pathExtensions.or_empty_list_if_null())
                 {
                     extensions.Add(extension.StartsWith(".") ? extension : ".{0}".format_with(extension));
@@ -104,8 +105,8 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
             searchPaths.Add(get_directory_name(get_current_assembly_path()));
             searchPaths.AddRange(
                 Environment.GetEnvironmentVariable("Path")
-                           .to_string()
-                           .Split(new[] { get_path_separator() }, StringSplitOptions.RemoveEmptyEntries));
+                    .to_string()
+                    .Split(new[] { get_path_separator() }, StringSplitOptions.RemoveEmptyEntries));
 
             foreach (var path in searchPaths.or_empty_list_if_null())
             {
@@ -131,17 +132,21 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
         #region File
 
         public IEnumerable<string> get_files(
-            string directoryPath, string pattern = "*.*", SearchOption option = SearchOption.TopDirectoryOnly)
+            string directoryPath,
+            string pattern = "*.*",
+            SearchOption option = SearchOption.TopDirectoryOnly)
         {
             return Directory.EnumerateFiles(directoryPath, pattern, option);
         }
 
         public IEnumerable<string> get_files(
-            string directoryPath, string[] extensions, SearchOption option = SearchOption.TopDirectoryOnly)
+            string directoryPath,
+            string[] extensions,
+            SearchOption option = SearchOption.TopDirectoryOnly)
         {
             return
                 Directory.EnumerateFiles(directoryPath, "*.*", option)
-                         .Where(f => extensions.Any(x => f.EndsWith(x, StringComparison.OrdinalIgnoreCase)));
+                    .Where(f => extensions.Any(x => f.EndsWith(x, StringComparison.OrdinalIgnoreCase)));
         }
 
         public bool file_exists(string filePath)
@@ -195,8 +200,9 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
                 this.Log()
                     .Debug(
                         () =>
-                        "Is directory \"{0}\" a system directory? {1}".format_with(
-                            file.DirectoryName, isSystemFile.to_string()));
+                            "Is directory \"{0}\" a system directory? {1}".format_with(
+                                file.DirectoryName,
+                                isSystemFile.to_string()));
             } else this.Log().Debug(() => "File \"{0}\" is a system file.".format_with(file.FullName));
 
             return isSystemFile;
@@ -213,8 +219,8 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
         public string get_file_date(FileInfo file)
         {
             return file.CreationTime < file.LastWriteTime
-                       ? file.CreationTime.Date.ToString("yyyyMMdd")
-                       : file.LastWriteTime.Date.ToString("yyyyMMdd");
+                ? file.CreationTime.Date.ToString("yyyyMMdd")
+                : file.LastWriteTime.Date.ToString("yyyyMMdd");
         }
 
         public void move_file(string filePath, string newFilePath)
@@ -227,8 +233,10 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
             this.Log()
                 .Debug(
                     () =>
-                    "Attempting to copy \"{0}\"{1} to \"{2}\".".format_with(
-                        sourceFilePath, Environment.NewLine, destinationFilePath));
+                        "Attempting to copy \"{0}\"{1} to \"{2}\".".format_with(
+                            sourceFilePath,
+                            Environment.NewLine,
+                            destinationFilePath));
             create_directory_if_not_exists(get_directory_name(destinationFilePath), ignoreError: true);
 
             File.Copy(sourceFilePath, destinationFilePath, overwriteExisting);
@@ -341,7 +349,9 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
         }
 
         public IEnumerable<string> get_directories(
-            string directoryPath, string pattern, SearchOption option = SearchOption.TopDirectoryOnly)
+            string directoryPath,
+            string pattern,
+            SearchOption option = SearchOption.TopDirectoryOnly)
         {
             if (!directory_exists(directoryPath)) return new List<string>();
 
@@ -391,7 +401,8 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
                 this.Log()
                     .Warn(
                         "Move failed with message:{0} {1}{0} Attempting backup move method.".format_with(
-                            Environment.NewLine, ex.Message));
+                            Environment.NewLine,
+                            ex.Message));
 
                 create_directory_if_not_exists(newDirectoryPath, ignoreError: true);
                 foreach (var file in get_files(directoryPath, "*.*", SearchOption.AllDirectories).or_empty_list_if_null())

@@ -1,12 +1,12 @@
 ﻿// Copyright © 2015 - Present RealDimensions Software, LLC
-//
+// 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
-//
+// 
 // You may obtain a copy of the License at
-//
+// 
 // 	http://www.apache.org/licenses/LICENSE-2.0
-//
+// 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,7 +30,8 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
         private IDisposable _subscription;
 
         /// <summary>
-        ///   Initializes a task. This should be initialized to run on a schedule, a trigger, a subscription to event messages, etc, or some combination of the above.
+        ///   Initializes a task. This should be initialized to run on a schedule, a trigger, a subscription to event messages,
+        ///   etc, or some combination of the above.
         /// </summary>
         public void initialize()
         {
@@ -88,9 +89,9 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             _timer.Elapsed += (sender, args) => synchronize();
             _timer.Start();
             this.Log().Info(
-                () =>
-                "{0} will check back in {1} minutes to see if the system can shut down".format_with(
-                    GetType().Name, DEFAULT_MINUTES));
+                () => "{0} will check back in {1} minutes to see if the system can shut down".format_with(
+                    GetType().Name,
+                    DEFAULT_MINUTES));
         }
     }
 }

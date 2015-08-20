@@ -41,11 +41,11 @@ namespace chocolatey.package.verifier
             } catch (Exception ex)
             {
                 ApplicationParameters.Name.Log()
-                                     .Error(
-                                         "{0} had an error formatting string:{1} {2}",
-                                         ApplicationParameters.Name,
-                                         Environment.NewLine,
-                                         ex.Message);
+                    .Error(
+                        "{0} had an error formatting string:{1} {2}",
+                        ApplicationParameters.Name,
+                        Environment.NewLine,
+                        ex.Message);
                 return input;
             }
         }
@@ -130,9 +130,11 @@ namespace chocolatey.package.verifier
         }
 
         private static readonly Regex _openBraceRegex = new Regex(
-            "(?<!{){(?!{)", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Compiled);
+            "(?<!{){(?!{)",
+            RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Compiled);
         private static readonly Regex _closeBraceRegex = new Regex(
-            "(?<!})}(?!})", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Compiled);
+            "(?<!})}(?!})",
+            RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Compiled);
 
         public static string escape_curly_braces(this string input)
         {

@@ -1,12 +1,12 @@
 ﻿// Copyright © 2015 - Present RealDimensions Software, LLC
-//
+// 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
-//
+// 
 // You may obtain a copy of the License at
-//
+// 
 // 	http://www.apache.org/licenses/LICENSE-2.0
-//
+// 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -56,12 +56,18 @@ namespace chocolatey.package.verifier.infrastructure.app
 
         public const char WebSeparatorChar = '/';
 
-        public static int RepositoryCacheIntervalMinutes { get { return Config.get_configuration_settings().RepositoryCacheIntervalMinutes; } }
+        public static int RepositoryCacheIntervalMinutes
+        {
+            get { return Config.get_configuration_settings().RepositoryCacheIntervalMinutes; }
+        }
 
         /// <summary>
         ///   Gets a value indicating whether we are in Debug Mode?
         /// </summary>
-        public static bool IsDebug { get { return try_get_config(() => Config.get_configuration_settings().IsDebugMode, false); } }
+        public static bool IsDebug
+        {
+            get { return try_get_config(() => Config.get_configuration_settings().IsDebugMode, false); }
+        }
 
         public static string GitHubUserName { get { return Config.get_configuration_settings().GitHubUserName; } }
 
@@ -78,14 +84,18 @@ namespace chocolatey.package.verifier.infrastructure.app
             get
             {
                 return ConfigurationManager.AppSettings["InsertTestData"].Equals(
-                    bool.TrueString, StringComparison.InvariantCultureIgnoreCase);
+                    bool.TrueString,
+                    StringComparison.InvariantCultureIgnoreCase);
             }
         }
 
         /// <summary>
         ///   Gets the connection string.
         /// </summary>
-        public static string ConnectionString { get { return ConfigurationManager.ConnectionStrings[ConnectionStringName].ConnectionString; } }
+        public static string ConnectionString
+        {
+            get { return ConfigurationManager.ConnectionStrings[ConnectionStringName].ConnectionString; }
+        }
 
         /// <summary>
         ///   Gets the site URL.

@@ -58,7 +58,9 @@ namespace chocolatey.package.verifier.infrastructure.messaging
         /// <param name="filter">The filter.</param>
         /// <returns>The subscription so that a service could unsubscribe</returns>
         public static IDisposable subscribe<TMessage>(
-            Action<TMessage> handleMessage, Action<Exception> handleError, Func<TMessage, bool> filter)
+            Action<TMessage> handleMessage,
+            Action<Exception> handleError,
+            Func<TMessage, bool> filter)
             where TMessage : class, IMessage
         {
             if (_messageSubscriptionManager != null) return _messageSubscriptionManager().subscribe(handleMessage, handleError, filter);

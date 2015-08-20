@@ -18,8 +18,8 @@ namespace chocolatey.package.verifier.infrastructure.services
     using System;
     using System.Collections.Generic;
     using System.Net.Mail;
-    using Elmah;
     using configuration;
+    using Elmah;
 
     /// <summary>
     ///   Sends a message with Smtp
@@ -121,8 +121,12 @@ namespace chocolatey.package.verifier.infrastructure.services
             this.Log()
                 .Info(
                     () =>
-                    "Sending '{0}' a message from '{1}': {2}{3}{4}".format_with(
-                        string.Join(",", to), @from, subject, Environment.NewLine, message));
+                        "Sending '{0}' a message from '{1}': {2}{3}{4}".format_with(
+                            string.Join(",", to),
+                            @from,
+                            subject,
+                            Environment.NewLine,
+                            message));
 
             using (var client = new SmtpClient())
             {
@@ -134,8 +138,11 @@ namespace chocolatey.package.verifier.infrastructure.services
                     this.Log()
                         .Error(
                             () =>
-                            "Error sending email to '{0}' with subject '{1}':{2}{3}".format_with(
-                                emailMessage.To.ToString(), emailMessage.Subject, Environment.NewLine, ex));
+                                "Error sending email to '{0}' with subject '{1}':{2}{3}".format_with(
+                                    emailMessage.To.ToString(),
+                                    emailMessage.Subject,
+                                    Environment.NewLine,
+                                    ex));
                     ErrorSignal.FromCurrentContext().Raise(ex);
                 }
             }

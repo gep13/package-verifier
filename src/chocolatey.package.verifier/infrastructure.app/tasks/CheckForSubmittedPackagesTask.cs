@@ -1,12 +1,12 @@
 ﻿// Copyright © 2015 - Present RealDimensions Software, LLC
-//
+// 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
-//
+// 
 // You may obtain a copy of the License at
-//
+// 
 // 	http://www.apache.org/licenses/LICENSE-2.0
-//
+// 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,11 +35,10 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             _timer.Interval = TIMER_INTERVAL;
             _timer.Elapsed += timer_elapsed;
             _timer.Start();
-            this.Log().Info
-                (
-                    () =>
-                    "{0} will check for new package submissions every {1} minutes".format_with(
-                        GetType().Name, TIMER_INTERVAL / 60000));
+            this.Log().Info(
+                () => "{0} will check for new package submissions every {1} minutes".format_with(
+                    GetType().Name,
+                    TIMER_INTERVAL / 60000));
         }
 
         public void shutdown()
@@ -66,9 +65,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
             this.Log().Info(() => "{0} found in submitted state.".format_with(package.Title));
 
-            EventManager.publish(
-                new SubmitPackageMessage(
-                    package.Id, package.Version));
+            EventManager.publish(new SubmitPackageMessage(package.Id, package.Version));
 
             _timer.Start();
         }

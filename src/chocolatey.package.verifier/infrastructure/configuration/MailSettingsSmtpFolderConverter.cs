@@ -26,7 +26,8 @@ namespace chocolatey.package.verifier.infrastructure.configuration
     ///   Converts a smtp folder relative path to an absolute
     /// </summary>
     /// <remarks>
-    ///   Based on http://www.singular.co.nz/blog/archive/2007/12/19/programmatically-setting-the-smtpclient-pickup-directory-location-at-runtime.aspx
+    ///   Based on
+    ///   http://www.singular.co.nz/blog/archive/2007/12/19/programmatically-setting-the-smtpclient-pickup-directory-location-at-runtime.aspx
     /// </remarks>
     public static class MailSettingsSmtpFolderConverter
     {
@@ -58,7 +59,10 @@ namespace chocolatey.package.verifier.infrastructure.configuration
         ///   Sets the default PickupDirectoryLocation for the SmtpClient.
         /// </summary>
         /// <remarks>
-        ///   This method should be called to set the PickupDirectoryLocation for the SmtpClient at runtime (Application_Start) Reflection is used to set the private variable located in the internal class for the SmtpClient's mail configuration: System.Net.Mail.SmtpClient.MailConfiguration.Smtp.SpecifiedPickupDirectory.PickupDirectoryLocation The folder must exist.
+        ///   This method should be called to set the PickupDirectoryLocation for the SmtpClient at runtime (Application_Start)
+        ///   Reflection is used to set the private variable located in the internal class for the SmtpClient's mail configuration:
+        ///   System.Net.Mail.SmtpClient.MailConfiguration.Smtp.SpecifiedPickupDirectory.PickupDirectoryLocation The folder must
+        ///   exist.
         /// </remarks>
         private static void set_pickup_directory_location()
         {

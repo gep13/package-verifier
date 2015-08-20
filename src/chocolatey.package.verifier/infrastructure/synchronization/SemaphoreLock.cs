@@ -74,9 +74,9 @@ namespace chocolatey.package.verifier.infrastructure.synchronization
                 } catch (Exception)
                 {
                     "SemaphoreLock".Log()
-                                   .Warn(
-                                       string.Format(
-                                           "Wonky error when trying to Release lock to semaphore. Should be safe to ignore."));
+                        .Warn(
+                            string.Format(
+                                "Wonky error when trying to Release lock to semaphore. Should be safe to ignore."));
                 }
             }
         }

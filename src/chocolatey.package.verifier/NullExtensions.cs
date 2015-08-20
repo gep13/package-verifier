@@ -25,13 +25,15 @@ namespace chocolatey.package.verifier
     public static class NullExtensions
     {
         public static TValue value_or_default<TSource, TValue>(
-            this TSource instance, Expression<Func<TSource, TValue>> expression)
+            this TSource instance,
+            Expression<Func<TSource, TValue>> expression)
         {
             return value_or_default(instance, expression, true);
         }
 
         internal static TProperty evaluate_expression<TSource, TProperty>(
-            TSource source, Expression<Func<TSource, TProperty>> expression)
+            TSource source,
+            Expression<Func<TSource, TProperty>> expression)
         {
             var method = expression.Body as MethodCallExpression;
 
@@ -64,11 +66,13 @@ namespace chocolatey.package.verifier
         }
 
         private static TValue value_or_default<TSource, TValue>(
-            this TSource instance, Expression<Func<TSource, TValue>> expression, bool nested)
+            this TSource instance,
+            Expression<Func<TSource, TValue>> expression,
+            bool nested)
         {
             return ReferenceEquals(instance, default(TSource))
-                       ? default(TValue)
-                       : nested ? evaluate_expression(instance, expression) : expression.Compile()(instance);
+                ? default(TValue)
+                : nested ? evaluate_expression(instance, expression) : expression.Compile()(instance);
         }
     }
 }

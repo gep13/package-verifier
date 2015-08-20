@@ -21,7 +21,8 @@ namespace chocolatey.package.verifier.infrastructure.tasks
     public interface ITask
     {
         /// <summary>
-        ///   Initializes a task. This should be initialized to run on a schedule, a trigger, a subscription to event messages, etc, or some combination of the above.
+        ///   Initializes a task. This should be initialized to run on a schedule, a trigger, a subscription to event messages,
+        ///   etc, or some combination of the above.
         /// </summary>
         void initialize();
 

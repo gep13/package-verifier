@@ -54,8 +54,8 @@ namespace chocolatey.package.verifier.infrastructure.container
             if (serviceType.IsAssignableFrom(implementationType))
             {
                 var longestConstructor = (from constructor in implementationType.GetConstructors()
-                                          orderby constructor.GetParameters().Count() descending
-                                          select constructor).Take(1);
+                    orderby constructor.GetParameters().Count() descending
+                    select constructor).Take(1);
 
                 if (longestConstructor.Any()) return longestConstructor.First();
             }
