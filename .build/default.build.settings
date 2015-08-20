@@ -60,9 +60,11 @@
 
   <property name="folder.settings" value="settings" overwrite="false" />
   <property name="dirs.settings" value="${dirs.current}${path.separator}${folder.settings}" overwrite="false" />
+  <property name="dirs.environments.settings" value="${dirs.settings}" overwrite="false" />
 
   <property name="folder.environment_files" value="environment.files" overwrite="false" />
   <property name="dirs.environment_files" value="${dirs.current}${path.separator}${folder.environment_files}" overwrite="false" />
+  <property name="dirs.build.environmentfiles" value="${dirs.build}${path.separator}${folder.environment_files}" overwrite="false" />
 
   <property name="folder.file_server" value="file.server" overwrite="false" />
   <property name="dirs.file_server" value="${dirs.current}${path.separator}${folder.file_server}" overwrite="false" />
