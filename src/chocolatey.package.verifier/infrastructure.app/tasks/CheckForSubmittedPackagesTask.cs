@@ -60,7 +60,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
             var service = new FeedContext_x0060_1(new Uri("http://chocolatey.org/api/v2/submitted/"));
 
-            // For testing purposes, let's only use the first package in the queue
+            //TODO (not looping) For testing purposes, let's only use the first package in the queue
             var package = service.Packages.First();
 
             this.Log().Info(() => "{0} found in submitted state.".format_with(package.Title));
