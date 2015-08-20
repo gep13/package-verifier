@@ -126,20 +126,20 @@
     <None Include="chocolatey.package.verifier.Host.exe.config.template">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Content Include="files\shell\InstallChocolatey.ps1">
+    <Content Include="shell\InstallChocolatey.ps1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="files\shell\InstallNet4.ps1">
+    <Content Include="shell\InstallNet4.ps1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="files\shell\NotifyGuiAppsOfEnvironmentChanges.ps1">
+    <Content Include="shell\NotifyGuiAppsOfEnvironmentChanges.ps1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="files\Vagrantfile">
+    <Content Include="Vagrantfile">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="files\shell\ChocolateyAction.ps1" />
-    <Content Include="files\shell\PrepareMachine.ps1">
+    <None Include="shell\ChocolateyAction.ps1" />
+    <Content Include="shell\PrepareMachine.ps1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config" />
