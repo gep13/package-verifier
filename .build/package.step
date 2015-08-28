@@ -60,6 +60,7 @@
         <exclude name="*Moq.*" />
         <exclude name="**${path.separator}*.template" />
         <include name="**/*.*" />
+        <include name="**/*" />
       </fileset>
     </copy>
   </target>
@@ -71,6 +72,7 @@
       <fileset basedir="${dir.build.publishedapps}">
         <exclude name="**${path.separator}*.template" />
         <include name="**/*.*" />
+        <include name="**/*" />
       </fileset>
     </copy>
   </target>
