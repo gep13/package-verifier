@@ -37,22 +37,19 @@
       <mapping>
         <level value="ERROR" />
         <foreColor value="Red" />
-        <backColor value="Black" />
       </mapping>
       <mapping>
         <level value="WARN" />
         <foreColor value="Yellow" />
-        <backColor value="Black" />
       </mapping>
       <mapping>
         <level value="INFO" />
-        <foreColor value="Gray" />
-        <backColor value="Black" />
+        <foreColor value="White" />
       </mapping>
       <mapping>
         <level value="DEBUG" />
-        <foreColor value="DarkBlue" />
-        <backColor value="Gray" />
+        <foreColor value="Blue" />
+        <backColor value="White" />
       </mapping>
       <layout type="log4net.Layout.PatternLayout">
         <conversionPattern value="%message%newline" />
