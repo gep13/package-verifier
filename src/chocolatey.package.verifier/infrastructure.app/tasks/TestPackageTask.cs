@@ -35,7 +35,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
         public void initialize()
         {
-            _subscription = EventManager.subscribe<SubmitPackageMessage>(moderate_package, null, null);
+            _subscription = EventManager.subscribe<SubmitPackageMessage>(test_package, null, null);
             this.Log().Info(() => "{0} is now ready and waiting for SubmitPackageMessage".format_with(GetType().Name));
         }
 
@@ -45,16 +45,22 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             _vagrantService.shutdown();
         }
 
-        private void moderate_package(SubmitPackageMessage message)
+        private void test_package(SubmitPackageMessage message)
         {
             this.Log().Info(
-                () => "Moderating Package: {0} Version: {1}".format_with(message.PackageId, message.PackageVersion));
+                () => "Testing Package: {0} Version: {1}".format_with(message.PackageId, message.PackageVersion));
 
             _vagrantService.prep();
             _vagrantService.reset();
-            var installLog = _vagrantService.run("install");
-            //var upgradeLog = _vagrantService.run("upgrade");
-            var uninstallLog = _vagrantService.run("uninstall");
+            var installLog =
+                _vagrantService.run(
+                    "choco install {0} --version {1} -fdvy".format_with(
+                        message.PackageId,
+                        message.PackageVersion));
+            //var upgradeLog = _vagrantService.run("choco upgrade {0} --version {1} -fdvy".format_with(message.PackageId,message.PackageVersion));
+            var uninstallLog =
+                _vagrantService.run(
+                    "choco uninstall {0} --version {1} -dvy".format_with(message.PackageId, message.PackageVersion));
 
             var logs = new List<PackageTestLog>();
 

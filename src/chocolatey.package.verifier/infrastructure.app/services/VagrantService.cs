@@ -15,41 +15,121 @@
 
 namespace chocolatey.package.verifier.infrastructure.app.services
 {
+    using System.Text;
+    using commands;
+    using configuration;
+    using filesystem;
+    using infrastructure.results;
+    using results;
+    using tokens;
+
+    public class VagrantProperties
+    {
+        public string Command { get; set; }
+    }
+
     public class VagrantService : IVagrantService
     {
+        private readonly ICommandExecutor _commandExecutor;
+        private readonly IFileSystem _fileSystem;
+        private readonly IConfigurationSettings _configuration;
+        private const string VAGRANT_ACTION_FILE = "VagrantAction.ps1";
+
+        private readonly string _vagrantExecutable;
+
+        public VagrantService(ICommandExecutor commandExecutor, IFileSystem fileSystem, IConfigurationSettings configuration)
+        {
+            _commandExecutor = commandExecutor;
+            _fileSystem = fileSystem;
+            _configuration = configuration;
+
+            _vagrantExecutable = _fileSystem.get_executable_path("vagrant.exe");
+        }
+
+        private bool is_running()
+        {
+            return execute_vagrant("status").ExitCode == 0;
+        }
+
+        private VagrantOutputResult execute_vagrant(string command)
+        {
+            var results = new VagrantOutputResult();
+            var logs = new StringBuilder();
+            var exitCode = _commandExecutor.execute(
+                _vagrantExecutable,
+                command,
+                _configuration.CommandExecutionTimeoutSeconds,
+                (s, e) =>
+                {
+                    if (e == null || string.IsNullOrWhiteSpace(e.Data)) return;
+                    this.Log().Debug(() => " [Vagrant] {0}".format_with(e.Data));
+                    logs.AppendLine(e.Data);
+                    results.Messages.Add(new ResultMessage{Message = e.Data,MessageType = ResultType.Note});
+                },
+                (s, e) =>
+                {
+                    if (e == null || string.IsNullOrWhiteSpace(e.Data)) return;
+                    this.Log().Debug(() => " [Vagrant][Error] {0}".format_with(e.Data));
+                    logs.AppendLine("[ERROR] " + e.Data);
+                    results.Messages.Add(new ResultMessage { Message = e.Data, MessageType = ResultType.Error });
+                },
+                updateProcessPath: false);
+
+            results.Logs = logs.ToString();
+            results.ExitCode = exitCode;
+
+            return results;
+        }
+
+        private void make_vagrant_provision_file(string fileName)
+        {
+            var path = _fileSystem.combine_paths(_fileSystem.get_current_directory(), "shell", fileName);
+            var destination = _fileSystem.combine_paths(_fileSystem.get_current_directory(), "shell", VAGRANT_ACTION_FILE);
+
+            _fileSystem.copy_file(path, destination, overwriteExisting: true);
+        }
+
+        private void update_command_in_action_file(string command)
+        {
+            var filePath = _fileSystem.combine_paths(_fileSystem.get_current_directory(), "shell", VAGRANT_ACTION_FILE);
+            var contents = _fileSystem.read_file(filePath);
+
+            var config = new VagrantProperties
+            {
+                Command = command
+            };
+            
+            _fileSystem.write_file(filePath, TokenReplacer.replace_tokens(config, contents),Encoding.UTF8);
+        }
+
         public void prep()
         {
-            //if vagrant status - on then we return quickly
+            if (is_running()) return;
 
-            /*
-             place and update vagrantfile
-             vagrant up
-
-             rename %CHOCOLATEYINSTALL%\logs\chocolatey.log chocolatey.log.old
-             vagrant sandbox on
-              
-vagrant provision
-
-choco install -dvy
-rename chocolatey.log.install
-rename chocolatey.log.uninstall
-
-grab files
-vagrant sandbox rollback
-swap vagrantfile for next install
-             */
+            make_vagrant_provision_file("PrepareMachine.ps1");
+            execute_vagrant("up");
+            execute_vagrant("sandbox on");
         }
 
         public void reset()
         {
-            /*
-             vagrant sandbox rollback
-             swap vagrantfile for next install
-             */
+            execute_vagrant("sandbox rollback");
+            make_vagrant_provision_file("PrepareMachine.ps1");
         }
 
         public string run(string command)
         {
+            execute_vagrant("sandbox on");
+
+            //replace templates
+
+            make_vagrant_provision_file("ChocolateyAction.ps1");
+            update_command_in_action_file(command);
+
+            var result = execute_vagrant("provision");
+
+            return result.Logs;
+
             /*
              swap choco action file
              vagrant provision
@@ -66,9 +146,7 @@ swap vagrantfile for next install
 
         public void shutdown()
         {
-            /*
-             vagrant halt
-             */
+            execute_vagrant("halt");
         }
     }
 }
