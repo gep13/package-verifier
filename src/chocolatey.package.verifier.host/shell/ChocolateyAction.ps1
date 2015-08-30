@@ -2,4 +2,4 @@
 
 $env:PATH +=';c:\ProgramData\chocolatey\bin'
 
-{{command}}
+[[command]]
