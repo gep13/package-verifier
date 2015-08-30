@@ -113,5 +113,10 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         ///   Gets the number of minutes that the forms authentication ticket is valid
         /// </summary>
         int FormsAuthenticationExpirationInMinutes { get; }
+
+        /// <summary>
+        ///   Gets the number of seconds for a command to run before timing out.
+        /// </summary>
+        int CommandExecutionTimeoutSeconds { get; }
     }
 }

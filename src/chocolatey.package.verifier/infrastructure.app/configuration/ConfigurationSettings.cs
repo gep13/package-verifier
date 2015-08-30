@@ -209,6 +209,11 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
             get { return int.Parse(get_application_settings_value("FormsAuthenticationExpirationInMinutes")); }
         }
 
+        public int CommandExecutionTimeoutSeconds
+        {
+            get { return int.Parse(get_application_settings_value("CommandExecutionTimeoutSeconds")); }
+        }
+
         /// <summary>
         ///   Gets the application settings value.
         /// </summary>
