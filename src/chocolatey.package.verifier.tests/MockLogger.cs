@@ -19,7 +19,7 @@ namespace chocolatey.package.verifier.tests
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using Moq;
-    using infrastructure.logging;
+    using verifier.infrastructure.logging;
 
     // ReSharper disable InconsistentNaming
 

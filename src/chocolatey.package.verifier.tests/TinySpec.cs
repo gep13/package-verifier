@@ -14,13 +14,11 @@
 // specific language governing permissions and limitations under the License.
 // ==============================================================================
 
-namespace chocolatey.package.verifier.Tests
+namespace chocolatey.package.verifier.tests
 {
     using System;
     using NUnit.Framework;
-    using infrastructure.app;
-    using infrastructure.logging;
-    using tests;
+    using verifier.infrastructure.logging;
 
     // ReSharper disable InconsistentNaming
 
