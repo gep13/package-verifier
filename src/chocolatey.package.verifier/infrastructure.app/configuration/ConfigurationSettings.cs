@@ -81,10 +81,7 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         ///   Gets the remote folders for FTP task.
         /// </summary>
         /// <value>The remote folders for FTP task.</value>
-        public IList<IKnownFolder> RemoteFoldersForFtpTask
-        {
-            get { return get_list_of_known_folders("FtpTask.RemoteFolders"); }
-        }
+        public IList<IKnownFolder> RemoteFoldersForFtpTask { get { return get_list_of_known_folders("FtpTask.RemoteFolders"); } }
 
         /// <summary>
         ///   Gets the ignored folders for FTP task.
