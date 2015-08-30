@@ -10,7 +10,7 @@
     <add key="IsDebugMode" value="false"/>
     <add key="Path.Files" value="..\App_Data\Files"/>
     <add key="TestingEmailOverride" value="${email.everything.to}"/>
-    <add key="CommandExecutionTimeoutSeconds" value="1800"/>
+    <add key="CommandExecutionTimeoutSeconds" value="2700"/>
     <add key="VagrantBoxNames" value="win2012r2x64"/>
     <add key="SubmittedPackagesUrl" value="${submitted.packages.url}"/>
     <add key="GitHub.UserName" value="${github.username}"/>
