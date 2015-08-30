@@ -1,4 +1,4 @@
-﻿$ChocoInstallPath = "$env:SystemDrive\ProgramData\Chocolatey\bin"
+$ChocoInstallPath = "$env:SystemDrive\ProgramData\Chocolatey\bin"
 
 if (!(Test-Path $ChocoInstallPath)) {
   # Install chocolatey
