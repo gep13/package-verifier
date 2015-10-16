@@ -15,6 +15,7 @@
 
 namespace chocolatey.package.verifier.infrastructure.app.registration
 {
+    using commands;
     using configuration;
     using filesystem;
     using infrastructure.configuration;
@@ -51,6 +52,7 @@ namespace chocolatey.package.verifier.infrastructure.app.registration
             container.Register<IMessageService, MessageService>(Lifestyle.Singleton);
             container.Register<IEmailDistributionService, EmailDistributionService>(Lifestyle.Singleton);
             container.Register<IDateTimeService, SystemDateTimeUtcService>(Lifestyle.Singleton);
+            container.Register<ICommandExecutor, CommandExecutor>(Lifestyle.Singleton);
             container.Register<IFileSystemService, FileSystemService>(Lifestyle.Singleton);
             container.Register<IFileSystem, DotNetFileSystem>(Lifestyle.Singleton);
             container.Register<IRegularExpressionService, RegularExpressionService>(Lifestyle.Singleton);
