@@ -144,11 +144,8 @@ namespace chocolatey.package.verifier.infrastructure.commands
                 }
             }
 
-            ApplicationParameters
-                .Name.Log()
-                .Debug(
-                    () =>
-                        "Command ['\"{0}\" {1}'] exited with '{2}'".format_with(process, arguments, exitCode));
+            ApplicationParameters.Name.Log().Debug(
+                () => "Command ['\"{0}\" {1}'] exited with '{2}'".format_with(process, arguments, exitCode));
 
             return exitCode;
         }
