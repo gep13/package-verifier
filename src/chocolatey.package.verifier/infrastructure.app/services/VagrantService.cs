@@ -126,13 +126,26 @@ namespace chocolatey.package.verifier.infrastructure.app.services
             if (is_running()) return;
 
             make_vagrant_provision_file("PrepareMachine.ps1");
-            execute_vagrant("up");
-            execute_vagrant("sandbox on");
+            var result = execute_vagrant("up");
+            if (result.ExitCode != 0)
+            {
+                throw new ApplicationException("Vagrant up resulted in {0}{1}".format_with(Environment.NewLine, result.Logs));
+            }
+
+            result = execute_vagrant("sandbox on");
+            if (result.ExitCode != 0)
+            {
+                throw new ApplicationException("Vagrant sandbox on resulted in {0}{1}".format_with(Environment.NewLine, result.Logs));
+            }
         }
 
         public void reset()
         {
-            execute_vagrant("sandbox rollback");
+            var result = execute_vagrant("sandbox rollback");
+            if (result.ExitCode != 0)
+            {
+                throw new ApplicationException("Vagrant sandbox rollback resulted in {0}{1}".format_with(Environment.NewLine, result.Logs));
+            }
             make_vagrant_provision_file("PrepareMachine.ps1");
         }
 
