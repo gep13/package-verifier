@@ -44,10 +44,12 @@ namespace chocolatey.package.verifier.infrastructure.app.services
             _commandExecutor = commandExecutor;
             _fileSystem = fileSystem;
             _configuration = configuration;
-
-
+            
             _vagrantExecutable = @"C:\HashiCorp\Vagrant\bin\vagrant.exe";
-            //_vagrantExecutable = _fileSystem.get_executable_path("vagrant.exe");
+            if (!_fileSystem.file_exists(_vagrantExecutable))
+            {
+                _vagrantExecutable = _fileSystem.get_executable_path("vagrant.exe");
+            }
         }
 
         private bool is_running()
