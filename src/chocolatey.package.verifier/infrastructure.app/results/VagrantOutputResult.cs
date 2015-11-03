@@ -21,5 +21,7 @@ namespace chocolatey.package.verifier.infrastructure.app.results
     {
         public int ExitCode { get; set; }
         public string Logs { get; set; }
+        public string DotFiles { get; set; }
+        public string DotRegistry { get; set; }
     }
 }
