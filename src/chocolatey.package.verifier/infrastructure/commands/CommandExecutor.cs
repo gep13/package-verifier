@@ -153,6 +153,75 @@ namespace chocolatey.package.verifier.infrastructure.commands
             return exitCode;
         }
 
+        public ProcessOutput execute(
+            string process,
+            string arguments,
+            int waitForExitInSeconds,
+            string workingDirectory,
+            bool updateProcessPath,
+            bool allowUseWindow
+            )
+        {
+            return execute_static(
+                process,
+                arguments,
+                waitForExitInSeconds,
+                file_system.get_directory_name(Assembly.GetExecutingAssembly().Location),
+                updateProcessPath,
+                allowUseWindow
+                );
+        }
+
+        //vagrant doesn't like reading process output while the process is running.
+        public static ProcessOutput execute_static(
+            string process,
+            string arguments,
+            int waitForExitInSeconds,
+            string workingDirectory,
+            bool updateProcessPath,
+            bool allowUseWindow
+            )
+        {
+            if (updateProcessPath) process = file_system.get_full_path(process);
+
+            ApplicationParameters.Name.Log().Debug(() => "Calling command ['\"{0}\" {1}']".format_with(process, arguments));
+
+            var psi = new ProcessStartInfo(process, arguments)
+            {
+                UseShellExecute = false,
+                WorkingDirectory = workingDirectory,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = !allowUseWindow,
+                WindowStyle = ProcessWindowStyle.Minimized,
+            };
+
+            var output = new ProcessOutput
+            {
+                ExitCode = -1
+            };
+
+            using (var p = new Process())
+            {
+                p.StartInfo = psi;
+                p.Start();
+
+                if (waitForExitInSeconds > 0)
+                {
+                    var exited = p.WaitForExit((int)TimeSpan.FromSeconds(waitForExitInSeconds).TotalMilliseconds);
+                    if (exited) output.ExitCode = p.ExitCode;
+                }
+
+                output.StandardOut = p.StandardOutput.ReadToEnd();
+                output.StandardError = p.StandardError.ReadToEnd();
+            }
+
+            ApplicationParameters.Name.Log()
+                .Debug(() => "Command ['\"{0}\" {1}'] exited with '{2}'".format_with(process, arguments, output.ExitCode));
+
+            return output;
+        }
+
         private static void log_output(object sender, DataReceivedEventArgs e)
         {
             if (e != null) ApplicationParameters.Name.Log().Info(e.Data);

@@ -42,5 +42,14 @@ namespace chocolatey.package.verifier.infrastructure.commands
             bool updateProcessPath,
             bool allowUseWindow
             );
+
+        ProcessOutput execute(
+            string process,
+            string arguments,
+            int waitForExitInSeconds,
+            string workingDirectory,
+            bool updateProcessPath,
+            bool allowUseWindow
+            );
     }
 }
