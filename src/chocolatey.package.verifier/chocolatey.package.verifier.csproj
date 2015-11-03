@@ -149,6 +149,7 @@
     <Compile Include="infrastructure\commands\CommandExecutor.cs" />
     <Compile Include="infrastructure\commands\ICommandExecutor.cs" />
     <Compile Include="infrastructure\commands\PowershellExecutor.cs" />
+    <Compile Include="infrastructure\commands\ProcessOutput.cs" />
     <Compile Include="infrastructure\container\SimpleInjectorContainerResolutionBehavior.cs" />
     <Compile Include="infrastructure.app\services\EmailDistributionService.cs" />
     <Compile Include="infrastructure.app\services\IEmailDistributionService.cs" />
