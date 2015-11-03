@@ -37,7 +37,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
         private readonly IConfigurationSettings _configuration;
         private const string VAGRANT_ACTION_FILE = "VagrantAction.ps1";
 
-        private readonly string _vagrantExecutable;
+        private string _vagrantExecutable;
 
         public VagrantService(ICommandExecutor commandExecutor, IFileSystem fileSystem, IConfigurationSettings configuration)
         {
@@ -50,6 +50,22 @@ namespace chocolatey.package.verifier.infrastructure.app.services
             {
                 _vagrantExecutable = _fileSystem.get_executable_path("vagrant.exe");
             }
+
+            set_environment_variables();
+        }
+
+        private void set_environment_variables()
+        {
+            var vagrantPath = _fileSystem.get_directory_info_from_file_path(_vagrantExecutable);
+            var vagrantEmbeddedPath = _fileSystem.get_full_path(_fileSystem.combine_paths(vagrantPath.FullName, "../embedded"));
+            var path = Environment.GetEnvironmentVariable("PATH");
+            Environment.SetEnvironmentVariable("PATH", "{0}\\bin;{1};{2}".format_with(vagrantEmbeddedPath,vagrantPath.FullName, path));
+
+            Environment.SetEnvironmentVariable("GEM_PATH","{0}\\gems".format_with(vagrantEmbeddedPath));
+            Environment.SetEnvironmentVariable("GEM_HOME","{0}\\gems".format_with(vagrantEmbeddedPath));
+            Environment.SetEnvironmentVariable("GEMRC","{0}\\etc\\gemrc".format_with(vagrantEmbeddedPath));
+
+            _vagrantExecutable = "{0}\\gems\\bin\\vagrant.bat".format_with(vagrantEmbeddedPath);
         }
 
         private bool is_running()
@@ -61,6 +77,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
         {
             var results = new VagrantOutputResult();
             var logs = new StringBuilder();
+            
             var output = _commandExecutor.execute(
                 _vagrantExecutable,
                 command,
@@ -159,7 +176,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
             update_command_in_action_file(command);
 
             var result = execute_vagrant("provision");
-
+           
             return result.Logs;
 
             //todo: return .registry / .files
