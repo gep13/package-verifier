@@ -22,6 +22,7 @@ namespace chocolatey.package.verifier.Host
     using infrastructure.app;
     using infrastructure.app.messaging;
     using infrastructure.app.registration;
+    using infrastructure.app.services;
     using infrastructure.messaging;
     using infrastructure.tasks;
     using log4net;
@@ -82,7 +83,8 @@ namespace chocolatey.package.verifier.Host
 
                 if ((args.Length > 0) && (Array.IndexOf(args, "/console") != -1))
                 {
-                    Console.WriteLine("Press any key to continue...");
+                    //bug:this may be causing vagrant to hang.
+                    Console.WriteLine("Press Enter to continue...");
                     Console.ReadKey();
                 }
             } catch (Exception ex)
