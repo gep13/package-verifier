@@ -15,6 +15,8 @@
 
 namespace chocolatey.package.verifier.infrastructure.app.services
 {
+    using System;
+    using System.Reflection;
     using System.Text;
     using commands;
     using configuration;
@@ -55,28 +57,26 @@ namespace chocolatey.package.verifier.infrastructure.app.services
         {
             var results = new VagrantOutputResult();
             var logs = new StringBuilder();
-            var exitCode = _commandExecutor.execute(
+            var output = _commandExecutor.execute(
                 _vagrantExecutable,
                 command,
                 _configuration.CommandExecutionTimeoutSeconds,
-                (s, e) =>
-                {
-                    if (e == null || string.IsNullOrWhiteSpace(e.Data)) return;
-                    this.Log().Debug(() => " [Vagrant] {0}".format_with(e.Data));
-                    logs.AppendLine(e.Data);
-                    results.Messages.Add(new ResultMessage{Message = e.Data,MessageType = ResultType.Note});
-                },
-                (s, e) =>
-                {
-                    if (e == null || string.IsNullOrWhiteSpace(e.Data)) return;
-                    this.Log().Debug(() => " [Vagrant][Error] {0}".format_with(e.Data));
-                    logs.AppendLine("[ERROR] " + e.Data);
-                    results.Messages.Add(new ResultMessage { Message = e.Data, MessageType = ResultType.Error });
-                },
-                updateProcessPath: false);
+                _fileSystem.get_directory_name(Assembly.GetExecutingAssembly().Location),
+                updateProcessPath: false,
+                allowUseWindow: false);
 
+            if (!string.IsNullOrWhiteSpace(output.StandardError))
+            {
+                results.Messages.Add(new ResultMessage { Message = output.StandardError, MessageType = ResultType.Error });
+                logs.Append("##Error Output" + Environment.NewLine);
+                logs.Append(output.StandardError + Environment.NewLine + Environment.NewLine);
+            }
+
+            results.Messages.Add(new ResultMessage { Message = output.StandardOut, MessageType = ResultType.Note });
+            logs.Append("##Standard Output" + Environment.NewLine);
+            logs.Append(output.StandardOut);
             results.Logs = logs.ToString();
-            results.ExitCode = exitCode;
+            results.ExitCode = output.ExitCode;
 
             return results;
         }
@@ -129,6 +129,8 @@ namespace chocolatey.package.verifier.infrastructure.app.services
             var result = execute_vagrant("provision");
 
             return result.Logs;
+
+            //todo: return .registry / .files
 
             /*
              swap choco action file
