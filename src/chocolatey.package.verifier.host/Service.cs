@@ -17,6 +17,7 @@ namespace chocolatey.package.verifier.Host
 {
     using System;
     using System.ServiceProcess;
+    using System.Threading;
     using SimpleInjector;
     using host.infrastructure.registration;
     using infrastructure.app;
@@ -35,6 +36,8 @@ namespace chocolatey.package.verifier.Host
         private readonly ILog _logger;
         private Container _container;
         private IDisposable _subscription;
+        private static ManualResetEvent manualReset = new ManualResetEvent(false);
+
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="Service" /> class.
@@ -84,8 +87,10 @@ namespace chocolatey.package.verifier.Host
                 if ((args.Length > 0) && (Array.IndexOf(args, "/console") != -1))
                 {
                     //bug:this may be causing vagrant to hang.
-                    Console.WriteLine("Press Enter to continue...");
-                    Console.ReadKey();
+                    //http://stackoverflow.com/a/16218470/18475
+                    Console.WriteLine("Press Control+C to exit.");
+                    manualReset.WaitOne();
+                    //Console.ReadKey();
                 }
             } catch (Exception ex)
             {

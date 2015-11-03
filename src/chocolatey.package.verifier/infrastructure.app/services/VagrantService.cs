@@ -51,10 +51,10 @@ namespace chocolatey.package.verifier.infrastructure.app.services
                 _vagrantExecutable = _fileSystem.get_executable_path("vagrant.exe");
             }
 
-            set_environment_variables();
+            //use_vagrant_directly();
         }
 
-        private void set_environment_variables()
+        private void use_vagrant_directly()
         {
             var vagrantPath = _fileSystem.get_directory_info_from_file_path(_vagrantExecutable);
             var vagrantEmbeddedPath = _fileSystem.get_full_path(_fileSystem.combine_paths(vagrantPath.FullName, "../embedded"));
