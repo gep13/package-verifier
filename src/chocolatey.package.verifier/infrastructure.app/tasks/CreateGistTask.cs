@@ -47,14 +47,10 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             this.Log().Info(
                 () => "Creating gist for Package: {0} Version: {1}. Result: {2}".format_with(message.PackageId, message.PackageVersion, message.Success ? "Pass" : "Fail"));
 
-            var gistDescription = "{0} v{1} - {2} - Package Tests Results{3} * Tested {4} UTC{3} * Tested against {4} ({5})".format_with(
+            var gistDescription = "{0} v{1} - {2} - Package Tests Results".format_with(
                 message.PackageId, 
                 message.PackageVersion,
-                message.Success ? "Passed":"Failed",
-                Environment.NewLine,
-                message.TestDate.GetValueOrDefault().ToUniversalTime().ToLongDateString(),
-                message.MachineName,
-                message.WindowsVersion);
+                message.Success ? "Passed":"Failed");
 
             var createdGistUrl = await _gistService.create_gist(gistDescription, true, message.Logs);
 
