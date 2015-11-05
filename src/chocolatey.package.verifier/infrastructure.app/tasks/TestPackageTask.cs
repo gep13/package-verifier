@@ -18,6 +18,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
     using System;
     using System.Collections.Generic;
     using domain;
+    using filesystem;
     using infrastructure.messaging;
     using infrastructure.tasks;
     using messaging;
@@ -26,11 +27,13 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
     public class TestPackageTask : ITask
     {
         private readonly IVagrantService _vagrantService;
+        private readonly IFileSystem _fileSystem;
         private IDisposable _subscription;
 
-        public TestPackageTask(IVagrantService vagrantService)
+        public TestPackageTask(IVagrantService vagrantService, IFileSystem fileSystem)
         {
             _vagrantService = vagrantService;
+            _fileSystem = fileSystem;
         }
 
         public void initialize()
@@ -52,23 +55,38 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
             _vagrantService.prep();
             _vagrantService.reset();
-            var installLog =
-                _vagrantService.run(
-                    "choco install {0} --version {1} -fdvy".format_with(
-                        message.PackageId,
-                        message.PackageVersion));
+            var installLog = _vagrantService.run(
+                "choco install {0} --version {1} -fdvy".format_with(
+                    message.PackageId,
+                    message.PackageVersion));
+
+            var registrySnapshot = string.Empty;
+            var registrySnapshotFile = ".\\files\\{0}.{1}\\.registry".format_with(message.PackageId, message.PackageVersion);
+            if (_fileSystem.file_exists(registrySnapshotFile)) registrySnapshot = _fileSystem.read_file(registrySnapshotFile);
+
+            var filesSnapshot = string.Empty;
+            var filesSnapshotFile = ".\\files\\{0}.{1}\\.files".format_with(message.PackageId, message.PackageVersion);
+            if (_fileSystem.file_exists(filesSnapshotFile)) filesSnapshot = _fileSystem.read_file(filesSnapshotFile);
+
             //var upgradeLog = _vagrantService.run("choco upgrade {0} --version {1} -fdvy".format_with(message.PackageId,message.PackageVersion));
-            var uninstallLog =
-                _vagrantService.run(
-                    "choco uninstall {0} --version {1} -dvy".format_with(message.PackageId, message.PackageVersion));
+            var uninstallLog = _vagrantService.run("choco uninstall {0} --version {1} -dvy".format_with(message.PackageId, message.PackageVersion));
+
+            foreach (var subDirectory in _fileSystem.get_directories(".\\files").or_empty_list_if_null())
+            {
+                _fileSystem.delete_directory_if_exists(subDirectory, recursive: true);
+            }
 
             var logs = new List<PackageTestLog>();
 
             var installationLog = new PackageTestLog("Install.txt", installLog);
+            var registrySnapshotLog = new PackageTestLog("RegistrySnapshot.xml", registrySnapshot);
+            var filesSnapshotLog = new PackageTestLog("FilesSnapshot.xml", filesSnapshot);
             var uninstallationLog = new PackageTestLog("Uninstall.txt", uninstallLog);
             var upgradeLog = new PackageTestLog("Upgrade.txt", "Not yet implemented");
 
             logs.Add(installationLog);
+            logs.Add(registrySnapshotLog);
+            logs.Add(filesSnapshotLog);
             logs.Add(uninstallationLog);
             logs.Add(upgradeLog);
 
