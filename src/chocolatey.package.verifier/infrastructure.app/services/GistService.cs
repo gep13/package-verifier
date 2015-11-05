@@ -52,7 +52,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
 
         private GitHubClient create_git_hub_client()
         {
-            // TODO: What sort of error handling do we want around this?  Can we assume that these values will be correctly set?
+            // assume that these values will be correctly set
             Credentials credentials;
             if (!string.IsNullOrWhiteSpace(_configuration.GitHubToken))
             {

@@ -154,8 +154,6 @@
     <Compile Include="infrastructure\container\SimpleInjectorContainerResolutionBehavior.cs" />
     <Compile Include="infrastructure.app\services\EmailDistributionService.cs" />
     <Compile Include="infrastructure.app\services\IEmailDistributionService.cs" />
-    <Compile Include="infrastructure.app\services\ISampleJobService.cs" />
-    <Compile Include="infrastructure.app\services\SampleJobService.cs" />
     <Compile Include="infrastructure\filesystem\DotNetFileSystem.cs" />
     <Compile Include="infrastructure\filesystem\filewatchers\FileFoundEventArgs.cs" />
     <Compile Include="infrastructure\filesystem\filewatchers\FileFoundEventHandler.cs" />
