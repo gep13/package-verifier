@@ -74,7 +74,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             var uninstallResults = new VagrantOutputResult();
             if (success)
             {
-                upgradeResults = _vagrantService.run("choco upgrade {0} --version {1} -fdvy".format_with(message.PackageId, message.PackageVersion));
+               // upgradeResults = _vagrantService.run("choco upgrade {0} --version {1} -fdvy".format_with(message.PackageId, message.PackageVersion));
                 uninstallResults = _vagrantService.run("choco uninstall {0} --version {1} -dvy".format_with(message.PackageId, message.PackageVersion));
             }
 
@@ -84,14 +84,11 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             }
 
             var logs = new List<PackageTestLog>();
-
-            //var installResults = new VagrantOutputResult();
-            //var success = installResults.Success && installResults.ExitCode == 0;
-
+            
             logs.Add(
                 new PackageTestLog(
                     "_Summary.md",
-                    "{0} v{1} - {2} - Package Tests Results{3} * Tested {4} UTC{3} * Tested against {4} ({5})".format_with(
+                    "{0} v{1} - {2} - Package Tests Results{3} * Tested {4} UTC{3} * Tested against {5} ({6})".format_with(
                         message.PackageId,
                         message.PackageVersion,
                         success ? "Passed" : "Failed",
