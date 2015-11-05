@@ -70,7 +70,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
 
         private bool is_running()
         {
-            return execute_vagrant("status").Logs.to_lower().Contains("running(");
+            return execute_vagrant("status").Logs.to_lower().Contains("running (");
         }
 
         private VagrantOutputResult execute_vagrant(string command)
