@@ -55,7 +55,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
             _vagrantService.prep();
             _vagrantService.reset();
-            var installLog = _vagrantService.run(
+            var installResults = _vagrantService.run(
                 "choco install {0} --version {1} -fdvy".format_with(
                     message.PackageId,
                     message.PackageVersion));
@@ -68,8 +68,8 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             var filesSnapshotFile = ".\\files\\{0}.{1}\\.files".format_with(message.PackageId, message.PackageVersion);
             if (_fileSystem.file_exists(filesSnapshotFile)) filesSnapshot = _fileSystem.read_file(filesSnapshotFile);
 
-            //var upgradeLog = _vagrantService.run("choco upgrade {0} --version {1} -fdvy".format_with(message.PackageId,message.PackageVersion));
-            var uninstallLog = _vagrantService.run("choco uninstall {0} --version {1} -dvy".format_with(message.PackageId, message.PackageVersion));
+            //var upgradeResults = _vagrantService.run("choco upgrade {0} --version {1} -fdvy".format_with(message.PackageId,message.PackageVersion));
+            var uninstallResults = _vagrantService.run("choco uninstall {0} --version {1} -dvy".format_with(message.PackageId, message.PackageVersion));
 
             foreach (var subDirectory in _fileSystem.get_directories(".\\files").or_empty_list_if_null())
             {
@@ -78,17 +78,12 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
             var logs = new List<PackageTestLog>();
 
-            var installationLog = new PackageTestLog("Install.txt", installLog);
-            var registrySnapshotLog = new PackageTestLog("RegistrySnapshot.xml", registrySnapshot);
-            var filesSnapshotLog = new PackageTestLog("FilesSnapshot.xml", filesSnapshot);
-            var uninstallationLog = new PackageTestLog("Uninstall.txt", uninstallLog);
-            var upgradeLog = new PackageTestLog("Upgrade.txt", "Not yet implemented");
-
-            logs.Add(installationLog);
-            logs.Add(registrySnapshotLog);
-            logs.Add(filesSnapshotLog);
-            logs.Add(uninstallationLog);
-            logs.Add(upgradeLog);
+            logs.Add(new PackageTestLog("Install.txt", installResults.Logs));
+            logs.Add(new PackageTestLog("RegistrySnapshot.xml", registrySnapshot));
+            logs.Add(new PackageTestLog("FilesSnapshot.xml", filesSnapshot));
+            logs.Add( new PackageTestLog("Upgrade.txt", "Not yet implemented"));
+            logs.Add(new PackageTestLog("Uninstall.txt", uninstallResults.Logs));
+          
 
             EventManager.publish(
                 new PackageTestResultMessage(
@@ -98,7 +93,8 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                     "win2012r2x64",
                     DateTime.UtcNow,
                     logs,
-                    true));
+                    success:installResults.Success
+                    ));
         }
     }
 }

@@ -15,11 +15,13 @@
 
 namespace chocolatey.package.verifier.infrastructure.app.services
 {
+    using results;
+
     public interface IVagrantService
     {
         void prep();
         void reset();
-        string run(string command);
+        VagrantOutputResult run(string command);
         void shutdown();
     }
 }

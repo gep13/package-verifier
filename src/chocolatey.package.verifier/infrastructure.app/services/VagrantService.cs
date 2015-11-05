@@ -166,31 +166,14 @@ namespace chocolatey.package.verifier.infrastructure.app.services
             make_vagrant_provision_file("PrepareMachine.ps1");
         }
 
-        public string run(string command)
+        public VagrantOutputResult run(string command)
         {
             execute_vagrant("sandbox on");
-
-            //replace templates
 
             make_vagrant_provision_file("ChocolateyAction.ps1");
             update_command_in_action_file(command);
 
-            var result = execute_vagrant("provision");
-           
-            return result.Logs;
-
-            /*
-             swap choco action file
-             vagrant provision
-
-             rename chocolatey.log.install
-             rename chocolatey.log.uninstall
-
-             grab files
-             vagrant sandbox rollback
-             swap vagrantfile for next install
-              */
-            return "";
+            return execute_vagrant("provision");
         }
 
         public void shutdown()
