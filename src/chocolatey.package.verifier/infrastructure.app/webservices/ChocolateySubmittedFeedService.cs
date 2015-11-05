@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 // Original file name: ChocolateySubmittedFeedService.cs
-// Generation date: 11/4/2015 9:55:03 PM
+// Generation date: 11/4/2015 11:03:29 PM
 namespace NuGetGallery
 {
     
@@ -732,6 +732,27 @@ namespace NuGetGallery
         private string _PackageSubmittedStatus;
         partial void OnPackageSubmittedStatusChanging(string value);
         partial void OnPackageSubmittedStatusChanged();
+        /// <summary>
+        /// There are no comments for Property PackageTestResultStatus in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Services.Design", "1.0.0")]
+        public string PackageTestResultStatus
+        {
+            get
+            {
+                return this._PackageTestResultStatus;
+            }
+            set
+            {
+                this.OnPackageTestResultStatusChanging(value);
+                this._PackageTestResultStatus = value;
+                this.OnPackageTestResultStatusChanged();
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Services.Design", "1.0.0")]
+        private string _PackageTestResultStatus;
+        partial void OnPackageTestResultStatusChanging(string value);
+        partial void OnPackageTestResultStatusChanged();
         /// <summary>
         /// There are no comments for Property RequireLicenseAcceptance in the schema.
         /// </summary>
