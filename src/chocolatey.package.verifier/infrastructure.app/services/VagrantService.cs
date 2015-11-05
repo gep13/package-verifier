@@ -179,8 +179,6 @@ namespace chocolatey.package.verifier.infrastructure.app.services
            
             return result.Logs;
 
-            //todo: return .registry / .files
-
             /*
              swap choco action file
              vagrant provision
