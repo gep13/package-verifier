@@ -52,7 +52,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                 message.PackageVersion,
                 message.Success ? "Passed":"Failed");
 
-            var createdGistUrl = await _gistService.create_gist(gistDescription, true, message.Logs);
+            var createdGistUrl = await _gistService.create_gist(gistDescription, isPublic:true,logs:message.Logs);
 
             EventManager.publish(new GistCreateMessage(createdGistUrl.ToString()));
         }

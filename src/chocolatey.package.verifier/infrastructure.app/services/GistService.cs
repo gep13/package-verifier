@@ -53,7 +53,8 @@ namespace chocolatey.package.verifier.infrastructure.app.services
         private GitHubClient create_git_hub_client()
         {
             // TODO: What sort of error handling do we want around this?  Can we assume that these values will be correctly set?
-            var credentials = new Credentials(_configuration.GitHubUserName, _configuration.GitHubPassword);
+            //var credentials = new Credentials(_configuration.GitHubUserName, _configuration.GitHubPassword);
+            var credentials = new Credentials(_configuration.GitHubToken);
             var gitHubClient = new GitHubClient(new ProductHeaderValue("ChocolateyPackageVerifier"))
             {
                 Credentials = credentials

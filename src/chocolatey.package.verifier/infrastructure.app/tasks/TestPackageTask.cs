@@ -22,6 +22,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
     using infrastructure.messaging;
     using infrastructure.tasks;
     using messaging;
+    using results;
     using services;
 
     public class TestPackageTask : ITask
@@ -68,8 +69,14 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             var filesSnapshotFile = ".\\files\\{0}.{1}\\.files".format_with(message.PackageId, message.PackageVersion);
             if (_fileSystem.file_exists(filesSnapshotFile)) filesSnapshot = _fileSystem.read_file(filesSnapshotFile);
 
-            //var upgradeResults = _vagrantService.run("choco upgrade {0} --version {1} -fdvy".format_with(message.PackageId,message.PackageVersion));
-            var uninstallResults = _vagrantService.run("choco uninstall {0} --version {1} -dvy".format_with(message.PackageId, message.PackageVersion));
+            var success = installResults.Success && installResults.ExitCode == 0;
+            var upgradeResults = new VagrantOutputResult();
+            var uninstallResults = new VagrantOutputResult();
+            if (success)
+            {
+                upgradeResults = _vagrantService.run("choco upgrade {0} --version {1} -fdvy".format_with(message.PackageId, message.PackageVersion));
+                uninstallResults = _vagrantService.run("choco uninstall {0} --version {1} -dvy".format_with(message.PackageId, message.PackageVersion));
+            }
 
             foreach (var subDirectory in _fileSystem.get_directories(".\\files").or_empty_list_if_null())
             {
@@ -78,21 +85,27 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
             var logs = new List<PackageTestLog>();
 
-            logs.Add(new PackageTestLog("_Summary.md","{0} v{1} - {2} - Package Tests Results{3} * Tested {4} UTC{3} * Tested against {4} ({5})".format_with(
-                message.PackageId, 
-                message.PackageVersion,
-                installResults.Success ? "Passed":"Failed",
-                Environment.NewLine,
-                DateTime.UtcNow.ToLongDateString(),
-                "win2012r2x64",
-                "Windows2012R2 x64"
-                )));
-            logs.Add(new PackageTestLog("Install.txt", installResults.Logs));
-            logs.Add(new PackageTestLog("RegistrySnapshot.xml", registrySnapshot));
-            logs.Add(new PackageTestLog("FilesSnapshot.xml", filesSnapshot));
-            logs.Add( new PackageTestLog("Upgrade.txt", "Not yet implemented"));
-            logs.Add(new PackageTestLog("Uninstall.txt", uninstallResults.Logs));
-          
+            //var installResults = new VagrantOutputResult();
+            //var success = installResults.Success && installResults.ExitCode == 0;
+
+            logs.Add(
+                new PackageTestLog(
+                    "_Summary.md",
+                    "{0} v{1} - {2} - Package Tests Results{3} * Tested {4} UTC{3} * Tested against {4} ({5})".format_with(
+                        message.PackageId,
+                        message.PackageVersion,
+                        success ? "Passed" : "Failed",
+                        Environment.NewLine,
+                        DateTime.UtcNow.ToLongDateString(),
+                        "win2012r2x64",
+                        "Windows2012R2 x64"
+                        )));
+
+            if (!string.IsNullOrWhiteSpace(installResults.Logs)) logs.Add(new PackageTestLog("Install.txt", installResults.Logs));
+            if (!string.IsNullOrWhiteSpace(registrySnapshot)) logs.Add(new PackageTestLog("RegistrySnapshot.xml", registrySnapshot));
+            if (!string.IsNullOrWhiteSpace(filesSnapshot)) logs.Add(new PackageTestLog("FilesSnapshot.xml", filesSnapshot));
+            if (!string.IsNullOrWhiteSpace(upgradeResults.Logs)) logs.Add(new PackageTestLog("Upgrade.txt", upgradeResults.Logs));
+            if (!string.IsNullOrWhiteSpace(uninstallResults.Logs)) logs.Add(new PackageTestLog("Uninstall.txt", uninstallResults.Logs));
 
             EventManager.publish(
                 new PackageTestResultMessage(
@@ -102,7 +115,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                     "win2012r2x64",
                     DateTime.UtcNow,
                     logs,
-                    success:installResults.Success
+                    success: success
                     ));
         }
     }

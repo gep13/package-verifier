@@ -163,7 +163,6 @@ namespace chocolatey.package.verifier.infrastructure.app.services
             {
                 throw new ApplicationException("Vagrant sandbox rollback resulted in {0}{1}".format_with(Environment.NewLine, result.Logs));
             }
-            make_vagrant_provision_file("PrepareMachine.ps1");
         }
 
         public VagrantOutputResult run(string command)
