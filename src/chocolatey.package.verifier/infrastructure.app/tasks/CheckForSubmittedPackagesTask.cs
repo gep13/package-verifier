@@ -56,21 +56,16 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             _timer.Stop();
 
             var service = new FeedContext_x0060_1(new Uri("http://chocolatey.org/api/v2/submitted/"));
-
-            //TODO (not looping) For testing purposes, let's only use the first package in the queue
+            
+            //this.Log().Info(()=> "There are currently {0} packages needing to be tested.".format_with(packages.Count));
             foreach (var package in service.Packages.or_empty_list_if_null())
             {
-                if (package.Id.Contains(".install"))
-                {
-                    this.Log().Info(() => "{0} found in submitted state.".format_with(package.Title));
+                if (package.PackageTestResultStatus == "Failing" || package.PackageTestResultStatus == "Passing") continue;
 
-                    EventManager.publish(new SubmitPackageMessage(package.Id, package.Version));
-                }
+                this.Log().Info(() => "{0} found in submitted state.".format_with(package.Title));
+                EventManager.publish(new SubmitPackageMessage(package.Id, package.Version));
             }
-            //var package = service.Packages.First();
-            //this.Log().Info(() => "{0} found in submitted state.".format_with(package.Title));
-            //EventManager.publish(new SubmitPackageMessage(package.Id, package.Version));
-
+            
             _timer.Start();
         }
     }
