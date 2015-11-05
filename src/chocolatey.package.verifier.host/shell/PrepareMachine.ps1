@@ -1,5 +1,3 @@
-$localDirectory = (Split-Path -Parent $MyInvocation.MyCommand.Definition);
-
-& $localDirectory\InstallNet4.ps1
-& $localDirectory\InstallChocolatey.ps1
-& $localDirectory\NotifyGuiAppsOfEnvironmentChanges.ps1
+& c:\vagrant\shell\InstallNet4.ps1
+& c:\vagrant\shell\InstallChocolatey.ps1
+& c:\vagrant\shell\NotifyGuiAppsOfEnvironmentChanges.ps1

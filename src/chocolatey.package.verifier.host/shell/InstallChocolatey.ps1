@@ -5,8 +5,7 @@ if (!(Test-Path $ChocoInstallPath)) {
   iex ((new-object net.webclient).DownloadString('http://chocolatey.org/install.ps1'))
 }
 
-
-Update-SessionEnvironment
+#Update-SessionEnvironment
 
 choco feature enable -n autouninstaller
 choco feature enable -n allowGlobalConfirmation
