@@ -58,11 +58,18 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             var service = new FeedContext_x0060_1(new Uri("http://chocolatey.org/api/v2/submitted/"));
 
             //TODO (not looping) For testing purposes, let's only use the first package in the queue
-            var package = service.Packages.First();
+            foreach (var package in service.Packages.or_empty_list_if_null())
+            {
+                if (package.Id.Contains(".install"))
+                {
+                    this.Log().Info(() => "{0} found in submitted state.".format_with(package.Title));
 
-            this.Log().Info(() => "{0} found in submitted state.".format_with(package.Title));
-
-            EventManager.publish(new SubmitPackageMessage(package.Id, package.Version));
+                    EventManager.publish(new SubmitPackageMessage(package.Id, package.Version));
+                }
+            }
+            //var package = service.Packages.First();
+            //this.Log().Info(() => "{0} found in submitted state.".format_with(package.Title));
+            //EventManager.publish(new SubmitPackageMessage(package.Id, package.Version));
 
             _timer.Start();
         }
