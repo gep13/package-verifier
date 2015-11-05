@@ -146,6 +146,7 @@
     <Compile Include="infrastructure.app\tasks\StartupTask.cs" />
     <Compile Include="infrastructure.app\tasks\TaskTracker.cs" />
     <Compile Include="infrastructure.app\tasks\UpdateWebsiteInformationTask.cs" />
+    <Compile Include="infrastructure.app\webservices\ChocolateySubmittedFeedService.cs" />
     <Compile Include="infrastructure\commands\CommandExecutor.cs" />
     <Compile Include="infrastructure\commands\ICommandExecutor.cs" />
     <Compile Include="infrastructure\commands\PowershellExecutor.cs" />
@@ -210,18 +211,12 @@
     <Compile Include="ObjectExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyInfoExtensions.cs" />
-    <Compile Include="Service References\ChocolateySubmittedFeedService\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.datasvcmap</DependentUpon>
-    </Compile>
     <Compile Include="StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ChocolateySubmittedFeedService\service.edmx" />
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="..\CustomDictionary.xml">
@@ -230,17 +225,6 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ServiceReferenceMetadataStorage Include="Service References\ChocolateySubmittedFeedService\">
-      <Type>datasvcmap</Type>
-    </ServiceReferenceMetadataStorage>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\ChocolateySubmittedFeedService\Reference.datasvcmap">
-      <Generator>DataServicesCoreClientGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
