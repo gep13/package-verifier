@@ -45,9 +45,16 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
         private async void create_gist(PackageTestResultMessage message)
         {
             this.Log().Info(
-                () => "Creating gist for Package: {0} Version: {1}".format_with(message.PackageId, message.PackageVersion));
+                () => "Creating gist for Package: {0} Version: {1}. Result: {2}".format_with(message.PackageId, message.PackageVersion, message.Success ? "Pass" : "Fail"));
 
-            var gistDescription = "Test results for {0} Version {1}".format_with(message.PackageId, message.PackageVersion);
+            var gistDescription = "{0} v{1} - {2} - Package Tests Results{3} * Tested {4} UTC{3} * Tested against {4} ({5})".format_with(
+                message.PackageId, 
+                message.PackageVersion,
+                message.Success ? "Passed":"Failed",
+                Environment.NewLine,
+                message.TestDate.GetValueOrDefault().ToUniversalTime().ToLongDateString(),
+                message.MachineName,
+                message.WindowsVersion);
 
             var createdGistUrl = await _gistService.create_gist(gistDescription, true, message.Logs);
 
