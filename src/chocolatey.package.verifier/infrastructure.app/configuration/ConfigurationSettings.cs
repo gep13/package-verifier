@@ -140,6 +140,14 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
             }
         }
 
+        public string GitHubToken
+        {
+            get
+            {
+                return get_application_settings_value("GitHub.Token");
+            }
+        }
+
         /// <summary>
         ///   Gets a value indicating whether [use caching].
         /// </summary>

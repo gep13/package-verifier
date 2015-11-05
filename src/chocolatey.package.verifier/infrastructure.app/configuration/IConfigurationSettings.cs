@@ -77,6 +77,11 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         string GitHubPassword { get; }
 
         /// <summary>
+        ///   Gets the Token for accessing GitHub.
+        /// </summary>
+        string GitHubToken { get; }
+
+        /// <summary>
         ///   Gets a value indicating whether [use caching].
         /// </summary>
         /// <value>
