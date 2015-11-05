@@ -78,6 +78,15 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
             var logs = new List<PackageTestLog>();
 
+            logs.Add(new PackageTestLog("_Summary.md","{0} v{1} - {2} - Package Tests Results{3} * Tested {4} UTC{3} * Tested against {4} ({5})".format_with(
+                message.PackageId, 
+                message.PackageVersion,
+                installResults.Success ? "Passed":"Failed",
+                Environment.NewLine,
+                DateTime.UtcNow.ToLongDateString(),
+                "win2012r2x64",
+                "Windows2012R2 x64"
+                )));
             logs.Add(new PackageTestLog("Install.txt", installResults.Logs));
             logs.Add(new PackageTestLog("RegistrySnapshot.xml", registrySnapshot));
             logs.Add(new PackageTestLog("FilesSnapshot.xml", filesSnapshot));
