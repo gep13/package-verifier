@@ -18,10 +18,10 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
     using System;
     using System.Linq;
     using System.Timers;
-    using ChocolateySubmittedFeedService;
     using infrastructure.messaging;
     using infrastructure.tasks;
     using messaging;
+    using NuGetGallery;
 
     public class CheckForSubmittedPackagesTask : ITask
     {
@@ -35,10 +35,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             _timer.Interval = TIMER_INTERVAL;
             _timer.Elapsed += timer_elapsed;
             _timer.Start();
-            this.Log().Info(
-                () => "{0} will check for new package submissions every {1} minutes".format_with(
-                    GetType().Name,
-                    TIMER_INTERVAL / 60000));
+            this.Log().Info(() => "{0} will check for new package submissions every {1} minutes".format_with(GetType().Name, TIMER_INTERVAL / 60000));
         }
 
         public void shutdown()
