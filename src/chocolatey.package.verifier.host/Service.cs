@@ -24,6 +24,7 @@ namespace chocolatey.package.verifier.Host
     using infrastructure.app.messaging;
     using infrastructure.app.registration;
     using infrastructure.app.services;
+    using infrastructure.filesystem;
     using infrastructure.messaging;
     using infrastructure.tasks;
     using log4net;
@@ -75,6 +76,9 @@ namespace chocolatey.package.verifier.Host
                 _container = SimpleInjectorContainer.Container;
 
                 _subscription = EventManager.subscribe<ShutdownMessage>((message) => OnStop(), null, null);
+
+                var fileSystem = _container.GetInstance<IFileSystem>();
+                fileSystem.create_directory_if_not_exists(".\\files");
 
                 var tasks = _container.GetAllInstances<ITask>();
                 foreach (var task in tasks)
