@@ -17,6 +17,7 @@ namespace chocolatey.package.verifier.host.infrastructure.registration
 {
     using System.Collections.Generic;
     using SimpleInjector;
+    using verifier.infrastructure.app.configuration;
     using verifier.infrastructure.app.services;
     using verifier.infrastructure.app.tasks;
     using verifier.infrastructure.filesystem;
@@ -41,7 +42,7 @@ namespace chocolatey.package.verifier.host.infrastructure.registration
                     var list = new List<ITask>
                     {
                         new StartupTask(),
-                        new CheckForSubmittedPackagesTask(),
+                        new CheckForSubmittedPackagesTask(container.GetInstance<IConfigurationSettings>()),
                         new TestPackageTask(container.GetInstance<IVagrantService>(),container.GetInstance<IFileSystem>()),
                         new CreateGistTask(container.GetInstance<IGistService>()),
                         new UpdateWebsiteInformationTask()

@@ -18,16 +18,25 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
     using System;
     using System.Linq;
     using System.Timers;
+    using configuration;
     using infrastructure.messaging;
     using infrastructure.tasks;
     using messaging;
     using NuGetGallery;
+    using services;
 
     public class CheckForSubmittedPackagesTask : ITask
     {
-        private const double TIMER_INTERVAL = 900000;
+        private readonly IConfigurationSettings _configurationSettings;
+        private const double TIMER_INTERVAL = 900000; 
+        private const string SERVICE_ENDPOINT = "/api/v2/submitted/";
         private readonly Timer _timer = new Timer();
         private IDisposable _subscription;
+
+        public CheckForSubmittedPackagesTask(IConfigurationSettings configurationSettings)
+        {
+            _configurationSettings = configurationSettings;
+        }
 
         public void initialize()
         {
@@ -55,7 +64,9 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
             _timer.Stop();
 
-            var service = new FeedContext_x0060_1(new Uri("http://chocolatey.org/api/v2/submitted/"));
+            var submittedPackagesUri = NuGetService.get_service_endpoint_url(_configurationSettings.PackagesUrl, SERVICE_ENDPOINT);
+
+            var service = new FeedContext_x0060_1(submittedPackagesUri);
             
             //this.Log().Info(()=> "There are currently {0} packages needing to be tested.".format_with(packages.Count));
             foreach (var package in service.Packages.or_empty_list_if_null())
