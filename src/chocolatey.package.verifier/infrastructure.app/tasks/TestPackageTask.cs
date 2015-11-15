@@ -95,7 +95,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                         Environment.NewLine,
                         DateTime.UtcNow.ToLongDateString(),
                         "win2012r2x64",
-                        "Windows2012R2 x64"
+                        "Windows Server 2012 R2 x64"
                         )));
 
             if (!string.IsNullOrWhiteSpace(installResults.Logs)) logs.Add(new PackageTestLog("Install.txt", installResults.Logs));
