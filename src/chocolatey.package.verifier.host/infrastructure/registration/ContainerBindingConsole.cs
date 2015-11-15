@@ -45,7 +45,7 @@ namespace chocolatey.package.verifier.host.infrastructure.registration
                         new CheckForSubmittedPackagesTask(container.GetInstance<IConfigurationSettings>()),
                         new TestPackageTask(container.GetInstance<IVagrantService>(),container.GetInstance<IFileSystem>()),
                         new CreateGistTask(container.GetInstance<IGistService>()),
-                        new UpdateWebsiteInformationTask()
+                        new UpdateWebsiteInformationTask(container.GetInstance<IConfigurationSettings>(),container.GetInstance<INuGetService>())
                     };
 
                     return list.AsReadOnly();
