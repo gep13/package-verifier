@@ -83,25 +83,5 @@ namespace chocolatey.package.verifier.infrastructure.app.services
             if (emailAddresses.or_empty_list_if_null().Count() != 0) _messageService.send(emailAddresses, subject, message, attachments);
         }
 
-        /// <summary>
-        ///   Sends the reset password message.
-        /// </summary>
-        /// <param name="to">The recipient.</param>
-        /// <param name="resetCode">The reset code.</param>
-        public void send_reset_password_message(string to, string resetCode)
-        {
-            string subject = "{0} - Password Reset Requested".format_with(ApplicationParameters.Name);
-            var message = @"## {0} Password Reset:  
-  
-It was recently requested to have your password reset for {1}. If you did not initiate this, please contact support immediately. Otherwise please follow the link below to reset your password.   
-  
-[Reset Your Password]({2})  
-".format_with(
-                ApplicationParameters.Name,
-                to,
-                "{0}/Account/ResetPassword/?resetCode={1}".format_with(ApplicationParameters.SiteUrl, resetCode));
-
-            send_message(to, subject, message);
-        }
     }
 }

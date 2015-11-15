@@ -20,11 +20,6 @@ namespace chocolatey.package.verifier.infrastructure.app.services
     /// </summary>
     public interface IEmailDistributionService
     {
-        /// <summary>
-        ///   Sends the reset password message.
-        /// </summary>
-        /// <param name="to">The recipient.</param>
-        /// <param name="resetCode">The reset code.</param>
-        void send_reset_password_message(string to, string resetCode);
+
     }
 }

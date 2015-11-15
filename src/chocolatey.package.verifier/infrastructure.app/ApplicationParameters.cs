@@ -21,6 +21,7 @@ namespace chocolatey.package.verifier.infrastructure.app
     using System.Reflection;
     using System.Web;
     using infrastructure.configuration;
+    using NuGet;
 
     // ReSharper disable InconsistentNaming
 
@@ -32,7 +33,7 @@ namespace chocolatey.package.verifier.infrastructure.app
         /// <summary>
         ///   Gets the name of the application
         /// </summary>
-        public const string Name = "chocolatey.package.verifier";
+        public const string Name = "chocolatey-package-verifier";
 
         /// <summary>
         ///   The name of the connection string in the config
@@ -56,11 +57,6 @@ namespace chocolatey.package.verifier.infrastructure.app
 
         public const char WebSeparatorChar = '/';
 
-        public static int RepositoryCacheIntervalMinutes
-        {
-            get { return Config.get_configuration_settings().RepositoryCacheIntervalMinutes; }
-        }
-
         /// <summary>
         ///   Gets a value indicating whether we are in Debug Mode?
         /// </summary>
@@ -70,33 +66,12 @@ namespace chocolatey.package.verifier.infrastructure.app
         }
 
         /// <summary>
-        ///   Gets a value indicating whether OVLP should insert test data. This should be false unless locally testing.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if [insert test data]; otherwise, <c>false</c>.
-        /// </value>
-        public static bool InsertTestData
-        {
-            get
-            {
-                return ConfigurationManager.AppSettings["InsertTestData"].Equals(
-                    bool.TrueString,
-                    StringComparison.InvariantCultureIgnoreCase);
-            }
-        }
-
-        /// <summary>
         ///   Gets the connection string.
         /// </summary>
         public static string ConnectionString
         {
             get { return ConfigurationManager.ConnectionStrings[ConnectionStringName].ConnectionString; }
         }
-
-        /// <summary>
-        ///   Gets the site URL.
-        /// </summary>
-        public static string SiteUrl { get { return Config.get_configuration_settings().SiteUrl; } }
 
         /// <summary>
         ///   Gets the file version.

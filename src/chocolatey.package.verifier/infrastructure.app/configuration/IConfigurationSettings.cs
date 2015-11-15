@@ -20,6 +20,12 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
 
     public interface IConfigurationSettings
     {
+
+        /// <summary>
+        ///   Gets the system email address.
+        /// </summary>
+        string SystemEmailAddress { get; }
+
         /// <summary>
         ///   Gets a value indicating whether this instance is in debug mode.
         /// </summary>
@@ -27,44 +33,36 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         ///   <c>true</c> if this instance is debug mode; otherwise, <c>false</c>.
         /// </value>
         bool IsDebugMode { get; }
-
-        /// <summary>
-        ///   Gets a value indicating whether to run profilers.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if [run profiler]; otherwise, <c>false</c>.
-        /// </value>
-        bool RunProfiler { get; }
-
-        /// <summary>
-        ///   Gets a value indicating whether to allow JavaScript.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if [allow JavaScript]; otherwise, <c>false</c>.
-        /// </value>
-        bool AllowJavascript { get; }
-
+        
         /// <summary>
         ///   Gets the files path.
         /// </summary>
         string FilesPath { get; }
+        
+        /// <summary>
+        ///   Gets an email to use as an override instead of the provided email. If null, use the provided email.
+        /// </summary>
+        string TestEmailOverride { get; }
 
         /// <summary>
-        ///   Gets the remote folders for FTP task.
+        ///   Gets the number of seconds for a command to run before timing out.
         /// </summary>
-        /// <value>The remote folders for FTP task.</value>
-        IList<IKnownFolder> RemoteFoldersForFtpTask { get; }
+        int CommandExecutionTimeoutSeconds { get; }
 
         /// <summary>
-        ///   Gets the ignored folders for FTP task.
+        ///   The url used for testing packages and submitting results.
         /// </summary>
-        /// <value>The ignored folders for FTP task.</value>
-        IList<IKnownFolder> IgnoredFoldersForFtpTask { get; }
+        string PackagesUrl { get; }
 
         /// <summary>
-        ///   Gets the site URL.
+        ///   The api key used for submitting test results to the PackagesUrl.
         /// </summary>
-        string SiteUrl { get; }
+        string PackagesApiKey { get; }
+
+        /// <summary>
+        ///   Gets the Token for accessing GitHub.
+        /// </summary>
+        string GitHubToken { get; }
 
         /// <summary>
         ///   Gets the UserName for accessing GitHub.
@@ -76,52 +74,5 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         /// </summary>
         string GitHubPassword { get; }
 
-        /// <summary>
-        ///   Gets the Token for accessing GitHub.
-        /// </summary>
-        string GitHubToken { get; }
-
-        /// <summary>
-        ///   Gets a value indicating whether [use caching].
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if [use caching]; otherwise, <c>false</c>.
-        /// </value>
-        bool UseCaching { get; }
-
-        /// <summary>
-        ///   Gets the system email address.
-        /// </summary>
-        string SystemEmailAddress { get; }
-
-        /// <summary>
-        ///   Gets an email to use as an override instead of the provided email. If null, use the provided email.
-        /// </summary>
-        string TestEmailOverride { get; }
-
-        /// <summary>
-        ///   Gets a value indicating whether SSL is required
-        /// </summary>
-        bool ForceSsl { get; }
-
-        /// <summary>
-        ///   Gets the URL scheme to be used when created absolute URL's
-        /// </summary>
-        string UrlScheme { get; }
-
-        /// <summary>
-        ///   Gets the cache Interval in minutes for repository caching
-        /// </summary>
-        int RepositoryCacheIntervalMinutes { get; }
-
-        /// <summary>
-        ///   Gets the number of minutes that the forms authentication ticket is valid
-        /// </summary>
-        int FormsAuthenticationExpirationInMinutes { get; }
-
-        /// <summary>
-        ///   Gets the number of seconds for a command to run before timing out.
-        /// </summary>
-        int CommandExecutionTimeoutSeconds { get; }
     }
 }

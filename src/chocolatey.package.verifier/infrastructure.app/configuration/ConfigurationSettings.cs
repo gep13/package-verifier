@@ -28,198 +28,6 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
     public class ConfigurationSettings : IConfigurationSettings
     {
         /// <summary>
-        ///   Gets a value indicating whether this instance is in debug mode.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if this instance is debug mode; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsDebugMode
-        {
-            get
-            {
-                return get_application_settings_value("IsDebugMode")
-                    .Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase);
-            }
-        }
-
-        /// <summary>
-        ///   Gets a value indicating whether to run profilers.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if [run profiler]; otherwise, <c>false</c>.
-        /// </value>
-        public bool RunProfiler
-        {
-            get
-            {
-                return get_application_settings_value("RunProfiler")
-                    .Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase);
-            }
-        }
-
-        /// <summary>
-        ///   Gets a value indicating whether to allow JavaScript.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if [allow JavaScript]; otherwise, <c>false</c>.
-        /// </value>
-        public bool AllowJavascript
-        {
-            get
-            {
-                return get_application_settings_value("AllowJavascript")
-                    .Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase);
-            }
-        }
-
-        /// <summary>
-        ///   Gets the files path.
-        /// </summary>
-        public string FilesPath { get { return get_application_settings_value("Path.Files"); } }
-
-        /// <summary>
-        ///   Gets the remote folders for FTP task.
-        /// </summary>
-        /// <value>The remote folders for FTP task.</value>
-        public IList<IKnownFolder> RemoteFoldersForFtpTask { get { return get_list_of_known_folders("FtpTask.RemoteFolders"); } }
-
-        /// <summary>
-        ///   Gets the ignored folders for FTP task.
-        /// </summary>
-        /// <value>The ignored folders for FTP task.</value>
-        public IList<IKnownFolder> IgnoredFoldersForFtpTask
-        {
-            get { return get_list_of_known_folders("FtpTask.IgnoredFolders"); }
-        }
-
-        /// <summary>
-        ///   Gets the site URL.
-        /// </summary>
-        public string SiteUrl
-        {
-            get
-            {
-                var siteUrl = get_application_settings_value("Site.Url");
-                if (string.IsNullOrWhiteSpace(siteUrl))
-                {
-                    if (HttpContext.Current != null)
-                    {
-                        var url = HttpContext.Current.Request.Url;
-
-                        siteUrl = "{0}://{1}:{2}".format_with(UrlScheme, url.Host, url.Port);
-                    }
-                }
-
-                return siteUrl;
-            }
-        }
-
-        /// <summary>
-        ///   Gets the UserName for accessing GitHub.
-        /// </summary>
-        public string GitHubUserName
-        {
-            get
-            {
-                var gitHubUserName = get_application_settings_value("GitHub.UserName");
-
-                return gitHubUserName;
-            }
-        }
-
-        /// <summary>
-        ///   Gets the Password for accessing GitHub.
-        /// </summary>
-        public string GitHubPassword
-        {
-            get
-            {
-                var gitHubPassword = get_application_settings_value("GitHub.Password");
-
-                return gitHubPassword;
-            }
-        }
-
-        public string GitHubToken
-        {
-            get
-            {
-                return get_application_settings_value("GitHub.Token");
-            }
-        }
-
-        /// <summary>
-        ///   Gets a value indicating whether [use caching].
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if [use caching]; otherwise, <c>false</c>.
-        /// </value>
-        public bool UseCaching
-        {
-            get
-            {
-                return get_application_settings_value("UseCaching")
-                    .Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase);
-            }
-        }
-
-        /// <summary>
-        ///   Gets the system email address.
-        /// </summary>
-        public string SystemEmailAddress
-        {
-            get
-            {
-                return
-                    get_smtp_email_from_mail_settings_section(
-                        get_configuration_section<SmtpSection>("system.net/mailSettings/smtp"));
-            }
-        }
-
-        /// <summary>
-        ///   Gets an email to use as an override instead of the provided email. If null, use the provided email.
-        /// </summary>
-        public string TestEmailOverride { get { return get_application_settings_value("TestingEmailOverride"); } }
-
-        /// <summary>
-        ///   Gets a value indicating whether SSL is required
-        /// </summary>
-        public bool ForceSsl
-        {
-            get
-            {
-                return get_application_settings_value("ForceSSL")
-                    .Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase);
-            }
-        }
-
-        /// <summary>
-        ///   Gets the URL scheme to be used when created absolute URL's
-        /// </summary>
-        public string UrlScheme { get { return get_application_settings_value("UrlScheme"); } }
-
-        /// <summary>
-        ///   Gets the cache Interval in minutes for repository caching
-        /// </summary>
-        public int RepositoryCacheIntervalMinutes
-        {
-            get { return int.Parse(get_application_settings_value("RepositoryCacheIntervalMinutes")); }
-        }
-
-        /// <summary>
-        ///   Gets the number of minutes that the forms authentication ticket is valid
-        /// </summary>
-        public int FormsAuthenticationExpirationInMinutes
-        {
-            get { return int.Parse(get_application_settings_value("FormsAuthenticationExpirationInMinutes")); }
-        }
-
-        public int CommandExecutionTimeoutSeconds
-        {
-            get { return int.Parse(get_application_settings_value("CommandExecutionTimeoutSeconds")); }
-        }
-
-        /// <summary>
         ///   Gets the application settings value.
         /// </summary>
         /// <param name="name">The name.</param>
@@ -258,38 +66,87 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         }
 
         /// <summary>
-        ///   Gets the list of known folders.
+        ///   Gets the system email address.
         /// </summary>
-        /// <param name="configFileSetting">The config file setting.</param>
-        /// <returns>List of known folders</returns>
-        public IList<IKnownFolder> get_list_of_known_folders(string configFileSetting)
+        public string SystemEmailAddress
         {
-            var folders = get_application_settings_value(configFileSetting)
-                .Split(new[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
-
-            var knownFolders = new List<IKnownFolder>
+            get
             {
-            };
-
-            foreach (var folder in folders)
-            {
-                knownFolders.Add(new KnownFolder(folder));
+                return
+                    get_smtp_email_from_mail_settings_section(
+                        get_configuration_section<SmtpSection>("system.net/mailSettings/smtp"));
             }
-
-            return knownFolders;
         }
 
-        private Dictionary<string, string> parse_query_parameters(string queryParameters)
+        /// <summary>
+        ///   Gets a value indicating whether this instance is in debug mode.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is debug mode; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsDebugMode
         {
-            var result = new Dictionary<string, string>();
-
-            foreach (var parameter in queryParameters.Split('&'))
+            get
             {
-                var param = parameter.Split('=');
-                result.Add(param[0], param[1]);
+                return get_application_settings_value("IsDebugMode")
+                    .Equals(bool.TrueString, StringComparison.InvariantCultureIgnoreCase);
             }
-
-            return result;
         }
+        
+        /// <summary>
+        ///   Gets the files path.
+        /// </summary>
+        public string FilesPath { get { return get_application_settings_value("Path.Files"); } }
+
+        /// <summary>
+        ///   Gets an email to use as an override instead of the provided email. If null, use the provided email.
+        /// </summary>
+        public string TestEmailOverride { get { return get_application_settings_value("TestingEmailOverride"); } }
+
+        public int CommandExecutionTimeoutSeconds
+        {
+            get { return int.Parse(get_application_settings_value("CommandExecutionTimeoutSeconds")); }
+        }
+
+        public string PackagesUrl { get { return get_application_settings_value("PackagesUrl"); } }
+        public string PackagesApiKey { get { return get_application_settings_value("PackagesApiKey"); } }
+
+        /// <summary>
+        ///   Gets the Token for accessing GitHub.
+        /// </summary>
+        public string GitHubToken
+        {
+            get
+            {
+                return get_application_settings_value("GitHub.Token");
+            }
+        }
+
+        /// <summary>
+        ///   Gets the UserName for accessing GitHub.
+        /// </summary>
+        public string GitHubUserName
+        {
+            get
+            {
+                var gitHubUserName = get_application_settings_value("GitHub.UserName");
+
+                return gitHubUserName;
+            }
+        }
+
+        /// <summary>
+        ///   Gets the Password for accessing GitHub.
+        /// </summary>
+        public string GitHubPassword
+        {
+            get
+            {
+                var gitHubPassword = get_application_settings_value("GitHub.Password");
+
+                return gitHubPassword;
+            }
+        }
+
     }
 }
