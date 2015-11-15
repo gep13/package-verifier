@@ -134,14 +134,17 @@
     <Compile Include="infrastructure.app\messaging\ShutdownMessage.cs" />
     <Compile Include="infrastructure.app\messaging\StartupMessage.cs" />
     <Compile Include="infrastructure.app\messaging\WebsiteUpdateMessage.cs" />
+    <Compile Include="infrastructure.app\results\NuGetServiceGetClientResult.cs" />
     <Compile Include="infrastructure.app\results\PackageTestResult.cs" />
     <Compile Include="infrastructure.app\messaging\PackageTestResultMessage.cs" />
     <Compile Include="infrastructure.app\services\GistService.cs" />
     <Compile Include="infrastructure.app\services\IGistService.cs" />
+    <Compile Include="infrastructure.app\services\INuGetService.cs" />
     <Compile Include="infrastructure.app\services\IPackageCheckService.cs" />
     <Compile Include="infrastructure.app\services\IPackageSubmitResultsService.cs" />
     <Compile Include="infrastructure.app\services\IVagrantService.cs" />
     <Compile Include="infrastructure.app\results\VagrantOutputResult.cs" />
+    <Compile Include="infrastructure.app\services\NuGetService.cs" />
     <Compile Include="infrastructure.app\services\VagrantService.cs" />
     <Compile Include="infrastructure.app\tasks\CheckForSubmittedPackagesTask.cs" />
     <Compile Include="infrastructure.app\tasks\CreateGistTask.cs" />
