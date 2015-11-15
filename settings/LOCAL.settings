@@ -3,7 +3,9 @@
   <!-- environment settings -->
   <property name="environment" value="LOCAL" />
   <property name="log.level" value="DEBUG" />
-  <property name="submitted.packages.url" value="" />
+  <property name="packages.url" value="http://localhost:55881/" />
+  <property name="packages.apikey" value="" />
+  <property name="github.token" value="" />
   <property name="github.username" value="" />
   <property name="github.password" value="" />
   

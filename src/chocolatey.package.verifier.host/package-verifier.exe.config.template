@@ -12,7 +12,10 @@
     <add key="TestingEmailOverride" value="${email.everything.to}"/>
     <add key="CommandExecutionTimeoutSeconds" value="2700"/>
     <add key="VagrantBoxNames" value="win2012r2x64"/>
-    <add key="SubmittedPackagesUrl" value="${submitted.packages.url}"/>
+    <add key="PackagesUrl" value="${packages.url}"/>
+    <add key="PackagesApiKey" value="${packages.apikey}"/>
+    <!-- Use token or username/password -->
+    <add key="GitHub.Token" value="${github.token}"/>
     <add key="GitHub.UserName" value="${github.username}"/>
     <add key="GitHub.Password" value="${github.password}"/>
   </appSettings>
@@ -82,7 +85,7 @@
       <port value="${server.smtp.port}" />
       <to value="${email.errors.to}" />
       <from value="package-verifier-service@noreply.org"/>
-      <subject value="Package Verifier Errors - ${environment}"/>
+      <subject value="Chocolatey Package Verifier Errors - ${environment}"/>
       <bufferSize value="2"/>
       <lossy value="true"/>
       <evaluator type="log4net.Core.LevelEvaluator">

@@ -3,7 +3,9 @@
   <!-- environment settings -->
   <property name="environment" value="TEST" />
   <property name="log.level" value="INFO" />
-  <property name="submitted.packages.url" value="" />
+  <property name="packages.url" value="http://chocotest.apphb.com/" />
+  <property name="packages.apikey" value="" />
+  <property name="github.token" value="" />
   <property name="github.username" value="" />
   <property name="github.password" value="" />
   
