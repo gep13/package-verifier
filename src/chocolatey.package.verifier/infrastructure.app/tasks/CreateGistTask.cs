@@ -48,13 +48,13 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                 () => "Creating gist for Package: {0} Version: {1}. Result: {2}".format_with(message.PackageId, message.PackageVersion, message.Success ? "Pass" : "Fail"));
 
             var gistDescription = "{0} v{1} - {2} - Package Tests Results".format_with(
-                message.PackageId, 
+                message.PackageId,
                 message.PackageVersion,
-                message.Success ? "Passed":"Failed");
+                message.Success ? "Passed" : "Failed");
 
-            var createdGistUrl = await _gistService.create_gist(gistDescription, isPublic:true,logs:message.Logs);
+            var createdGistUrl = await _gistService.create_gist(gistDescription, isPublic: true, logs: message.Logs);
 
-            EventManager.publish(new GistCreateMessage(createdGistUrl.ToString()));
+            EventManager.publish(new FinalPackageTestResultMessage(message.PackageId, message.PackageVersion, createdGistUrl.ToString(), message.Success));
         }
     }
 }

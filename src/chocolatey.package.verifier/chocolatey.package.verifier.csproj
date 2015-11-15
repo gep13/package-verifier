@@ -128,12 +128,11 @@
     <Compile Include="EnumerationExtensions.cs" />
     <Compile Include="infrastructure.app\ApplicationFileType.cs" />
     <Compile Include="infrastructure.app\FileInformation.cs" />
-    <Compile Include="infrastructure.app\messaging\GistCreateMessage.cs" />
+    <Compile Include="infrastructure.app\messaging\FinalPackageTestResultMessage.cs" />
     <Compile Include="infrastructure.app\messaging\ImportFilesCompleteMessage.cs" />
     <Compile Include="infrastructure.app\messaging\SubmitPackageMessage.cs" />
     <Compile Include="infrastructure.app\messaging\ShutdownMessage.cs" />
     <Compile Include="infrastructure.app\messaging\StartupMessage.cs" />
-    <Compile Include="infrastructure.app\messaging\WebsiteUpdateMessage.cs" />
     <Compile Include="infrastructure.app\results\NuGetServiceGetClientResult.cs" />
     <Compile Include="infrastructure.app\results\PackageTestResult.cs" />
     <Compile Include="infrastructure.app\messaging\PackageTestResultMessage.cs" />

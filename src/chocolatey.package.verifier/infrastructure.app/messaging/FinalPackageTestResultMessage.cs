@@ -17,7 +17,23 @@ namespace chocolatey.package.verifier.infrastructure.app.messaging
 {
     using infrastructure.messaging;
 
-    public class WebsiteUpdateMessage : IMessage
+    public class FinalPackageTestResultMessage : IMessage
     {
+        public FinalPackageTestResultMessage(
+            string packageId,
+            string packageVersion,
+            string resultDetailsUrl,
+            bool success)
+        {
+            PackageId = packageId;
+            PackageVersion = packageVersion;
+            ResultDetailsUrl = resultDetailsUrl;
+            Success = success;
+        }
+
+        public string PackageId { get; private set; }
+        public string PackageVersion { get; private set; }
+        public string ResultDetailsUrl { get; private set; }
+        public bool Success { get; private set; }
     }
 }

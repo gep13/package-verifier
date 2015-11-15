@@ -41,7 +41,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
             // TODO: Put the work of updating the website here
 
-            EventManager.publish(new WebsiteUpdateMessage());
         }
+        // EventManager.publish(new WebsiteUpdateMessage());
     }
 }
