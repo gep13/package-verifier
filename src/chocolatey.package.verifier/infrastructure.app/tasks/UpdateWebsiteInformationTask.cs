@@ -39,7 +39,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
         public void initialize()
         {
             _subscription = EventManager.subscribe<FinalPackageTestResultMessage>(update_website, null, null);
-            this.Log().Info(() => "{0} is now ready and waiting for GistCreateMessage".format_with(GetType().Name));
+            this.Log().Info(() => "{0} is now ready and waiting for FinalPackageTestResultMessage".format_with(GetType().Name));
         }
 
         public void shutdown()
