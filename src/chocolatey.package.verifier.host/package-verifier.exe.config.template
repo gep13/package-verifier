@@ -25,7 +25,7 @@
       <!-- Local Debug directory -->
       <smtp deliveryMethod="${server.smtp.deliveryMethod}" from="package-verifier-service@noreply.org">
         <network host="${server.smtp}" defaultCredentials="${email.use.defaultCredentials}" enableSsl="${server.smtp.enablessl}" port="${server.smtp.port}" ${server.smtp.credentials} />
-        <specifiedPickupDirectory pickupDirectoryLocation="..\App_Data\Email"/>
+        <specifiedPickupDirectory pickupDirectoryLocation=".\App_Data\Email"/>
       </smtp>
     </mailSettings>
   </system.net>

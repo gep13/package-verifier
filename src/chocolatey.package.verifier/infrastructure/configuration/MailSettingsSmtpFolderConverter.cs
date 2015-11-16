@@ -88,6 +88,7 @@ namespace chocolatey.package.verifier.infrastructure.configuration
             var absolutePath = Path.GetFullPath(path);
 
             if (HttpContext.Current != null) absolutePath = HttpContext.Current.Server.MapPath(path);
+            if (!Directory.Exists(absolutePath)) Directory.CreateDirectory(absolutePath);
 
             field.SetValue(specifiedPickupDirectory, absolutePath);
         }
