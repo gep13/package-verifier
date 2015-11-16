@@ -40,8 +40,7 @@ namespace chocolatey.package.verifier.infrastructure.filesystem
             {
                 if (rightItem.Contains(":"))
                 {
-                    throw new ApplicationException(
-                        "Cannot combine a path with ':' attempted to combine '{0}' with '{1}'".format_with(
+                    throw new ApplicationException("Cannot combine a path with ':' attempted to combine '{0}' with '{1}'".format_with(
                             rightItem,
                             combinedPath));
                 }

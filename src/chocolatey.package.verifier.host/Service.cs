@@ -18,16 +18,15 @@ namespace chocolatey.package.verifier.Host
     using System;
     using System.ServiceProcess;
     using System.Threading;
-    using SimpleInjector;
     using host.infrastructure.registration;
     using infrastructure.app;
     using infrastructure.app.messaging;
     using infrastructure.app.registration;
-    using infrastructure.app.services;
     using infrastructure.filesystem;
     using infrastructure.messaging;
     using infrastructure.tasks;
     using log4net;
+    using SimpleInjector;
 
     /// <summary>
     ///   The service that registers tasks and schedules to run
@@ -37,8 +36,7 @@ namespace chocolatey.package.verifier.Host
         private readonly ILog _logger;
         private Container _container;
         private IDisposable _subscription;
-        private static ManualResetEvent manualReset = new ManualResetEvent(false);
-
+        private static readonly ManualResetEvent manualReset = new ManualResetEvent(false);
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="Service" /> class.
@@ -48,6 +46,7 @@ namespace chocolatey.package.verifier.Host
             InitializeComponent();
             Bootstrap.initialize();
             _logger = LogManager.GetLogger(typeof(Service));
+            Bootstrap.startup();
         }
 
         /// <summary>
@@ -61,7 +60,9 @@ namespace chocolatey.package.verifier.Host
         }
 
         /// <summary>
-        ///   When implemented in a derived class, executes when a Start command is sent to the service by the Service Control Manager (SCM) or when the operating system starts (for a service that starts automatically). Specifies actions to take when the service starts.
+        ///   When implemented in a derived class, executes when a Start command is sent to the service by the Service Control
+        ///   Manager (SCM) or when the operating system starts (for a service that starts automatically). Specifies actions to
+        ///   take when the service starts.
         /// </summary>
         /// <param name="args">Data passed by the Start command.</param>
         protected override void OnStart(string[] args)
@@ -70,7 +71,6 @@ namespace chocolatey.package.verifier.Host
 
             try
             {
-                Bootstrap.startup();
                 //AutoMapperInitializer.Initialize();
                 SimpleInjectorContainer.start();
                 _container = SimpleInjectorContainer.Container;
@@ -96,7 +96,8 @@ namespace chocolatey.package.verifier.Host
                     manualReset.WaitOne();
                     //Console.ReadKey();
                 }
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 _logger.ErrorFormat(
                     "{0} service had an error on {1} (with user {2}):{3}{4}",
@@ -109,18 +110,16 @@ namespace chocolatey.package.verifier.Host
         }
 
         /// <summary>
-        ///   When implemented in a derived class, executes when a Stop command is sent to the service by the Service Control Manager (SCM). Specifies actions to take when a service stops running.
+        ///   When implemented in a derived class, executes when a Stop command is sent to the service by the Service Control
+        ///   Manager (SCM). Specifies actions to take when a service stops running.
         /// </summary>
         protected override void OnStop()
         {
             try
             {
                 _logger.InfoFormat("Stopping {0} service.", ApplicationParameters.Name);
-                if (_subscription != null)
-                {
-                    _subscription.Dispose();
-                }
-                
+                if (_subscription != null) _subscription.Dispose();
+
                 if (_container != null)
                 {
                     var tasks = _container.GetAllInstances<ITask>();
