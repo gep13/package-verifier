@@ -17,12 +17,14 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 {
     using System;
     using System.Net;
+    using System.Text;
     using configuration;
     using infrastructure.messaging;
     using infrastructure.tasks;
     using messaging;
     using NuGet;
     using services;
+    using HttpUtility = System.Web.HttpUtility;
 
     public class UpdateWebsiteInformationTask : ITask
     {
@@ -55,16 +57,29 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
         {
             this.Log().Info(() => "Updating website with success '{0}' and results url: '{1}'".format_with(message.Success, message.ResultDetailsUrl));
 
-            var url = string.Join("/", message.PackageId, message.PackageVersion);
-            HttpClient client = _nugetService.get_client(_configurationSettings.PackagesUrl, url, "POST", "text/html");
+            var url = string.Join("/", SERVICE_ENDPOINT, message.PackageId, message.PackageVersion);
+            HttpClient client = _nugetService.get_client(_configurationSettings.PackagesUrl, url, "POST", "application/x-www-form-urlencoded");
 
-            //todo: Add Form to body
+            StringBuilder postData = new StringBuilder();
+            postData.Append("apikey=" + HttpUtility.UrlEncode(_configurationSettings.PackagesApiKey));
+            postData.Append("&success=" + HttpUtility.UrlEncode(message.Success.to_string().to_lower()));
+            postData.Append("&resultDetailsUrl=" + HttpUtility.UrlEncode(message.ResultDetailsUrl));
+            var form = postData.ToString();
+            var data = Encoding.ASCII.GetBytes(form);
 
             client.SendingRequest += (sender, e) =>
             {
                 SendingRequest(this, e);
                 var request = (HttpWebRequest)e.Request;
+                request.Timeout = 30000;
                 request.Headers.Add(_nugetService.ApiKeyHeader, _configurationSettings.PackagesApiKey);
+
+                request.ContentLength = data.Length;
+
+                using (var stream = request.GetRequestStream())
+                {
+                    stream.Write(data, 0, data.Length);
+                }
             };
 
             _nugetService.ensure_successful_response(client);
