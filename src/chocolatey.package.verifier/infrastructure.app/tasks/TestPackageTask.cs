@@ -22,6 +22,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
     using infrastructure.messaging;
     using infrastructure.tasks;
     using messaging;
+    using registration;
     using results;
     using services;
 
@@ -51,11 +52,15 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
         private void test_package(SubmitPackageMessage message)
         {
-            this.Log().Info(
-                () => "Testing Package: {0} Version: {1}".format_with(message.PackageId, message.PackageVersion));
+            this.Log().Info(() => "Testing Package: {0} Version: {1}".format_with(message.PackageId, message.PackageVersion));
 
-            _vagrantService.prep();
-            _vagrantService.reset();
+            var prepSuccess = _vagrantService.prep();
+            var resetSuccess = _vagrantService.reset();
+            if (!prepSuccess || !resetSuccess)
+            {
+                Bootstrap.handle_exception(new ApplicationException("Unable to test package due to vagrant issues. See log for details"));
+                return;
+            }
             var installResults = _vagrantService.run(
                 "choco install {0} --version {1} -fdvy".format_with(
                     message.PackageId,
@@ -74,7 +79,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             var uninstallResults = new VagrantOutputResult();
             if (success)
             {
-               // upgradeResults = _vagrantService.run("choco upgrade {0} --version {1} -fdvy".format_with(message.PackageId, message.PackageVersion));
+                // upgradeResults = _vagrantService.run("choco upgrade {0} --version {1} -fdvy".format_with(message.PackageId, message.PackageVersion));
                 uninstallResults = _vagrantService.run("choco uninstall {0} --version {1} -dvy".format_with(message.PackageId, message.PackageVersion));
             }
 
@@ -84,7 +89,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             }
 
             var logs = new List<PackageTestLog>();
-            
+
             logs.Add(
                 new PackageTestLog(
                     "_Summary.md",

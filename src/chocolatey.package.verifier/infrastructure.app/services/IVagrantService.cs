@@ -19,8 +19,8 @@ namespace chocolatey.package.verifier.infrastructure.app.services
 
     public interface IVagrantService
     {
-        void prep();
-        void reset();
+        bool prep();
+        bool reset();
         VagrantOutputResult run(string command);
         void shutdown();
     }

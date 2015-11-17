@@ -22,6 +22,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
     using configuration;
     using filesystem;
     using infrastructure.results;
+    using registration;
     using results;
     using tokens;
 
@@ -138,31 +139,38 @@ namespace chocolatey.package.verifier.infrastructure.app.services
             _fileSystem.write_file(filePath, TokenReplacer.replace_tokens(config, contents),Encoding.UTF8);
         }
 
-        public void prep()
+        public bool prep()
         {
-            if (is_running()) return;
+            if (is_running()) return true;
 
             make_vagrant_provision_file("PrepareMachine.ps1");
             var result = execute_vagrant("up");
             if (result.ExitCode != 0)
             {
-                throw new ApplicationException("Vagrant up resulted in {0}{1}".format_with(Environment.NewLine, result.Logs));
+                Bootstrap.handle_exception(new ApplicationException("Vagrant up resulted in {0}{1}".format_with(Environment.NewLine, result.Logs)));
+                return false;
             }
 
             result = execute_vagrant("sandbox on");
             if (result.ExitCode != 0)
             {
-                throw new ApplicationException("Vagrant sandbox on resulted in {0}{1}".format_with(Environment.NewLine, result.Logs));
+                Bootstrap.handle_exception(new ApplicationException("Vagrant sandbox on resulted in {0}{1}".format_with(Environment.NewLine, result.Logs)));
+                return false;
             }
+
+            return true;
         }
 
-        public void reset()
+        public bool reset()
         {
             var result = execute_vagrant("sandbox rollback");
             if (result.ExitCode != 0)
             {
-                throw new ApplicationException("Vagrant sandbox rollback resulted in {0}{1}".format_with(Environment.NewLine, result.Logs));
+                Bootstrap.handle_exception(new ApplicationException("Vagrant sandbox rollback resulted in {0}{1}".format_with(Environment.NewLine, result.Logs)));
+                return false;
             }
+
+            return true;
         }
 
         public VagrantOutputResult run(string command)
