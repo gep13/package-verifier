@@ -69,9 +69,9 @@ namespace chocolatey.package.verifier.infrastructure.commands
                 if (fileSystem.file_exists(powershellLocation)) return powershellLocation;
             }
 
-            throw new FileNotFoundException(
-                "Unable to find suitable location for PowerShell. Searched the following locations: '{0}'".format_with(
-                    string.Join("; ", _powershellLocations)));
+            var message = "Unable to find suitable location for PowerShell. Searched the following locations: '{0}'".format_with(string.Join("; ", _powershellLocations));
+            "PowerShellExecutor".Log().Error(message);
+            throw new FileNotFoundException(message);
         }
     }
 }
