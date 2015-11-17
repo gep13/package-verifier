@@ -16,10 +16,10 @@
 namespace chocolatey.package.verifier.infrastructure.app.services
 {
     using System;
-    using System.Globalization;
     using System.Net;
+    using infrastructure.results;
     using NuGet;
-    using NuGet.Resources;
+    using registration;
     using results;
 
     public class NuGetService : INuGetService
@@ -69,20 +69,40 @@ namespace chocolatey.package.verifier.infrastructure.app.services
             try
             {
                 response = (HttpWebResponse)client.GetResponse();
+
+                result.Messages.Add(
+                    new ResultMessage
+                    {
+                        MessageType = ResultType.Note,
+                        Message = response != null ? response.StatusDescription : "Response was null"
+                    });
+
                 if (response != null &&
                     ((expectedStatusCode.HasValue && expectedStatusCode.Value != response.StatusCode) ||
 
                      // If expected status code isn't provided, just look for anything 400 (Client Errors) or higher (incl. 500-series, Server Errors)
-                    // 100-series is protocol changes, 200-series is success, 300-series is redirect.
-                     (!expectedStatusCode.HasValue && (int)response.StatusCode >= 400))) throw new InvalidOperationException(String.Format(CultureInfo.CurrentCulture, NuGetResources.PackageServerError, response.StatusDescription, String.Empty));
+                     // 100-series is protocol changes, 200-series is success, 300-series is redirect.
+                     (!expectedStatusCode.HasValue && (int)response.StatusCode >= 400)))
+
+                {
+                    Bootstrap.handle_exception(new InvalidOperationException("Failed to process request.{0} '{1}'".format_with(Environment.NewLine, response.StatusDescription)));
+                }
+                else
+                {
+                    result.Success = true;
+                }
 
                 return result;
             }
             catch (WebException e)
             {
-                if (e.Response == null) throw;
-                response = (HttpWebResponse)e.Response;
+                if (e.Response == null)
+                {
+                    Bootstrap.handle_exception(e);
+                    return result;
+                }
 
+                response = (HttpWebResponse)e.Response;
                 // Check if the error is caused by redirection
                 if (response.StatusCode == HttpStatusCode.MultipleChoices ||
                     response.StatusCode == HttpStatusCode.MovedPermanently ||
@@ -92,15 +112,33 @@ namespace chocolatey.package.verifier.infrastructure.app.services
                 {
                     var location = response.Headers["Location"];
                     Uri newUri;
-                    if (!Uri.TryCreate(client.Uri, location, out newUri)) throw;
+                    if (!Uri.TryCreate(client.Uri, location, out newUri))
+                    {
+                        Bootstrap.handle_exception(e);
+                        return result;
+                    }
 
                     result.RedirectUrl = newUri.ToString();
+
                     return result;
                 }
 
-                if (expectedStatusCode != response.StatusCode) throw new InvalidOperationException(String.Format("Failed to process request.{0} '{1}'", Environment.NewLine, response.StatusDescription, e.Message), e);
+                result.Messages.Add(
+                    new ResultMessage
+                    {
+                        MessageType = ResultType.Note,
+                        Message = response.StatusDescription
+                    });
 
-                result.Success = true;
+                if (expectedStatusCode != response.StatusCode)
+                {
+                    Bootstrap.handle_exception(new InvalidOperationException("Failed to process request.{0} '{1}':{0} {2}".format_with(Environment.NewLine, response.StatusDescription, e.Message), e));
+                }
+                else
+                {
+                    result.Success = true;
+                }
+
                 return result;
             }
             finally
@@ -113,5 +151,26 @@ namespace chocolatey.package.verifier.infrastructure.app.services
             }
         }
 
+        //private string get_response_text(HttpWebResponse response)
+        //{
+        //    if (response == null) return string.Empty;
+
+        //    try
+        //    {
+        //        var encoding = Encoding.GetEncoding(response.CharacterSet);
+        //        using (var responseStream = response.GetResponseStream())
+        //        {
+        //            using (var reader = new StreamReader(responseStream, encoding))
+        //            {
+        //                return reader.ReadToEnd();
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        this.Log().Warn("Response text is empty: {0}".format_with(ex.Message));
+        //        return string.Empty;
+        //    }
+        //}
     }
 }
