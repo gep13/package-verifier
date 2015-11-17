@@ -84,13 +84,21 @@ namespace chocolatey.package.verifier.infrastructure.app.registration
         private static void domain_unhandled_exception(object sender, UnhandledExceptionEventArgs e)
         {
             var ex = e.ExceptionObject as Exception;
-            var exceptionMessage = string.Empty;
-            if (ex != null)
-            {
-                exceptionMessage = ex.ToString();
+            handle_exception(ex);
+        }
 
-                var exceptions = Exceptions.GetOrAdd(ex.GetType(), create_exception_list);
-                exceptions.Add(ex);
+        /// <summary>
+        ///   Handles exceptions in a universal way.
+        /// </summary>
+        /// <param name="exception">The <see cref="System.Exception" /> instance containing the exception.</param>
+        public static void handle_exception(Exception exception)
+        {
+            if (exception != null)
+            { 
+                var exceptionMessage = exception.ToString();
+
+                var exceptions = Exceptions.GetOrAdd(exception.GetType(), create_exception_list);
+                exceptions.Add(exception);
 
                 _logger.WarnFormat(
                     "{0} had an error on {1} (with user {2}):{3}{4}",
