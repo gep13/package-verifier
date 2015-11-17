@@ -90,10 +90,19 @@ namespace chocolatey.package.verifier.Host
 
                 if ((args.Length > 0) && (Array.IndexOf(args, "/console") != -1))
                 {
-                    //bug:this may be causing vagrant to hang.
-                    //http://stackoverflow.com/a/16218470/18475
                     Console.WriteLine("Press Control+C to exit.");
+
+                    // all of these options have their own issues.
+                    //do
+                    //{
+                    //    Thread.Sleep(900000);
+                    //}
+                    //while (1==1);
+
+                    // http://stackoverflow.com/a/16218470/18475
                     manualReset.WaitOne();
+
+                    // this causes process calls (like calls to vagrant) to hang.
                     //Console.ReadKey();
                 }
             }
