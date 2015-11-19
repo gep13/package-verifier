@@ -107,7 +107,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
                         new ResultMessage
                         {
                             Message = e.Data,
-                            MessageType = ResultType.Error
+                            MessageType = ResultType.Note
                         });
                 },
                 updateProcessPath: false,
