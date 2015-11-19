@@ -65,7 +65,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
             this.Log().Info(() => "Checking install.");
             var installResults = _vagrantService.run(
-                "$env:SystemDrive\\ProgramData\\Chocolatey\\bin\\choco.exe install {0} --version {1} -fdvy".format_with(
+                "choco.exe install {0} --version {1} -fdvy".format_with(
                     message.PackageId,
                     message.PackageVersion));
 
@@ -100,8 +100,8 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             if (success)
             {
                 this.Log().Info(() => "Now checking uninstall.");
-                // upgradeResults = _vagrantService.run("$env:SystemDrive\\ProgramData\\Chocolatey\\bin\\choco.exe upgrade {0} --version {1} -fdvy".format_with(message.PackageId, message.PackageVersion));
-                uninstallResults = _vagrantService.run("$env:SystemDrive\\ProgramData\\Chocolatey\\bin\\choco.exe uninstall {0} --version {1} -dvy".format_with(message.PackageId, message.PackageVersion));
+                // upgradeResults = _vagrantService.run("choco.exe upgrade {0} --version {1} -fdvy".format_with(message.PackageId, message.PackageVersion));
+                uninstallResults = _vagrantService.run("choco.exe uninstall {0} --version {1} -dvy".format_with(message.PackageId, message.PackageVersion));
             }
 
             foreach (var subDirectory in _fileSystem.get_directories(".\\files").or_empty_list_if_null())
