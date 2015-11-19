@@ -36,6 +36,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
 
         public HttpClient get_client(string baseUrl, string path, string method, string contentType)
         {
+            this.Log().Debug(() => "Getting httpclient for '{0}' with '{1}'".format_with(baseUrl,path));
             Uri requestUri = get_service_endpoint_url(baseUrl, path);
 
             var client = new HttpClient(requestUri)
@@ -60,6 +61,8 @@ namespace chocolatey.package.verifier.infrastructure.app.services
         /// </returns>
         public NuGetServiceGetClientResult ensure_successful_response(HttpClient client, HttpStatusCode? expectedStatusCode = null)
         {
+            this.Log().Debug(() => "Reaching out to '{0}'".format_with(client.Uri.to_string()));
+
             var result = new NuGetServiceGetClientResult
             {
                 Success = false

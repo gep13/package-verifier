@@ -16,6 +16,7 @@
 namespace chocolatey.package.verifier.infrastructure.app.services
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net.Mail;
     using infrastructure.services;
 
@@ -45,6 +46,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
         /// <param name="message">The message.</param>
         public void send(string to, string subject, string message)
         {
+            this.Log().Debug(() => "Sending message with subject '{0}' to '{1}'".format_with(subject, to));
             _sendService.send(_messageFrom, to, subject, message);
         }
 
@@ -56,6 +58,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
         /// <param name="message">The message.</param>
         public void send(IEnumerable<string> to, string subject, string message)
         {
+            this.Log().Debug(() => "Sending message with subject '{0}' to '{1}'".format_with(subject, string.Join(",",to)));
             _sendService.send(_messageFrom, to, subject, message);
         }
 
@@ -68,6 +71,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
         /// <param name="attachments">The attachments.</param>
         public void send(IEnumerable<string> to, string subject, string message, IEnumerable<Attachment> attachments)
         {
+            this.Log().Debug(() => "Sending message with subject '{0}' to '{1}'".format_with(subject, string.Join(",", to)));
             _sendService.send(_messageFrom, to, subject, message, attachments, useHtmlBody: false);
         }
     }

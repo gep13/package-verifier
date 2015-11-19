@@ -62,31 +62,58 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                 Bootstrap.handle_exception(new ApplicationException("Unable to test package due to vagrant issues. See log for details"));
                 return;
             }
+
+            this.Log().Info(() => "Checking install.");
             var installResults = _vagrantService.run(
                 "choco install {0} --version {1} -fdvy".format_with(
                     message.PackageId,
                     message.PackageVersion));
 
+            this.Log().Debug(() => "Grabbing results files (.registry/.files) to include in report.");
             var registrySnapshot = string.Empty;
             var registrySnapshotFile = ".\\files\\{0}.{1}\\.registry".format_with(message.PackageId, message.PackageVersion);
-            if (_fileSystem.file_exists(registrySnapshotFile)) registrySnapshot = _fileSystem.read_file(registrySnapshotFile);
+            try
+            {
+                if (_fileSystem.file_exists(registrySnapshotFile)) registrySnapshot = _fileSystem.read_file(registrySnapshotFile);
+            }
+            catch (Exception ex)
+            {
+                Bootstrap.handle_exception(new ApplicationException("Unable to read file '{0}':{1} {2}".format_with(registrySnapshotFile,Environment.NewLine,ex.ToString()),ex));
+            }
+         
 
             var filesSnapshot = string.Empty;
             var filesSnapshotFile = ".\\files\\{0}.{1}\\.files".format_with(message.PackageId, message.PackageVersion);
-            if (_fileSystem.file_exists(filesSnapshotFile)) filesSnapshot = _fileSystem.read_file(filesSnapshotFile);
-
+            try { 
+                if (_fileSystem.file_exists(filesSnapshotFile)) filesSnapshot = _fileSystem.read_file(filesSnapshotFile);
+            }
+            catch (Exception ex)
+            {
+                Bootstrap.handle_exception(new ApplicationException("Unable to read file '{0}':{1} {2}".format_with(filesSnapshotFile, Environment.NewLine, ex.ToString()), ex));
+            }
+            
             var success = installResults.Success && installResults.ExitCode == 0;
+            this.Log().Info(() => "Install was '{0}'.".format_with(success ? "successful": "not successful"));
+
             var upgradeResults = new VagrantOutputResult();
             var uninstallResults = new VagrantOutputResult();
             if (success)
             {
+                this.Log().Info(() => "Now checking uninstall.");
                 // upgradeResults = _vagrantService.run("choco upgrade {0} --version {1} -fdvy".format_with(message.PackageId, message.PackageVersion));
                 uninstallResults = _vagrantService.run("choco uninstall {0} --version {1} -dvy".format_with(message.PackageId, message.PackageVersion));
             }
 
             foreach (var subDirectory in _fileSystem.get_directories(".\\files").or_empty_list_if_null())
             {
-                _fileSystem.delete_directory_if_exists(subDirectory, recursive: true);
+                try
+                {
+                    _fileSystem.delete_directory_if_exists(subDirectory, recursive: true);
+                }
+                catch (Exception ex)
+                {
+                    Bootstrap.handle_exception(new ApplicationException("Unable to cleanup files directory (where .chocolatey files are put):{0} {1}".format_with(Environment.NewLine, ex.ToString()), ex));
+                }
             }
 
             var logs = new List<PackageTestLog>();

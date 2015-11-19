@@ -45,7 +45,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
             _commandExecutor = commandExecutor;
             _fileSystem = fileSystem;
             _configuration = configuration;
-            
+
             _vagrantExecutable = @"C:\HashiCorp\Vagrant\bin\vagrant.exe";
             if (!_fileSystem.file_exists(_vagrantExecutable))
             {
@@ -60,25 +60,27 @@ namespace chocolatey.package.verifier.infrastructure.app.services
             var vagrantPath = _fileSystem.get_directory_info_from_file_path(_vagrantExecutable);
             var vagrantEmbeddedPath = _fileSystem.get_full_path(_fileSystem.combine_paths(vagrantPath.FullName, "../embedded"));
             var path = Environment.GetEnvironmentVariable("PATH");
-            Environment.SetEnvironmentVariable("PATH", "{0}\\bin;{1};{2}".format_with(vagrantEmbeddedPath,vagrantPath.FullName, path));
+            Environment.SetEnvironmentVariable("PATH", "{0}\\bin;{1};{2}".format_with(vagrantEmbeddedPath, vagrantPath.FullName, path));
 
-            Environment.SetEnvironmentVariable("GEM_PATH","{0}\\gems".format_with(vagrantEmbeddedPath));
-            Environment.SetEnvironmentVariable("GEM_HOME","{0}\\gems".format_with(vagrantEmbeddedPath));
-            Environment.SetEnvironmentVariable("GEMRC","{0}\\etc\\gemrc".format_with(vagrantEmbeddedPath));
+            Environment.SetEnvironmentVariable("GEM_PATH", "{0}\\gems".format_with(vagrantEmbeddedPath));
+            Environment.SetEnvironmentVariable("GEM_HOME", "{0}\\gems".format_with(vagrantEmbeddedPath));
+            Environment.SetEnvironmentVariable("GEMRC", "{0}\\etc\\gemrc".format_with(vagrantEmbeddedPath));
 
             _vagrantExecutable = "{0}\\gems\\bin\\vagrant.bat".format_with(vagrantEmbeddedPath);
         }
 
         private bool is_running()
         {
+            this.Log().Debug(() => "Checking to see if vagrant is running");
             return execute_vagrant("status").Logs.to_lower().Contains("running (");
         }
 
         private VagrantOutputResult execute_vagrant(string command)
         {
+            this.Log().Debug(() => "Executing vagrant command '{0}'.".format_with(command.escape_curly_braces()));
             var results = new VagrantOutputResult();
             var logs = new StringBuilder();
-            
+
             var output = _commandExecutor.execute(
                 _vagrantExecutable,
                 command,
@@ -87,20 +89,30 @@ namespace chocolatey.package.verifier.infrastructure.app.services
                 (s, e) =>
                 {
                     if (e == null || string.IsNullOrWhiteSpace(e.Data)) return;
-                    this.Log().Debug(() => " [Vagrant] {0}".format_with(e.Data));
+                    this.Log().Info(() => " [Vagrant] {0}".format_with(e.Data));
                     logs.AppendLine(e.Data);
-                    results.Messages.Add(new ResultMessage{Message = e.Data,MessageType = ResultType.Note});
+                    results.Messages.Add(
+                        new ResultMessage
+                        {
+                            Message = e.Data,
+                            MessageType = ResultType.Note
+                        });
                 },
                 (s, e) =>
                 {
                     if (e == null || string.IsNullOrWhiteSpace(e.Data)) return;
-                    this.Log().Debug(() => " [Vagrant][Error] {0}".format_with(e.Data));
+                    this.Log().Error(() => " [Vagrant][Error] {0}".format_with(e.Data));
                     logs.AppendLine("[ERROR] " + e.Data);
-                    results.Messages.Add(new ResultMessage { Message = e.Data, MessageType = ResultType.Error });
+                    results.Messages.Add(
+                        new ResultMessage
+                        {
+                            Message = e.Data,
+                            MessageType = ResultType.Error
+                        });
                 },
                 updateProcessPath: false,
                 allowUseWindow: false);
-            
+
             //if (!string.IsNullOrWhiteSpace(output.StandardError))
             //{
             //    results.Messages.Add(new ResultMessage { Message = output.StandardError, MessageType = ResultType.Error });
@@ -145,14 +157,15 @@ namespace chocolatey.package.verifier.infrastructure.app.services
             {
                 Command = command
             };
-            
-            _fileSystem.write_file(filePath, TokenReplacer.replace_tokens(config, contents),Encoding.UTF8);
+
+            _fileSystem.write_file(filePath, TokenReplacer.replace_tokens(config, contents), Encoding.UTF8);
         }
 
         public bool prep()
         {
             if (is_running()) return true;
 
+            this.Log().Info(() => "Prepping vagrant machine.");
             var filePrepped = make_vagrant_provision_file("PrepareMachine.ps1");
             if (!filePrepped) return false;
 
@@ -163,6 +176,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
                 return false;
             }
 
+            this.Log().Info(() => "Turning on vagrant sandbox.");
             result = execute_vagrant("sandbox on");
             if (result.ExitCode != 0)
             {
@@ -175,6 +189,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
 
         public bool reset()
         {
+            this.Log().Info(() => "Rolling back vagrant machine to good known prepped state.");
             var result = execute_vagrant("sandbox rollback");
             if (result.ExitCode != 0)
             {
@@ -187,10 +202,26 @@ namespace chocolatey.package.verifier.infrastructure.app.services
 
         public VagrantOutputResult run(string command)
         {
+            this.Log().Debug(() => "Ensuring vagrant sandbox is on.");
             execute_vagrant("sandbox on");
 
             var filePrepped = make_vagrant_provision_file("ChocolateyAction.ps1");
-            if (!filePrepped) return new VagrantOutputResult{ExitCode = 1, Messages = { new ResultMessage{Message = "Error setting provisioning file ChocolateyAction.ps1.", MessageType = ResultType.Error}}};
+            if (!filePrepped)
+            {
+                return new VagrantOutputResult
+                               {
+                                   ExitCode = 1,
+                                   Messages =
+                    {
+                        new ResultMessage
+                        {
+                            Message = "Error setting provisioning file ChocolateyAction.ps1.",
+                            MessageType = ResultType.Error
+                        }
+                    }
+                               };
+            }
+
             update_command_in_action_file(command);
 
             return execute_vagrant("provision");
@@ -198,6 +229,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
 
         public void shutdown()
         {
+            this.Log().Info(() => "Shutting down vagrant machine.");
             execute_vagrant("halt");
         }
     }

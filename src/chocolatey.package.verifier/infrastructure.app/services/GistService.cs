@@ -33,6 +33,8 @@ namespace chocolatey.package.verifier.infrastructure.app.services
 
         public async Task<Uri> create_gist(string description, bool isPublic, IList<PackageTestLog> logs)
         {
+            this.Log().Debug(() => "Creating gist with description '{0}'.".format_with(description.escape_curly_braces()));
+
             var gitHubClient = this.create_git_hub_client();
 
             var gist = new NewGist
