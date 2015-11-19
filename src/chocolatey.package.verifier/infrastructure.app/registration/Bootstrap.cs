@@ -44,6 +44,7 @@ namespace chocolatey.package.verifier.infrastructure.app.registration
         /// </summary>
         public static void initialize()
         {
+            _logger.Info("================================");
             // initialization code 
             _logger.Debug("XmlConfiguration is now operational");
         }

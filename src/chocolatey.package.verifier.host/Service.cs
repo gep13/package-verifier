@@ -67,7 +67,7 @@ namespace chocolatey.package.verifier.Host
         /// <param name="args">Data passed by the Start command.</param>
         protected override void OnStart(string[] args)
         {
-            _logger.InfoFormat("Starting {0} service.", ApplicationParameters.Name);
+            _logger.InfoFormat("Starting {0} (v{1}) service.", ApplicationParameters.Name, ApplicationParameters.ProductVersion);
 
             try
             {

@@ -82,10 +82,21 @@ namespace chocolatey.package.verifier.infrastructure.app
             {
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-                string version = versionInfo.FileVersion;
+                return versionInfo.FileVersion;
+            }
+        }
 
-                ////string version = Assembly.GetEntryAssembly().GetName().Version;
-                return version;
+        /// <summary>
+        ///   Gets the informational product version.
+        /// </summary>
+        public static string ProductVersion
+        {
+            get
+            {
+                Assembly assembly = Assembly.GetExecutingAssembly();
+                FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
+               
+                return versionInfo.ProductVersion;
             }
         }
 
