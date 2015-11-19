@@ -209,9 +209,9 @@ namespace chocolatey.package.verifier.infrastructure.app.services
             if (!filePrepped)
             {
                 return new VagrantOutputResult
-                               {
-                                   ExitCode = 1,
-                                   Messages =
+                {
+                    ExitCode = 1,
+                    Messages =
                     {
                         new ResultMessage
                         {
@@ -219,7 +219,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
                             MessageType = ResultType.Error
                         }
                     }
-                               };
+                };
             }
 
             update_command_in_action_file(command);
