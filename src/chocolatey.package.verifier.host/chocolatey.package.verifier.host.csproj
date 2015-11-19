@@ -126,14 +126,24 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="app.config" />
-    <Content Include="shell\InstallChocolatey.ps1" />
-    <Content Include="shell\InstallNet4.ps1" />
-    <Content Include="shell\NotifyGuiAppsOfEnvironmentChanges.ps1" />
+    <Content Include="shell\InstallChocolatey.ps1">
+      <CopyToOutputDirectory Condition="'$(Configuration)' == 'Debug'">Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="shell\InstallNet4.ps1">
+      <CopyToOutputDirectory Condition="'$(Configuration)' == 'Debug'">Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="shell\NotifyGuiAppsOfEnvironmentChanges.ps1">
+      <CopyToOutputDirectory Condition="'$(Configuration)' == 'Debug'">Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Vagrantfile">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="shell\ChocolateyAction.ps1" />
-    <Content Include="shell\PrepareMachine.ps1" />
+    <Content Include="shell\ChocolateyAction.ps1">
+      <CopyToOutputDirectory Condition="'$(Configuration)' == 'Debug'">Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="shell\PrepareMachine.ps1">
+      <CopyToOutputDirectory Condition="'$(Configuration)' == 'Debug'">Always</CopyToOutputDirectory>
+    </Content>
     <None Include="packages.config" />
     <None Include="targets\Microsoft.Application.targets" />
   </ItemGroup>
