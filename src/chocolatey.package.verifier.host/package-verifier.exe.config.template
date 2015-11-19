@@ -10,7 +10,7 @@
     <add key="IsDebugMode" value="false"/>
     <add key="Path.Files" value="..\App_Data\Files"/>
     <add key="TestingEmailOverride" value="${email.everything.to}"/>
-    <add key="CommandExecutionTimeoutSeconds" value="2700"/>
+    <add key="CommandExecutionTimeoutSeconds" value="720"/>
     <add key="VagrantBoxNames" value="win2012r2x64"/>
     <add key="PackagesUrl" value="${packages.url}"/>
     <add key="PackagesApiKey" value="${packages.apikey}"/>
