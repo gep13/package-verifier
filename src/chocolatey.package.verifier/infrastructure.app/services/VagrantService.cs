@@ -101,7 +101,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
                 (s, e) =>
                 {
                     if (e == null || string.IsNullOrWhiteSpace(e.Data)) return;
-                    this.Log().Error(() => " [Vagrant][Error] {0}".format_with(e.Data));
+                    this.Log().Warn(() => " [Vagrant][Error] {0}".format_with(e.Data));
                     logs.AppendLine("[ERROR] " + e.Data);
                     results.Messages.Add(
                         new ResultMessage
