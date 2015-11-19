@@ -28,10 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
-            this.ServiceName = "Service";
+            this.components = new System.ComponentModel.Container();
+            this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
+            // 
+            // Service
+            // 
+            this.ServiceName = "ChocolateyPackageVerifier";
+
         }
 
         #endregion
+
+        private System.IO.Ports.SerialPort serialPort1;
+
     }
 }
