@@ -16,6 +16,7 @@
 namespace chocolatey.package.verifier.Host
 {
     using System;
+    using System.IO;
     using System.ServiceProcess;
 
     // ReSharper disable InconsistentNaming
@@ -34,6 +35,7 @@ namespace chocolatey.package.verifier.Host
                 service.run_as_console(args);
             } else
             {
+                Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
                 var servicesToRun = new ServiceBase[] { new Service() };
                 ServiceBase.Run(servicesToRun);
             }
