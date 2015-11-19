@@ -169,7 +169,6 @@ namespace chocolatey.package.verifier.infrastructure.commands
                 );
         }
 
-        //vagrant doesn't like reading process output while the process is running.
         public static ProcessOutput execute_static(
             string process,
             string arguments,

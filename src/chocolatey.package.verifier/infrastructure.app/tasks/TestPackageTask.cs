@@ -52,6 +52,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
         private void test_package(SubmitPackageMessage message)
         {
+            this.Log().Info(() => "========== {0} v{1} ==========".format_with(message.PackageId, message.PackageVersion));
             this.Log().Info(() => "Testing Package: {0} Version: {1}".format_with(message.PackageId, message.PackageVersion));
 
             var prepSuccess = _vagrantService.prep();

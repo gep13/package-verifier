@@ -60,9 +60,9 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
         private void timer_elapsed(object sender, ElapsedEventArgs e)
         {
-            this.Log().Info(() => "Checking for submitted packages to test.");
-
             _timer.Stop();
+
+            this.Log().Info(() => "Checking for submitted packages to test.");
 
             var submittedPackagesUri = NuGetService.get_service_endpoint_url(_configurationSettings.PackagesUrl, SERVICE_ENDPOINT);
 
