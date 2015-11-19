@@ -118,12 +118,22 @@ namespace chocolatey.package.verifier.infrastructure.app.services
             return results;
         }
 
-        private void make_vagrant_provision_file(string fileName)
+        private bool make_vagrant_provision_file(string fileName)
         {
             var path = _fileSystem.combine_paths(_fileSystem.get_current_directory(), "shell", fileName);
             var destination = _fileSystem.combine_paths(_fileSystem.get_current_directory(), "shell", VAGRANT_ACTION_FILE);
 
-            _fileSystem.copy_file(path, destination, overwriteExisting: true);
+            try
+            {
+                _fileSystem.copy_file(path, destination, overwriteExisting: true);
+            }
+            catch (Exception ex)
+            {
+                Bootstrap.handle_exception(new ApplicationException("Cannot copy file '{0}':{1}{2}".format_with(path, Environment.NewLine, ex.ToString())));
+                return false;
+            }
+
+            return true;
         }
 
         private void update_command_in_action_file(string command)
@@ -143,7 +153,9 @@ namespace chocolatey.package.verifier.infrastructure.app.services
         {
             if (is_running()) return true;
 
-            make_vagrant_provision_file("PrepareMachine.ps1");
+            var filePrepped = make_vagrant_provision_file("PrepareMachine.ps1");
+            if (!filePrepped) return false;
+
             var result = execute_vagrant("up");
             if (result.ExitCode != 0)
             {
@@ -177,7 +189,8 @@ namespace chocolatey.package.verifier.infrastructure.app.services
         {
             execute_vagrant("sandbox on");
 
-            make_vagrant_provision_file("ChocolateyAction.ps1");
+            var filePrepped = make_vagrant_provision_file("ChocolateyAction.ps1");
+            if (!filePrepped) return new VagrantOutputResult{ExitCode = 1, Messages = { new ResultMessage{Message = "Error setting provisioning file ChocolateyAction.ps1.", MessageType = ResultType.Error}}};
             update_command_in_action_file(command);
 
             return execute_vagrant("provision");
