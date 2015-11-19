@@ -140,7 +140,15 @@ namespace chocolatey.package.verifier.infrastructure.commands
                 if (waitForExitInSeconds > 0)
                 {
                     var exited = p.WaitForExit((int)TimeSpan.FromSeconds(waitForExitInSeconds).TotalMilliseconds);
-                    if (exited) exitCode = p.ExitCode;
+                    if (exited)
+                    {
+                        exitCode = p.ExitCode;
+                    }
+                    else
+                    {
+                        ApplicationParameters.Name.Log().Warn(() => "Killing process ['\"{0}\" {1}']".format_with(process, arguments));
+                        p.Kill();
+                    }
                 }
             }
 
@@ -205,7 +213,15 @@ namespace chocolatey.package.verifier.infrastructure.commands
                 if (waitForExitInSeconds > 0)
                 {
                     var exited = p.WaitForExit((int)TimeSpan.FromSeconds(waitForExitInSeconds).TotalMilliseconds);
-                    if (exited) output.ExitCode = p.ExitCode;
+                    if (exited)
+                    {
+                        output.ExitCode = p.ExitCode;
+                    } 
+                    else
+                    {
+                        ApplicationParameters.Name.Log().Warn(() => "Killing process ['\"{0}\" {1}']".format_with(process, arguments));
+                        p.Kill();
+                    }
                 }
 
                 output.StandardOut = p.StandardOutput.ReadToEnd();
