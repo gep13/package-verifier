@@ -69,7 +69,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             var service = new FeedContext_x0060_1(submittedPackagesUri);
             
             //this.Log().Info(()=> "There are currently {0} packages needing to be tested.".format_with(packages.Count));
-            foreach (var package in service.Packages.or_empty_list_if_null())
+            foreach (var package in service.Packages.or_empty_list_if_null().Take(2))
             {
                 if (package.PackageTestResultStatus == "Failing" || package.PackageTestResultStatus == "Passing") continue;
 
