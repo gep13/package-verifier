@@ -109,6 +109,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                 // upgradeResults = _vagrantService.run("choco.exe upgrade {0} --version {1} -fdvy".format_with(message.PackageId, message.PackageVersion));
                 this.Log().Info(() => "Now checking uninstall.");
                 uninstallResults = _vagrantService.run("choco.exe uninstall {0} --version {1} -dvy".format_with(message.PackageId, message.PackageVersion));
+                this.Log().Info(() => "Uninstall was '{0}'.".format_with(uninstallResults.ExitCode == 0 ? "successful" : "not successful"));
 
                 if (detect_vagrant_errors(uninstallResults.Logs)) return;
             }
@@ -129,12 +130,12 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
             var summary = new StringBuilder();
             summary.AppendFormat("{0} v{1} - {2} - Package Test Results", message.PackageId, message.PackageVersion, success ? "Passed" : "Failed");
-            summary.AppendFormat("[{0}packages/{1}/{2}]({0}packages/{1}/{2)", _configuration.PackagesUrl.ensure_trailing_slash(), message.PackageId, message.PackageVersion);
+            summary.AppendFormat("[{0}packages/{1}/{2}]({0}packages/{1}/{2})", _configuration.PackagesUrl.ensure_trailing_slash(), message.PackageId, message.PackageVersion);
             summary.AppendFormat("{0} * Tested {1} +00:00", Environment.NewLine, DateTime.UtcNow.ToString("dd MMM yyyy HH:mm:ss"));
             summary.AppendFormat("{0} * Tested against {1} ({2})", Environment.NewLine, "win2012r2x64", "Windows Server 2012 R2 x64");
             summary.AppendFormat("{0} * Install {1}.", Environment.NewLine, installResults.ExitCode == 0 ? "was successful": "failed");
             if (!string.IsNullOrWhiteSpace(upgradeResults.Logs)) summary.AppendFormat("{0} * Upgrade {1}.", Environment.NewLine, upgradeResults.ExitCode == 0 ? "was successful" : "failed");
-            if (!string.IsNullOrWhiteSpace(uninstallResults.Logs)) summary.AppendFormat("{0} * Uninstall {1}.", Environment.NewLine, uninstallResults.ExitCode == 0 ? "was successful" : "failed (allowed).");
+            if (!string.IsNullOrWhiteSpace(uninstallResults.Logs)) summary.AppendFormat("{0} * Uninstall {1}.", Environment.NewLine, uninstallResults.ExitCode == 0 ? "was successful" : "failed (allowed)");
 
             logs.Add(new PackageTestLog("_Summary.md", summary.ToString()));
             if (!string.IsNullOrWhiteSpace(installResults.Logs)) logs.Add(new PackageTestLog("Install.txt", installResults.Logs));
