@@ -83,25 +83,25 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             }
             catch (Exception ex)
             {
-                Bootstrap.handle_exception(new ApplicationException("Unable to read file '{0}':{1} {2}".format_with(registrySnapshotFile,Environment.NewLine,ex.ToString()),ex));
+                Bootstrap.handle_exception(new ApplicationException("Unable to read file '{0}':{1} {2}".format_with(registrySnapshotFile, Environment.NewLine, ex.ToString()), ex));
             }
-         
 
             var filesSnapshot = string.Empty;
             var filesSnapshotFile = ".\\files\\{0}.{1}\\.files".format_with(message.PackageId, message.PackageVersion);
-            try { 
+            try
+            {
                 if (_fileSystem.file_exists(filesSnapshotFile)) filesSnapshot = _fileSystem.read_file(filesSnapshotFile);
             }
             catch (Exception ex)
             {
                 Bootstrap.handle_exception(new ApplicationException("Unable to read file '{0}':{1} {2}".format_with(filesSnapshotFile, Environment.NewLine, ex.ToString()), ex));
             }
-            
-            var success = installResults.Success && installResults.ExitCode == 0;
-            this.Log().Info(() => "Install was '{0}'.".format_with(success ? "successful": "not successful"));
 
-            if (detect_vagrant_errors(installResults.Logs)) return;
-            
+            var success = installResults.Success && installResults.ExitCode == 0;
+            this.Log().Info(() => "Install was '{0}'.".format_with(success ? "successful" : "not successful"));
+
+            if (detect_vagrant_errors(installResults.Logs, message.PackageId, message.PackageVersion)) return;
+
             var upgradeResults = new VagrantOutputResult();
             var uninstallResults = new VagrantOutputResult();
             if (success)
@@ -111,7 +111,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                 uninstallResults = _vagrantService.run("choco.exe uninstall {0} --version {1} -dvy".format_with(message.PackageId, message.PackageVersion));
                 this.Log().Info(() => "Uninstall was '{0}'.".format_with(uninstallResults.ExitCode == 0 ? "successful" : "not successful"));
 
-                if (detect_vagrant_errors(uninstallResults.Logs)) return;
+                if (detect_vagrant_errors(uninstallResults.Logs, message.PackageId, message.PackageVersion)) return;
             }
 
             foreach (var subDirectory in _fileSystem.get_directories(".\\files").or_empty_list_if_null())
@@ -133,7 +133,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             summary.AppendFormat("{0} * [{1}packages/{2}/{3}]({1}packages/{2}/{3})", Environment.NewLine, _configuration.PackagesUrl.ensure_trailing_slash(), message.PackageId, message.PackageVersion);
             summary.AppendFormat("{0} * Tested {1} +00:00", Environment.NewLine, DateTime.UtcNow.ToString("dd MMM yyyy HH:mm:ss"));
             summary.AppendFormat("{0} * Tested against {1} ({2})", Environment.NewLine, "win2012r2x64", "Windows Server 2012 R2 x64");
-            summary.AppendFormat("{0} * Install {1}.", Environment.NewLine, installResults.ExitCode == 0 ? "was successful": "failed");
+            summary.AppendFormat("{0} * Install {1}.", Environment.NewLine, installResults.ExitCode == 0 ? "was successful" : "failed");
             if (!string.IsNullOrWhiteSpace(upgradeResults.Logs)) summary.AppendFormat("{0} * Upgrade {1}.", Environment.NewLine, upgradeResults.ExitCode == 0 ? "was successful" : "failed");
             if (!string.IsNullOrWhiteSpace(uninstallResults.Logs)) summary.AppendFormat("{0} * Uninstall {1}.", Environment.NewLine, uninstallResults.ExitCode == 0 ? "was successful" : "failed (allowed)");
 
@@ -156,12 +156,12 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                     ));
         }
 
-        private bool detect_vagrant_errors(string log)
+        private bool detect_vagrant_errors(string log, string packageId, string packageVersion)
         {
             if (string.IsNullOrWhiteSpace(log)) return false;
-            if (log.Contains("An action 'provision' was attempted") || log.Contains("VBoxManage.exe: error: Failed to assign the machine to the session (E_FAIL)"))
+            if (log.Contains("An action 'provision' was attempted") || log.Contains("VBoxManage.exe: error:"))
             {
-                Bootstrap.handle_exception(new ApplicationException("Unable to use vagrant machine for testing:{0} {1}".format_with(Environment.NewLine, log)));
+                Bootstrap.handle_exception(new ApplicationException("Unable to use vagrant machine for testing {0} v{1}:{2} {3}".format_with(packageId, packageVersion, Environment.NewLine, log)));
                 _vagrantService.destroy();
                 Thread.Sleep(20000);
                 return true;

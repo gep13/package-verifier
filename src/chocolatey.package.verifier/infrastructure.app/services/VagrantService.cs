@@ -16,6 +16,7 @@
 namespace chocolatey.package.verifier.infrastructure.app.services
 {
     using System;
+    using System.Diagnostics;
     using System.Reflection;
     using System.Text;
     using System.Threading;
@@ -171,7 +172,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
             if (!filePrepped) return false;
 
             var result = execute_vagrant("up");
-            if (result.Logs.Contains("VBoxManage.exe: error: Failed to assign the machine to the session (E_FAIL)"))
+            if (result.Logs.Contains("VBoxManage.exe: error:"))
             {
                 destroy();
                 Thread.Sleep(3000);
@@ -198,13 +199,13 @@ namespace chocolatey.package.verifier.infrastructure.app.services
         {
             this.Log().Info(() => "Rolling back vagrant machine to good known prepped state.");
             var result = execute_vagrant("sandbox rollback");
-            if (result.Logs.Contains("VBoxManage.exe: error: Failed to assign the machine to the session (E_FAIL)"))
+            if (result.Logs.Contains("VBoxManage.exe: error:"))
             {
                 destroy();
                 Thread.Sleep(3000);
                 prep();
                 execute_vagrant("sandbox rollback");
-            } 
+            }
             else if (result.ExitCode != 0)
             {
                 Bootstrap.handle_exception(new ApplicationException("Vagrant sandbox rollback resulted in {0}{1}".format_with(Environment.NewLine, result.Logs)));
@@ -249,7 +250,35 @@ namespace chocolatey.package.verifier.infrastructure.app.services
 
         public void destroy()
         {
+            kill_all_running_vagrants_and_rubies();
             execute_vagrant("destroy -f");
+        }
+
+        private void kill_all_running_vagrants_and_rubies()
+        {
+            foreach (var ruby in Process.GetProcessesByName("ruby.exe"))
+            {
+                try
+                {
+                    ruby.Kill();
+                }
+                catch (Exception ex)
+                {
+                    this.Log().Warn(() => "Unable to kill a ruby process with id {0}:{1} {2}".format_with(ruby.Id, Environment.NewLine, ex.ToString()));
+                }
+            }
+
+            foreach (var vagrant in Process.GetProcessesByName("vagrant.exe"))
+            {
+                try
+                {
+                    vagrant.Kill();
+                }
+                catch (Exception ex)
+                {
+                    this.Log().Warn(() => "Unable to kill a vagrant process with id {0}:{1} {2}".format_with(vagrant.Id, Environment.NewLine, ex.ToString()));
+                }
+            }
         }
     }
 }
