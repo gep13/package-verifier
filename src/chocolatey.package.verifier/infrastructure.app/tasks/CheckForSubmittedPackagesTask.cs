@@ -16,6 +16,7 @@
 namespace chocolatey.package.verifier.infrastructure.app.tasks
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Timers;
     using configuration;
@@ -28,7 +29,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
     public class CheckForSubmittedPackagesTask : ITask
     {
         private readonly IConfigurationSettings _configurationSettings;
-        private const double TIMER_INTERVAL = 900000; 
+        private const double TIMER_INTERVAL = 600000;
         private const string SERVICE_ENDPOINT = "/api/v2/submitted/";
         private readonly Timer _timer = new Timer();
         private IDisposable _subscription;
@@ -67,16 +68,14 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             var submittedPackagesUri = NuGetService.get_service_endpoint_url(_configurationSettings.PackagesUrl, SERVICE_ENDPOINT);
 
             var service = new FeedContext_x0060_1(submittedPackagesUri);
-            
-            //this.Log().Info(()=> "There are currently {0} packages needing to be tested.".format_with(packages.Count));
-            foreach (var package in service.Packages.or_empty_list_if_null())
-            {
-                if (package.PackageTestResultStatus == "Failing" || package.PackageTestResultStatus == "Passing") continue;
 
+            // this only returns 40 results but at least we'll have something to start with
+            foreach (var package in service.Packages.Where(p => p.PackageTestResultStatus != "Failing" && p.PackageTestResultStatus != "Passing").or_empty_list_if_null())
+            {
                 this.Log().Info(() => "{0} found in submitted state.".format_with(package.Title));
                 EventManager.publish(new SubmitPackageMessage(package.Id, package.Version));
             }
-            
+
             _timer.Start();
         }
     }
