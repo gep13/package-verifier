@@ -18,6 +18,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
     using System;
     using System.Reflection;
     using System.Text;
+    using System.Threading;
     using commands;
     using configuration;
     using filesystem;
@@ -170,7 +171,13 @@ namespace chocolatey.package.verifier.infrastructure.app.services
             if (!filePrepped) return false;
 
             var result = execute_vagrant("up");
-            if (result.ExitCode != 0)
+            if (result.Logs.Contains("VBoxManage.exe: error: Failed to assign the machine to the session (E_FAIL)"))
+            {
+                destroy();
+                Thread.Sleep(3000);
+                execute_vagrant("up");
+            }
+            else if (result.ExitCode != 0)
             {
                 Bootstrap.handle_exception(new ApplicationException("Vagrant up resulted in {0}{1}".format_with(Environment.NewLine, result.Logs)));
                 return false;
@@ -191,7 +198,14 @@ namespace chocolatey.package.verifier.infrastructure.app.services
         {
             this.Log().Info(() => "Rolling back vagrant machine to good known prepped state.");
             var result = execute_vagrant("sandbox rollback");
-            if (result.ExitCode != 0)
+            if (result.Logs.Contains("VBoxManage.exe: error: Failed to assign the machine to the session (E_FAIL)"))
+            {
+                destroy();
+                Thread.Sleep(3000);
+                prep();
+                execute_vagrant("sandbox rollback");
+            } 
+            else if (result.ExitCode != 0)
             {
                 Bootstrap.handle_exception(new ApplicationException("Vagrant sandbox rollback resulted in {0}{1}".format_with(Environment.NewLine, result.Logs)));
                 return false;
