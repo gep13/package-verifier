@@ -70,7 +70,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             var service = new FeedContext_x0060_1(submittedPackagesUri);
 
             // this only returns 40 results but at least we'll have something to start with
-            foreach (var package in service.Packages.Where(p => p.PackageTestResultStatus != "Failing" && p.PackageTestResultStatus != "Passing").or_empty_list_if_null())
+            foreach (var package in service.Packages.Where(p => p.PackageTestResultStatus == null || p.PackageTestResultStatus == "Pending" || p.PackageTestResultStatus == "Unknown").or_empty_list_if_null())
             {
                 this.Log().Info(() => "{0} found in submitted state.".format_with(package.Title));
                 EventManager.publish(new SubmitPackageMessage(package.Id, package.Version));

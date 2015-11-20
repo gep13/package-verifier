@@ -55,7 +55,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
         private void update_website(FinalPackageTestResultMessage message)
         {
-            this.Log().Info(() => "Updating website with success '{0}' and results url: '{1}'".format_with(message.Success, message.ResultDetailsUrl));
+            this.Log().Info(() => "Updating website for {0} v{1} with success '{2}' and results url: '{3}'".format_with(message.PackageId, message.PackageVersion, message.Success, message.ResultDetailsUrl));
 
             var url = string.Join("/", SERVICE_ENDPOINT, message.PackageId, message.PackageVersion);
             HttpClient client = _nugetService.get_client(_configurationSettings.PackagesUrl, url, "POST", "application/x-www-form-urlencoded");
