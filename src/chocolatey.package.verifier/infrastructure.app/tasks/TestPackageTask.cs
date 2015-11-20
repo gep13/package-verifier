@@ -130,7 +130,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
             var summary = new StringBuilder();
             summary.AppendFormat("{0} v{1} - {2} - Package Test Results", message.PackageId, message.PackageVersion, success ? "Passed" : "Failed");
-            summary.AppendFormat("[{0}packages/{1}/{2}]({0}packages/{1}/{2})", _configuration.PackagesUrl.ensure_trailing_slash(), message.PackageId, message.PackageVersion);
+            summary.AppendFormat("{0} * [{1}packages/{2}/{3}]({1}packages/{2}/{3})", Environment.NewLine, _configuration.PackagesUrl.ensure_trailing_slash(), message.PackageId, message.PackageVersion);
             summary.AppendFormat("{0} * Tested {1} +00:00", Environment.NewLine, DateTime.UtcNow.ToString("dd MMM yyyy HH:mm:ss"));
             summary.AppendFormat("{0} * Tested against {1} ({2})", Environment.NewLine, "win2012r2x64", "Windows Server 2012 R2 x64");
             summary.AppendFormat("{0} * Install {1}.", Environment.NewLine, installResults.ExitCode == 0 ? "was successful": "failed");
