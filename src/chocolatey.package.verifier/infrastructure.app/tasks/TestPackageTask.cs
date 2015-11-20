@@ -19,6 +19,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
     using System.Collections.Generic;
     using System.Text;
     using System.Threading;
+    using configuration;
     using domain;
     using filesystem;
     using infrastructure.messaging;
@@ -32,12 +33,14 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
     {
         private readonly IVagrantService _vagrantService;
         private readonly IFileSystem _fileSystem;
+        private readonly IConfigurationSettings _configuration;
         private IDisposable _subscription;
 
-        public TestPackageTask(IVagrantService vagrantService, IFileSystem fileSystem)
+        public TestPackageTask(IVagrantService vagrantService, IFileSystem fileSystem, IConfigurationSettings configuration)
         {
             _vagrantService = vagrantService;
             _fileSystem = fileSystem;
+            _configuration = configuration;
         }
 
         public void initialize()
@@ -126,6 +129,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
             var summary = new StringBuilder();
             summary.AppendFormat("{0} v{1} - {2} - Package Test Results", message.PackageId, message.PackageVersion, success ? "Passed" : "Failed");
+            summary.AppendFormat("[{0}packages/{1}/{2}]({0}packages/{1}/{2)", _configuration.PackagesUrl.ensure_trailing_slash(), message.PackageId, message.PackageVersion);
             summary.AppendFormat("{0} * Tested {1} +00:00", Environment.NewLine, DateTime.UtcNow.ToString("dd MMM yyyy HH:mm:ss"));
             summary.AppendFormat("{0} * Tested against {1} ({2})", Environment.NewLine, "win2012r2x64", "Windows Server 2012 R2 x64");
             summary.AppendFormat("{0} * Install {1}.", Environment.NewLine, installResults.ExitCode == 0 ? "was successful": "failed");

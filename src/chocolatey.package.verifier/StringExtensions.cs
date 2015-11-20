@@ -38,7 +38,8 @@ namespace chocolatey.package.verifier
             try
             {
                 return string.Format(input, formatting);
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 ApplicationParameters.Name.Log()
                     .Error(
@@ -141,6 +142,15 @@ namespace chocolatey.package.verifier
             if (string.IsNullOrWhiteSpace(input)) return string.Empty;
 
             return _openBraceRegex.Replace(_closeBraceRegex.Replace(input, "}}"), "{{");
+        }
+
+        public static string ensure_trailing_slash(this string input)
+        {
+            if (string.IsNullOrWhiteSpace(input)) return input;
+
+            if (!input.EndsWith("/", StringComparison.Ordinal)) input += '/';
+
+            return input;
         }
     }
 }
