@@ -232,5 +232,10 @@ namespace chocolatey.package.verifier.infrastructure.app.services
             this.Log().Info(() => "Shutting down vagrant machine.");
             execute_vagrant("halt");
         }
+
+        public void destroy()
+        {
+            execute_vagrant("destroy -f");
+        }
     }
 }

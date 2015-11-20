@@ -23,5 +23,6 @@ namespace chocolatey.package.verifier.infrastructure.app.services
         bool reset();
         VagrantOutputResult run(string command);
         void shutdown();
+        void destroy();
     }
 }

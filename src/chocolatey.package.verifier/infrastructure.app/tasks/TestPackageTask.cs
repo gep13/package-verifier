@@ -17,6 +17,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading;
     using domain;
     using filesystem;
     using infrastructure.messaging;
@@ -95,13 +96,17 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             var success = installResults.Success && installResults.ExitCode == 0;
             this.Log().Info(() => "Install was '{0}'.".format_with(success ? "successful": "not successful"));
 
+            if (detect_vagrant_errors(installResults.Logs)) return;
+            
             var upgradeResults = new VagrantOutputResult();
             var uninstallResults = new VagrantOutputResult();
             if (success)
             {
-                this.Log().Info(() => "Now checking uninstall.");
                 // upgradeResults = _vagrantService.run("choco.exe upgrade {0} --version {1} -fdvy".format_with(message.PackageId, message.PackageVersion));
+                this.Log().Info(() => "Now checking uninstall.");
                 uninstallResults = _vagrantService.run("choco.exe uninstall {0} --version {1} -dvy".format_with(message.PackageId, message.PackageVersion));
+
+                if (detect_vagrant_errors(uninstallResults.Logs)) return;
             }
 
             foreach (var subDirectory in _fileSystem.get_directories(".\\files").or_empty_list_if_null())
@@ -147,6 +152,20 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                     logs,
                     success: success
                     ));
+        }
+
+        private bool detect_vagrant_errors(string log)
+        {
+            if (string.IsNullOrWhiteSpace(log)) return false;
+            if (log.Contains("An action 'provision' was attempted") || log.Contains("VBoxManage.exe: error: Failed to assign the machine to the session (E_FAIL)"))
+            {
+                Bootstrap.handle_exception(new ApplicationException("Unable to use vagrant machine for testing:{0} {1}".format_with(Environment.NewLine, log)));
+                _vagrantService.destroy();
+                Thread.Sleep(20000);
+                return true;
+            }
+
+            return false;
         }
     }
 }
