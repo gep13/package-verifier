@@ -17,6 +17,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
 {
     using System;
     using System.Diagnostics;
+    using System.Linq;
     using System.Reflection;
     using System.Text;
     using System.Threading;
@@ -256,7 +257,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
 
         private void kill_all_running_vagrants_and_rubies()
         {
-            foreach (var ruby in Process.GetProcessesByName("ruby.exe"))
+            foreach (var ruby in Process.GetProcesses().Where(p => p.ProcessName.Contains("Ruby")).or_empty_list_if_null())
             {
                 try
                 {
@@ -268,7 +269,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
                 }
             }
 
-            foreach (var vagrant in Process.GetProcessesByName("vagrant.exe"))
+            foreach (var vagrant in Process.GetProcesses().Where(p => p.ProcessName.Contains("vagrant")).or_empty_list_if_null())
             {
                 try
                 {
