@@ -17,6 +17,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 {
     using System;
     using System.Collections.Generic;
+    using System.Text;
     using System.Threading;
     using domain;
     using filesystem;
@@ -123,19 +124,15 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
             var logs = new List<PackageTestLog>();
 
-            logs.Add(
-                new PackageTestLog(
-                    "_Summary.md",
-                    "{0} v{1} - {2} - Package Tests Results{3} * Tested {4} UTC{3} * Tested against {5} ({6})".format_with(
-                        message.PackageId,
-                        message.PackageVersion,
-                        success ? "Passed" : "Failed",
-                        Environment.NewLine,
-                        DateTime.UtcNow.ToLongDateString(),
-                        "win2012r2x64",
-                        "Windows Server 2012 R2 x64"
-                        )));
+            var summary = new StringBuilder();
+            summary.AppendFormat("{0} v{1} - {2} - Package Test Results", message.PackageId, message.PackageVersion, success ? "Passed" : "Failed");
+            summary.AppendFormat("{0} * Tested {1} +00:00", Environment.NewLine, DateTime.UtcNow.ToString("dd MMM yyyy HH:mm:ss"));
+            summary.AppendFormat("{0} * Tested against {1} ({2})", Environment.NewLine, "win2012r2x64", "Windows Server 2012 R2 x64");
+            summary.AppendFormat("{0} * Install {1}.", Environment.NewLine, installResults.ExitCode == 0 ? "was successful": "failed");
+            if (!string.IsNullOrWhiteSpace(upgradeResults.Logs)) summary.AppendFormat("{0} * Upgrade {1}.", Environment.NewLine, upgradeResults.ExitCode == 0 ? "was successful" : "failed");
+            if (!string.IsNullOrWhiteSpace(uninstallResults.Logs)) summary.AppendFormat("{0} * Uninstall {1}.", Environment.NewLine, uninstallResults.ExitCode == 0 ? "was successful" : "failed (allowed).");
 
+            logs.Add(new PackageTestLog("_Summary.md", summary.ToString()));
             if (!string.IsNullOrWhiteSpace(installResults.Logs)) logs.Add(new PackageTestLog("Install.txt", installResults.Logs));
             if (!string.IsNullOrWhiteSpace(registrySnapshot)) logs.Add(new PackageTestLog("RegistrySnapshot.xml", registrySnapshot));
             if (!string.IsNullOrWhiteSpace(filesSnapshot)) logs.Add(new PackageTestLog("FilesSnapshot.xml", filesSnapshot));
