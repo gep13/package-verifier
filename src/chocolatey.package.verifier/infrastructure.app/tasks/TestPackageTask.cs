@@ -65,6 +65,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             if (!prepSuccess || !resetSuccess)
             {
                 Bootstrap.handle_exception(new ApplicationException("Unable to test package due to vagrant issues. See log for details"));
+                detect_vagrant_errors("An action 'provision' was attempted");
                 return;
             }
 
