@@ -144,6 +144,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                 summary.AppendFormat("{0} * [{1}packages/{2}/{3}]({1}packages/{2}/{3})", Environment.NewLine, _configuration.PackagesUrl.ensure_trailing_slash(), message.PackageId, message.PackageVersion);
                 summary.AppendFormat("{0} * Tested {1} +00:00", Environment.NewLine, DateTime.UtcNow.ToString("dd MMM yyyy HH:mm:ss"));
                 summary.AppendFormat("{0} * Tested against {1} ({2})", Environment.NewLine, "win2012r2x64", "Windows Server 2012 R2 x64");
+                summary.AppendFormat("{0} * Tested with {1} service v{2}", Environment.NewLine, ApplicationParameters.Name, ApplicationParameters.ProductVersion);
                 summary.AppendFormat(
                     "{0} * Install {1}.",
                     Environment.NewLine,
