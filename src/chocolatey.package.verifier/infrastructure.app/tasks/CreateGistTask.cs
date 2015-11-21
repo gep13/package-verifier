@@ -19,6 +19,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
     using infrastructure.messaging;
     using infrastructure.tasks;
     using messaging;
+    using registration;
     using services;
 
     public class CreateGistTask : ITask
@@ -52,9 +53,17 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                 message.PackageVersion,
                 message.Success ? "Passed" : "Failed");
 
-            var createdGistUrl = await _gistService.create_gist(gistDescription, isPublic: true, logs: message.Logs);
+            try
+            {
+                var createdGistUrl = await _gistService.create_gist(gistDescription, isPublic: true, logs: message.Logs);
 
-            EventManager.publish(new FinalPackageTestResultMessage(message.PackageId, message.PackageVersion, createdGistUrl.ToString(), message.Success));
+                EventManager.publish(new FinalPackageTestResultMessage(message.PackageId, message.PackageVersion, createdGistUrl.ToString(), message.Success));
+            }
+            catch (Exception ex)
+            { 
+               Bootstrap.handle_exception(ex);
+            }
+         
         }
     }
 }
