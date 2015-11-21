@@ -23,6 +23,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
     using infrastructure.tasks;
     using messaging;
     using NuGet;
+    using registration;
     using services;
     using HttpUtility = System.Web.HttpUtility;
 
@@ -57,32 +58,39 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
         {
             this.Log().Info(() => "Updating website for {0} v{1} with success '{2}' and results url: '{3}'".format_with(message.PackageId, message.PackageVersion, message.Success, message.ResultDetailsUrl));
 
-            var url = string.Join("/", SERVICE_ENDPOINT, message.PackageId, message.PackageVersion);
-            HttpClient client = _nugetService.get_client(_configurationSettings.PackagesUrl, url, "POST", "application/x-www-form-urlencoded");
-
-            StringBuilder postData = new StringBuilder();
-            postData.Append("apikey=" + HttpUtility.UrlEncode(_configurationSettings.PackagesApiKey));
-            postData.Append("&success=" + HttpUtility.UrlEncode(message.Success.to_string().to_lower()));
-            postData.Append("&resultDetailsUrl=" + HttpUtility.UrlEncode(message.ResultDetailsUrl));
-            var form = postData.ToString();
-            var data = Encoding.ASCII.GetBytes(form);
-
-            client.SendingRequest += (sender, e) =>
+            try
             {
-                SendingRequest(this, e);
-                var request = (HttpWebRequest)e.Request;
-                request.Timeout = 30000;
-                request.Headers.Add(_nugetService.ApiKeyHeader, _configurationSettings.PackagesApiKey);
+                var url = string.Join("/", SERVICE_ENDPOINT, message.PackageId, message.PackageVersion);
+                HttpClient client = _nugetService.get_client(_configurationSettings.PackagesUrl, url, "POST", "application/x-www-form-urlencoded");
 
-                request.ContentLength = data.Length;
+                StringBuilder postData = new StringBuilder();
+                postData.Append("apikey=" + HttpUtility.UrlEncode(_configurationSettings.PackagesApiKey));
+                postData.Append("&success=" + HttpUtility.UrlEncode(message.Success.to_string().to_lower()));
+                postData.Append("&resultDetailsUrl=" + HttpUtility.UrlEncode(message.ResultDetailsUrl));
+                var form = postData.ToString();
+                var data = Encoding.ASCII.GetBytes(form);
 
-                using (var stream = request.GetRequestStream())
+                client.SendingRequest += (sender, e) =>
                 {
-                    stream.Write(data, 0, data.Length);
-                }
-            };
+                    SendingRequest(this, e);
+                    var request = (HttpWebRequest)e.Request;
+                    request.Timeout = 30000;
+                    request.Headers.Add(_nugetService.ApiKeyHeader, _configurationSettings.PackagesApiKey);
 
-            _nugetService.ensure_successful_response(client);
+                    request.ContentLength = data.Length;
+
+                    using (var stream = request.GetRequestStream())
+                    {
+                        stream.Write(data, 0, data.Length);
+                    }
+                };
+
+                _nugetService.ensure_successful_response(client);
+            }
+            catch (Exception ex)
+            {
+                Bootstrap.handle_exception(ex);
+            }
         }
 
         // EventManager.publish(new WebsiteUpdateMessage());
