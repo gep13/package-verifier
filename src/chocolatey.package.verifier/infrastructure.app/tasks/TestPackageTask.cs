@@ -161,7 +161,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             if (string.IsNullOrWhiteSpace(log)) return false;
             if (log.Contains("An action 'provision' was attempted") || log.Contains("VBoxManage.exe: error:"))
             {
-                Bootstrap.handle_exception(new ApplicationException("Unable to use vagrant machine for testing {0} v{1}:{2} {3}".format_with(packageId, packageVersion, Environment.NewLine, log)));
+                this.Log().Warn("Unable to use vagrant machine for testing {0} v{1}:{2} {3}".format_with(packageId, packageVersion, Environment.NewLine, log));
                 _vagrantService.destroy();
                 Thread.Sleep(20000);
                 return true;
