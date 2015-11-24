@@ -209,6 +209,7 @@
     <Compile Include="infrastructure\synchronization\TransactionLockObject.cs" />
     <Compile Include="infrastructure\tasks\ITask.cs" />
     <Compile Include="infrastructure\tokens\TokenReplacer.cs" />
+    <Compile Include="infrastructure\tolerance\FaultTolerance.cs" />
     <Compile Include="LogExtensions.cs" />
     <Compile Include="NameValueCollectionExtensions.cs" />
     <Compile Include="NullExtensions.cs" />

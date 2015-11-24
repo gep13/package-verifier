@@ -21,6 +21,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
     using messaging;
     using registration;
     using services;
+    using tolerance;
 
     public class CreateGistTask : ITask
     {
@@ -55,7 +56,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
             try
             {
-                var createdGistUrl = await _gistService.create_gist(gistDescription, isPublic: true, logs: message.Logs);
+                var createdGistUrl = FaultTolerance.retry(2, () => _gistService.create_gist(gistDescription, isPublic: true, logs: message.Logs));
 
                 EventManager.publish(new FinalPackageTestResultMessage(message.PackageId, message.PackageVersion, createdGistUrl.ToString(), message.Success));
             }
