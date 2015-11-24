@@ -56,7 +56,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
             try
             {
-                var createdGistUrl = FaultTolerance.retry(2, () => _gistService.create_gist(gistDescription, isPublic: true, logs: message.Logs));
+                var createdGistUrl = await FaultTolerance.retry(2, () => _gistService.create_gist(gistDescription, isPublic: true, logs: message.Logs));
 
                 EventManager.publish(new FinalPackageTestResultMessage(message.PackageId, message.PackageVersion, createdGistUrl.ToString(), message.Success));
             }
