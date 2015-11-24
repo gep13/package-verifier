@@ -18,6 +18,7 @@ namespace chocolatey.package.verifier.infrastructure.tolerance
     using System;
     using System.Threading;
     using System.Threading.Tasks;
+    using app.registration;
     using configuration;
 
     /// <summary>
@@ -91,7 +92,8 @@ namespace chocolatey.package.verifier.infrastructure.tolerance
                 {
                     if (i == numberOfTries)
                     {
-                        "chocolatey".Log().Error("Maximum tries of {0} reached. Throwing error.".format_with(numberOfTries));
+                        "chocolatey".Log().Warn("Maximum tries of {0} reached. Throwing error.".format_with(numberOfTries));
+                        Bootstrap.handle_exception(ex);
                         throw;
                     }
 
@@ -132,7 +134,8 @@ namespace chocolatey.package.verifier.infrastructure.tolerance
                 {
                     if (i == numberOfTries)
                     {
-                        "chocolatey".Log().Error("Maximum tries of {0} reached. Throwing error.".format_with(numberOfTries));
+                        "chocolatey".Log().Warn("Maximum tries of {0} reached. Throwing error.".format_with(numberOfTries));
+                        Bootstrap.handle_exception(ex);
                         throw;
                     }
 
