@@ -60,6 +60,16 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
             try
             {
+                var resultsUri = new Uri(message.ResultDetailsUrl);
+            }
+            catch (Exception ex)
+            {
+                Bootstrap.handle_exception(ex);
+                return;
+            }
+
+            try
+            {
                 var url = string.Join("/", SERVICE_ENDPOINT, message.PackageId, message.PackageVersion);
                 HttpClient client = _nugetService.get_client(_configurationSettings.PackagesUrl, url, "POST", "application/x-www-form-urlencoded");
 
