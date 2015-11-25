@@ -16,10 +16,12 @@
 namespace chocolatey.package.verifier.host.infrastructure.registration
 {
     using System.Collections.Generic;
+    using System.Linq;
     using SimpleInjector;
     using verifier.infrastructure.app.configuration;
     using verifier.infrastructure.app.services;
     using verifier.infrastructure.app.tasks;
+    using verifier.infrastructure.configuration;
     using verifier.infrastructure.filesystem;
     using verifier.infrastructure.tasks;
 
@@ -36,13 +38,21 @@ namespace chocolatey.package.verifier.host.infrastructure.registration
         /// <param name="container">The container.</param>
         public void register_components(Container container)
         {
+            var config = Config.get_configuration_settings();
+            var packagesCheckTask = new CheckForPackagesToVerifyTask(config);
+            if (config.PackageTypesToVerify.to_lower() != "submitted")
+            {
+                packagesCheckTask.ServiceEndpoint = "/api/v2/";
+                packagesCheckTask.AdditionalPackageSelectionFilters = p => p.Where(pv => pv.IsLatestVersion);
+            }
+
             container.Register<IEnumerable<ITask>>(
                 () =>
                 {
                     var list = new List<ITask>
                     {
                         new StartupTask(),
-                        new CheckForSubmittedPackagesTask(container.GetInstance<IConfigurationSettings>()),
+                        packagesCheckTask,
                         new TestPackageTask(container.GetInstance<IVagrantService>(),container.GetInstance<IFileSystem>(),container.GetInstance<IConfigurationSettings>()),
                         new CreateGistTask(container.GetInstance<IGistService>()),
                         new UpdateWebsiteInformationTask(container.GetInstance<IConfigurationSettings>(),container.GetInstance<INuGetService>())

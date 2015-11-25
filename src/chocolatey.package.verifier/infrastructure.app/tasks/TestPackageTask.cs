@@ -47,8 +47,8 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
         public void initialize()
         {
-            _subscription = EventManager.subscribe<SubmitPackageMessage>(test_package, null, null);
-            this.Log().Info(() => "{0} is now ready and waiting for SubmitPackageMessage".format_with(GetType().Name));
+            _subscription = EventManager.subscribe<VerifyPackageMessage>(test_package, null, null);
+            this.Log().Info(() => "{0} is now ready and waiting for VerifyPackageMessage".format_with(GetType().Name));
         }
 
         public void shutdown()
@@ -57,7 +57,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             _vagrantService.shutdown();
         }
 
-        private void test_package(SubmitPackageMessage message)
+        private void test_package(VerifyPackageMessage message)
         {
             var lockTaken = TransactionLock.acquire(VAGRANT_LOCK_NAME, 7200);
             if (!lockTaken)
