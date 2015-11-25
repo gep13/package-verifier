@@ -67,9 +67,12 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
             var submittedPackagesUri = NuGetService.get_service_endpoint_url(_configurationSettings.PackagesUrl, SERVICE_ENDPOINT);
 
-            var service = new FeedContext_x0060_1(submittedPackagesUri);
+            var service = new FeedContext_x0060_1(submittedPackagesUri)
+            {
+                Timeout = 70
+            };
 
-            // this only returns 40 results but at least we'll have something to start with
+            // this only returns 40 results at a time but at least we'll have something to start with
             IList<V2FeedPackage> submittedPackages = service.Packages.Where(p => p.PackageTestResultStatus == null || p.PackageTestResultStatus == "Pending" || p.PackageTestResultStatus == "Unknown").or_empty_list_if_null().ToList();
 
             this.Log().Info("Pulled {0} packages in submitted status for review.".format_with(submittedPackages.Count));
