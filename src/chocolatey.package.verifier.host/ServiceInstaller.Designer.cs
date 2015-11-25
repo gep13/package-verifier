@@ -1,5 +1,7 @@
 ﻿namespace chocolatey.package.verifier.host
 {
+    using verifier.infrastructure.configuration;
+
     partial class ServiceInstaller
     {
         /// <summary>
@@ -43,6 +45,13 @@
     "nd share results.";
             this.serviceInstaller1.DisplayName = "Chocolatey Package Verifier";
             this.serviceInstaller1.ServiceName = "choco-pkg-verifier";
+            var config = Config.get_configuration_settings();
+            if (!string.IsNullOrWhiteSpace(config.InstanceName))
+            {
+                this.serviceInstaller1.DisplayName = "Chocolatey Package Verifier ({0})".format_with(config.InstanceName);
+                this.serviceInstaller1.ServiceName = "choco-pkg-verifier-{0}".format_with(config.InstanceName.to_lower());
+            }
+
             this.serviceInstaller1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             // 
             // ServiceInstaller

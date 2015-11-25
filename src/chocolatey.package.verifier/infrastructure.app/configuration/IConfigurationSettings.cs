@@ -22,6 +22,14 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
     {
 
         /// <summary>
+        /// Gets the name of the service instance. This allows multiple instances to be installed.
+        /// </summary>
+        /// <value>
+        /// The name of the instance.
+        /// </value>
+        string InstanceName { get; }
+
+        /// <summary>
         ///   Gets the system email address.
         /// </summary>
         string SystemEmailAddress { get; }
@@ -53,6 +61,14 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         ///   The url used for testing packages and submitting results.
         /// </summary>
         string PackagesUrl { get; }
+
+        /// <summary>
+        /// Gets the package types to verify - if submitted it checks submitted packages. Otherwise checks approved packages
+        /// </summary>
+        /// <value>
+        /// The package types to verify.
+        /// </value>
+        string PackageTypesToVerify { get; }
 
         /// <summary>
         ///   The api key used for submitting test results to the PackagesUrl.

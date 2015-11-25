@@ -65,6 +65,7 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
             return settings.From;
         }
 
+       
         /// <summary>
         ///   Gets the system email address.
         /// </summary>
@@ -77,6 +78,8 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
                         get_configuration_section<SmtpSection>("system.net/mailSettings/smtp"));
             }
         }
+
+        public string InstanceName { get { return get_application_settings_value("InstanceName"); } }
 
         /// <summary>
         ///   Gets a value indicating whether this instance is in debug mode.
@@ -109,6 +112,7 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         }
 
         public string PackagesUrl { get { return get_application_settings_value("PackagesUrl"); } }
+        public string PackageTypesToVerify { get { return get_application_settings_value("PackageTypesToVerify"); } }
         public string PackagesApiKey { get { return get_application_settings_value("PackagesApiKey"); } }
 
         /// <summary>

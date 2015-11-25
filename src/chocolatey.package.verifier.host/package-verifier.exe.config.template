@@ -7,12 +7,15 @@
   </configSections>
   
   <appSettings>
+    <!-- Instance name is used when creating multiple instances of the verifier - Do NOT change once installed -->
+    <add key="InstanceName" value=""/>
     <add key="IsDebugMode" value="false"/>
     <add key="Path.Files" value="..\App_Data\Files"/>
     <add key="TestingEmailOverride" value="${email.everything.to}"/>
     <add key="CommandExecutionTimeoutSeconds" value="720"/>
     <add key="VagrantBoxNames" value="win2012r2x64"/>
     <add key="PackagesUrl" value="${packages.url}"/>
+    <add key="PackageTypesToVerify" value="Submitted"/>
     <add key="PackagesApiKey" value="${packages.apikey}"/>
     <!-- Use token or username/password -->
     <add key="GitHub.Token" value="${github.token}"/>
