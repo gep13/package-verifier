@@ -49,10 +49,29 @@ namespace chocolatey.package.verifier.infrastructure.app.services
             _fileSystem = fileSystem;
             _configuration = configuration;
 
-            _vagrantExecutable = @"C:\HashiCorp\Vagrant\bin\vagrant.exe";
-            if (!_fileSystem.file_exists(_vagrantExecutable))
+            var vagrantFound = false;
+            var customVagrantPath = _configuration.PathToVagrant;
+            if (!string.IsNullOrWhiteSpace(customVagrantPath))
             {
-                _vagrantExecutable = _fileSystem.get_executable_path("vagrant.exe");
+                if (!_fileSystem.file_exists(customVagrantPath))
+                {
+                    this.Log().Warn("Unable to find vagrant at the path specified. Using default instance.");
+                }
+                else
+                {
+                    this.Log().Warn("Using custom vagrant path at '{0}'.".format_with(customVagrantPath));
+                    vagrantFound = true;
+                    _vagrantExecutable = customVagrantPath;
+                }
+            }
+
+            if (!vagrantFound)
+            {
+                _vagrantExecutable = @"C:\HashiCorp\Vagrant\bin\vagrant.exe";
+                if (!_fileSystem.file_exists(_vagrantExecutable))
+                {
+                    _vagrantExecutable = _fileSystem.get_executable_path("vagrant.exe");
+                }
             }
 
             //use_vagrant_directly();
@@ -257,11 +276,25 @@ namespace chocolatey.package.verifier.infrastructure.app.services
 
         private void kill_all_running_vagrants_and_rubies()
         {
+            bool killAll = true;
+            string killPath = _configuration.PathToVagrant.to_lower();
+            if (!string.IsNullOrWhiteSpace(_configuration.PathToVagrant))
+            {
+                killAll = false;
+            }
+
             foreach (var ruby in Process.GetProcesses().Where(p => p.ProcessName.Contains("Ruby")).or_empty_list_if_null())
             {
                 try
                 {
-                    ruby.Kill();
+                    if (!killAll)
+                    {
+                        if (ruby.MainModule.FileName.to_lower().Contains(killPath)) ruby.Kill();
+                    }
+                    else
+                    {
+                        ruby.Kill();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -273,7 +306,14 @@ namespace chocolatey.package.verifier.infrastructure.app.services
             {
                 try
                 {
-                    vagrant.Kill();
+                    if (!killAll)
+                    {
+                        if (vagrant.MainModule.FileName.to_lower().Contains(killPath)) vagrant.Kill();
+                    }
+                    else
+                    {
+                        vagrant.Kill();
+                    }
                 }
                 catch (Exception ex)
                 {

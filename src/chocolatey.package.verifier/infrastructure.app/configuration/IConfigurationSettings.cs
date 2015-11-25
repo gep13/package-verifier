@@ -58,6 +58,14 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         int CommandExecutionTimeoutSeconds { get; }
 
         /// <summary>
+        /// Gets the path to vagrant. Used for isolating different vagrants.
+        /// </summary>
+        /// <value>
+        /// The path to vagrant.
+        /// </value>
+        string PathToVagrant { get; }
+
+        /// <summary>
         ///   The url used for testing packages and submitting results.
         /// </summary>
         string PackagesUrl { get; }

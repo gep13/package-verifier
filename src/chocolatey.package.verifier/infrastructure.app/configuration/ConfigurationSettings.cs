@@ -111,6 +111,7 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
             get { return int.Parse(get_application_settings_value("CommandExecutionTimeoutSeconds")); }
         }
 
+        public string PathToVagrant { get { return get_application_settings_value("PathToVagrant"); } }
         public string PackagesUrl { get { return get_application_settings_value("PackagesUrl"); } }
         public string PackageTypesToVerify { get { return get_application_settings_value("PackageTypesToVerify"); } }
         public string PackagesApiKey { get { return get_application_settings_value("PackagesApiKey"); } }
