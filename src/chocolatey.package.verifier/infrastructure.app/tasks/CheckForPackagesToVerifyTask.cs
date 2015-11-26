@@ -67,17 +67,19 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
         {
             _timer.Stop();
 
-            this.Log().Info(() => "Checking for submitted packages.");
+            this.Log().Info(() => "Checking for packages to verify.");
 
             var submittedPackagesUri = NuGetService.get_service_endpoint_url(_configurationSettings.PackagesUrl, ServiceEndpoint);
 
-            var service = new FeedContext_x0060_1(submittedPackagesUri)
-            {
-                Timeout = 70
-            };
-
             for (var i = 0; i < 10; i++)
             {
+                this.Log().Info(() => "Grabbing next available package for verification.");
+
+                var service = new FeedContext_x0060_1(submittedPackagesUri)
+                {
+                    Timeout = 70
+                };
+
                 // this only returns 40 results at a time but at least we'll have something to start with
                 IQueryable<V2FeedPackage> packageQuery =
                     service.Packages.Where(p => p.PackageTestResultStatus == null || p.PackageTestResultStatus == "Pending" || p.PackageTestResultStatus == "Unknown");
