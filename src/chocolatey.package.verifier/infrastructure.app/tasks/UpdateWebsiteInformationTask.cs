@@ -101,8 +101,12 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             {
                 Bootstrap.handle_exception(ex);
             }
+
+            this.Log().Info("Finished verification for {0} v{1}.".format_with(message.PackageId, message.PackageVersion));
+            // EventManager.publish(new WebsiteUpdateMessage());
+
         }
 
-        // EventManager.publish(new WebsiteUpdateMessage());
+        
     }
 }
