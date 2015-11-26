@@ -76,7 +76,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                 Timeout = 70
             };
 
-            for (int i = 0; i < 10; i++)
+            for (var i = 0; i < 10; i++)
             {
                 // this only returns 40 results at a time but at least we'll have something to start with
                 IQueryable<V2FeedPackage> packageQuery =
@@ -100,14 +100,20 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
                 packagesToValidate = packagesToValidate.Skip(skip).Take(1).ToList();
 
-                foreach (var package in packagesToValidate.or_empty_list_if_null())
-                {
-                    this.Log().Info("{0} v{1} found for review.".format_with(package.Title, package.Version));
-                    EventManager.publish(new VerifyPackageMessage(package.Id, package.Version));
-                }
+                var package = packagesToValidate.FirstOrDefault();
+                if (package == null) continue;
+
+                this.Log().Info("{0} v{1} found for review.".format_with(package.Title, package.Version));
+                EventManager.publish(new VerifyPackageMessage(package.Id, package.Version));
+
+                //foreach (var package in packagesToValidate.or_empty_list_if_null())
+                //{
+                //    this.Log().Info("{0} v{1} found for review.".format_with(package.Title, package.Version));
+                //    EventManager.publish(new VerifyPackageMessage(package.Id, package.Version));
+                //}
             }
 
-            this.Log().Info(() => "Finished checking for packages to verify.");
+            this.Log().Info(() => "Finished checking for packages to verify. Sleeping for {0} minutes.".format_with(TIMER_INTERVAL / 60000));
 
             _timer.Start();
         }
