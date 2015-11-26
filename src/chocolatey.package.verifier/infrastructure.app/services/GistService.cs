@@ -48,7 +48,8 @@ namespace chocolatey.package.verifier.infrastructure.app.services
                 gist.Files.Add(log.Name, log.Contents);
             }
 
-            var createdGist = await gitHubClient.Gist.Create(gist);
+            var createdGist = await gitHubClient.Gist.Create(gist); //.ConfigureAwait(continueOnCapturedContext:false);
+
             return new Uri(createdGist.HtmlUrl);
         }
 
