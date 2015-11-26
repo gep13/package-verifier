@@ -19,7 +19,6 @@ namespace chocolatey.package.verifier.infrastructure.services
     using System.Collections.Generic;
     using System.Net.Mail;
     using configuration;
-    using Elmah;
 
     /// <summary>
     ///   Sends a message with Smtp
@@ -143,7 +142,6 @@ namespace chocolatey.package.verifier.infrastructure.services
                                     emailMessage.Subject,
                                     Environment.NewLine,
                                     ex));
-                    ErrorSignal.FromCurrentContext().Raise(ex);
                 }
             }
         }
