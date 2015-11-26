@@ -59,12 +59,12 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
         private void test_package(VerifyPackageMessage message)
         {
-            var lockTaken = TransactionLock.acquire(VAGRANT_LOCK_NAME, 7200);
-            if (!lockTaken)
-            {
-                Bootstrap.handle_exception(new ApplicationException("Testing package {0} v{1} timed out waiting on transaction lock to open".format_with(message.PackageId, message.PackageVersion)));
-                return;
-            }
+            //var lockTaken = TransactionLock.acquire(VAGRANT_LOCK_NAME, 7200);
+            //if (!lockTaken)
+            //{
+            //    Bootstrap.handle_exception(new ApplicationException("Testing package {0} v{1} timed out waiting on transaction lock to open".format_with(message.PackageId, message.PackageVersion)));
+            //    return;
+            //}
 
             try
             {
@@ -193,10 +193,10 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             {
                 Bootstrap.handle_exception(ex);
             }
-            finally
-            {
-                TransactionLock.release(VAGRANT_LOCK_NAME, lockTaken: true);
-            }
+            //finally
+            //{
+            //    TransactionLock.release(VAGRANT_LOCK_NAME, lockTaken: true);
+            //}
         }
 
         private bool detect_vagrant_errors(string log, string packageId, string packageVersion)
