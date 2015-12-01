@@ -21,7 +21,6 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
     using messaging;
     using registration;
     using services;
-    using tolerance;
 
     public class CreateGistTask : ITask
     {
@@ -61,10 +60,13 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                 EventManager.publish(new FinalPackageTestResultMessage(message.PackageId, message.PackageVersion, createdGistUrl.ToString(), message.Success));
             }
             catch (Exception ex)
-            { 
-               Bootstrap.handle_exception(ex);
+            {
+                Bootstrap.handle_exception(
+                    new ApplicationException(
+                        "Error creating Gist for {0} v{1}, likely because Gists API is sometimes janky and throws more temper tantrums than a 2 year old. The service will try to test the package again later. Until then enjoy this error log heartbeat. The service is still running, yay!."
+                            .format_with(message.PackageId, message.PackageVersion),
+                        ex));
             }
-         
         }
     }
 }
