@@ -63,7 +63,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             {
                 Bootstrap.handle_exception(
                     new ApplicationException(
-                        "Error creating Gist for {0} v{1}, likely because Gists API is sometimes janky and throws more temper tantrums than a 2 year old. The service will try to test the package again later. Until then enjoy this error log heartbeat. The service is still running, yay!."
+                        "Error creating Gist for {0} v{1}, likely because Gists API is sometimes janky and throws more temper tantrums than a 2 year old. The service will try to test the package again later. Until then enjoy this error log heartbeat. The service is still running, yay!"
                             .format_with(message.PackageId, message.PackageVersion),
                         ex));
             }
