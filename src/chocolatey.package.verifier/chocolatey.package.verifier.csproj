@@ -138,7 +138,7 @@
     <Compile Include="infrastructure.app\results\VagrantOutputResult.cs" />
     <Compile Include="infrastructure.app\services\NuGetService.cs" />
     <Compile Include="infrastructure.app\services\VagrantService.cs" />
-    <Compile Include="infrastructure.app\tasks\CheckForPackagesToVerifyTask.cs" />
+    <Compile Include="infrastructure.app\tasks\CheckForPackagesTask.cs" />
     <Compile Include="infrastructure.app\tasks\CreateGistTask.cs" />
     <Compile Include="infrastructure.app\tasks\TestPackageTask.cs" />
     <Compile Include="infrastructure.app\tasks\ShutdownAfterWorkCompletedTask.cs" />

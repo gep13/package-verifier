@@ -39,7 +39,7 @@ namespace chocolatey.package.verifier.host.infrastructure.registration
         public void register_components(Container container)
         {
             var config = Config.get_configuration_settings();
-            var packagesCheckTask = new CheckForPackagesToVerifyTask(config);
+            var packagesCheckTask = new CheckForPackagesTask(config);
             if (config.PackageTypesToVerify.to_lower() != "submitted")
             {
                 packagesCheckTask.ServiceEndpoint = "/api/v2/";

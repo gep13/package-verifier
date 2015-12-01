@@ -26,7 +26,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
     using NuGetGallery;
     using services;
 
-    public class CheckForPackagesToVerifyTask : ITask
+    public class CheckForPackagesTask : ITask
     {
         private readonly IConfigurationSettings _configurationSettings;
         private const double TIMER_INTERVAL = 600000;
@@ -38,7 +38,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
         public Func<IQueryable<V2FeedPackage>, IQueryable<V2FeedPackage>> AdditionalPackageSelectionFilters { get; set; }
 
-        public CheckForPackagesToVerifyTask(IConfigurationSettings configurationSettings)
+        public CheckForPackagesTask(IConfigurationSettings configurationSettings)
         {
             _configurationSettings = configurationSettings;
         }
@@ -80,9 +80,10 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                     Timeout = 70
                 };
 
+                var cacheTimeout = DateTime.UtcNow.AddMinutes(-31);
                 // this only returns 40 results at a time but at least we'll have something to start with
                 IQueryable<V2FeedPackage> packageQuery =
-                    service.Packages.Where(p => p.PackageTestResultStatus == null || p.PackageTestResultStatus == "Pending" || p.PackageTestResultStatus == "Unknown");
+                    service.Packages.Where(p => p.Created < cacheTimeout && (p.PackageTestResultStatus == null || p.PackageTestResultStatus == "Pending" || p.PackageTestResultStatus == "Unknown"));
 
                 if (AdditionalPackageSelectionFilters != null) packageQuery = AdditionalPackageSelectionFilters.Invoke(packageQuery);
 
