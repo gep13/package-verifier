@@ -17,18 +17,22 @@ namespace chocolatey.package.verifier.infrastructure.app.services
 {
     using System;
     using System.Collections.Generic;
+    using System.Text;
     using System.Threading.Tasks;
     using configuration;
     using domain;
+    using filesystem;
     using Octokit;
 
     public class GistService : IGistService
     {
         private readonly IConfigurationSettings _configuration;
+        private readonly IFileSystem _fileSystem;
 
-        public GistService(IConfigurationSettings configuration)
+        public GistService(IConfigurationSettings configuration, IFileSystem fileSystem)
         {
             _configuration = configuration;
+            _fileSystem = fileSystem;
         }
 
         public async Task<Uri> create_gist(string description, bool isPublic, IList<PackageTestLog> logs)
@@ -48,9 +52,25 @@ namespace chocolatey.package.verifier.infrastructure.app.services
                 gist.Files.Add(log.Name, log.Contents);
             }
 
+            debug_gist(gist);
+
             var createdGist = await gitHubClient.Gist.Create(gist); //.ConfigureAwait(continueOnCapturedContext:false);
 
             return new Uri(createdGist.HtmlUrl);
+        }
+
+        private void debug_gist(NewGist gist)
+        {
+            if (!_configuration.IsDebugMode) return;
+
+             var gistFilesLocation = _fileSystem.combine_paths(_fileSystem.get_temp_path(), ApplicationParameters.Name, "Gist_" + DateTime.Now.ToString("yyyyMMdd_HHmmss_ffff"));
+            _fileSystem.create_directory_if_not_exists(gistFilesLocation);
+            _fileSystem.write_file(_fileSystem.combine_paths(gistFilesLocation, "description.txt"), gist.Description, Encoding.UTF8);
+
+            foreach (var file in gist.Files)
+            {
+                 _fileSystem.write_file(_fileSystem.combine_paths(gistFilesLocation, file.Key),file.Value, Encoding.UTF8);
+            }
         }
 
         private GitHubClient create_git_hub_client()
