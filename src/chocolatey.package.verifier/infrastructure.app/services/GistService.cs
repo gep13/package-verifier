@@ -63,13 +63,14 @@ namespace chocolatey.package.verifier.infrastructure.app.services
         {
             if (!_configuration.IsDebugMode) return;
 
-             var gistFilesLocation = _fileSystem.combine_paths(_fileSystem.get_temp_path(), ApplicationParameters.Name, "Gist_" + DateTime.Now.ToString("yyyyMMdd_HHmmss_ffff"));
+            var gistFilesLocation = _fileSystem.combine_paths(_fileSystem.get_temp_path(), ApplicationParameters.Name, "Gist_" + DateTime.Now.ToString("yyyyMMdd_HHmmss_ffff"));
+            this.Log().Info(() => "Generating gist files for gist'{0}' at '{1}'.".format_with(gist.Description.escape_curly_braces(), gistFilesLocation));
             _fileSystem.create_directory_if_not_exists(gistFilesLocation);
             _fileSystem.write_file(_fileSystem.combine_paths(gistFilesLocation, "description.txt"), gist.Description, Encoding.UTF8);
 
             foreach (var file in gist.Files)
             {
-                 _fileSystem.write_file(_fileSystem.combine_paths(gistFilesLocation, file.Key),file.Value, Encoding.UTF8);
+                _fileSystem.write_file(_fileSystem.combine_paths(gistFilesLocation, file.Key), file.Value, Encoding.UTF8);
             }
         }
 
