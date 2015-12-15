@@ -71,6 +71,8 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
             var submittedPackagesUri = NuGetService.get_service_endpoint_url(_configurationSettings.PackagesUrl, ServiceEndpoint);
 
+            var lastPackage = string.Empty;
+
             for (var i = 0; i < 10; i++)
             {
                 this.Log().Info(() => "Grabbing next available package for verification.");
@@ -105,6 +107,15 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
                 var package = packagesToValidate.FirstOrDefault();
                 if (package == null) continue;
+
+                var packageId = "{0}:{1}".format_with(package.Id, package.Version);
+                if (lastPackage == packageId)
+                {
+                    this.Log().Info("Already verified {0} v{1} recently.".format_with(package.Title, package.Version));
+                    continue;
+                }
+                
+                lastPackage = packageId;
 
                 this.Log().Info("{0} v{1} found for review.".format_with(package.Title, package.Version));
                 EventManager.publish(new VerifyPackageMessage(package.Id, package.Version));
