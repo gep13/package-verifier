@@ -79,6 +79,29 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                     return;
                 }
 
+                this.Log().Info(() => "Checking 32bit install.");
+                var installx86Results = _vagrantService.run(
+                    "choco.exe install {0} --version {1} -x86 -fdvy".format_with(
+                        message.PackageId,
+                        message.PackageVersion));
+
+                var upgradeResults = new VagrantOutputResult();
+                if (installx86Results.Success && installx86Results.ExitCode == 0)
+                {
+                    this.Log().Info(() => "Now checking upgrade of 32 bit version.");
+                    upgradeResults = _vagrantService.run("choco.exe upgrade {0} --version {1} -x86 -fdvy".format_with(message.PackageId, message.PackageVersion));
+                    this.Log().Info(() => "Upgrade was was '{0}'.".format_with(upgradeResults.ExitCode == 0 ? "successful" : "not successful"));
+
+                    if (detect_vagrant_errors(upgradeResults.Logs, message.PackageId, message.PackageVersion)) return;
+                }
+               
+                resetSuccess = _vagrantService.reset();
+                if (!resetSuccess)
+                {
+                    Bootstrap.handle_exception(new ApplicationException("Unable to test package due to vagrant issues. See log for details"));
+                    return;
+                }
+
                 this.Log().Info(() => "Checking install.");
                 var installResults = _vagrantService.run(
                     "choco.exe install {0} --version {1} -fdvy".format_with(
@@ -108,16 +131,14 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                     Bootstrap.handle_exception(new ApplicationException("Unable to read file '{0}':{1} {2}".format_with(filesSnapshotFile, Environment.NewLine, ex.ToString()), ex));
                 }
 
-                var success = installResults.Success && installResults.ExitCode == 0;
+                var success = (installResults.Success && installResults.ExitCode == 0) && (installx86Results.Success && installx86Results.ExitCode == 0);
                 this.Log().Info(() => "Install was '{0}'.".format_with(success ? "successful" : "not successful"));
 
                 if (detect_vagrant_errors(installResults.Logs, message.PackageId, message.PackageVersion)) return;
 
-                var upgradeResults = new VagrantOutputResult();
                 var uninstallResults = new VagrantOutputResult();
                 if (success)
                 {
-                    // upgradeResults = _vagrantService.run("choco.exe upgrade {0} --version {1} -fdvy".format_with(message.PackageId, message.PackageVersion));
                     this.Log().Info(() => "Now checking uninstall.");
                     uninstallResults = _vagrantService.run("choco.exe uninstall {0} --version {1} -dvy".format_with(message.PackageId, message.PackageVersion));
                     this.Log().Info(() => "Uninstall was '{0}'.".format_with(uninstallResults.ExitCode == 0 ? "successful" : "not successful"));
@@ -155,24 +176,31 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                     Environment.NewLine,
                     installResults.ExitCode == 0
                         ? "was successful"
-                        : "failed. Note that the process may have hung, indicating a not completely silent install. This is usually seen when the last entry in the log is calling the install");
+                        : "failed. Note that the process may have hung, indicating a not completely silent install. This is usually seen when the last entry in the log is calling the install. This can also happen when a window pops up and needs to be closed to continue");   
+                summary.AppendFormat(
+                    "{0} * 32-bit install {1}.",
+                    Environment.NewLine,
+                    installx86Results.ExitCode == 0
+                        ? "was successful"
+                        : "failed. Note that the process may have hung, indicating a not completely silent install. This is usually seen when the last entry in the log is calling the install. This can also happen when a window pops up and needs to be closed to continue");
                 if (!string.IsNullOrWhiteSpace(upgradeResults.Logs))
                     summary.AppendFormat(
                         "{0} * Upgrade {1}.",
                         Environment.NewLine,
                         upgradeResults.ExitCode == 0
                             ? "was successful"
-                            : "failed. Note that the process may have hung, indicating a not completely silent install. This is usually seen when the last entry in the log is calling the install");
+                            : "failed. Note that the process may have hung, indicating a not completely silent install. This is usually seen when the last entry in the log is calling the install. This can also happen when a window pops up and needs to be closed to continue");
                 if (!string.IsNullOrWhiteSpace(uninstallResults.Logs))
                     summary.AppendFormat(
                         "{0} * Uninstall {1}.",
                         Environment.NewLine,
                         uninstallResults.ExitCode == 0
                             ? "was successful"
-                            : "failed (allowed). Note that the process may have hung, indicating a not completely silent uninstall. This is usually seen when the last entry in the log is calling the uninstall");
+                            : "failed (allowed). Note that the process may have hung, indicating a not completely silent uninstall. This is usually seen when the last entry in the log is calling the uninstall. This can also happen when a window pops up and needs to be closed to continue");
 
                 logs.Add(new PackageTestLog("_Summary.md", summary.ToString()));
                 if (!string.IsNullOrWhiteSpace(installResults.Logs)) logs.Add(new PackageTestLog("Install.txt", installResults.Logs));
+                if (!string.IsNullOrWhiteSpace(installx86Results.Logs)) logs.Add(new PackageTestLog("Install32Bit.txt", installResults.Logs));
                 if (!string.IsNullOrWhiteSpace(registrySnapshot)) logs.Add(new PackageTestLog("RegistrySnapshot.xml", registrySnapshot));
                 if (!string.IsNullOrWhiteSpace(filesSnapshot)) logs.Add(new PackageTestLog("FilesSnapshot.xml", filesSnapshot));
                 if (!string.IsNullOrWhiteSpace(upgradeResults.Logs)) logs.Add(new PackageTestLog("Upgrade.txt", upgradeResults.Logs));
