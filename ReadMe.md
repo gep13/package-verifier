@@ -1,12 +1,12 @@
 # Chocolatey Package Verifier
 
+The verifier is a service that checks the correctness (that the package actually works), that it installs and uninstalls correctly, has the right dependencies to ensure it is installed properly and can be installed silently. The verifier runs against both submitted packages and existing packages (checking every two weeks that a package can still install and sending notice when it fails). We like to think of the verifier as integration testing. It’s testing all the parts and ensuring everything is good. See the [wiki](https://github.com/chocolatey/package-verifier/wiki) for more information
+
 ![Chocolatey Logo](https://github.com/chocolatey/chocolatey/raw/master/docs/logo/chocolateyicon.gif "Chocolatey")
 
 ## Chat Room
 
-Come join in the conversation about Chocolatey in our Gitter Chat Room
-
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/chocolatey/choco?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+Want quick feedback to your questions? [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/chocolatey/choco?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ### Requirements
 * .NET Framework 4.0
