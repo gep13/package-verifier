@@ -201,7 +201,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
                 logs.Add(new PackageTestLog("_Summary.md", summary.ToString()));
                 if (!string.IsNullOrWhiteSpace(installResults.Logs)) logs.Add(new PackageTestLog("Install.txt", installResults.Logs));
-                if (!string.IsNullOrWhiteSpace(installx86Results.Logs)) logs.Add(new PackageTestLog("Install32Bit.txt", installResults.Logs));
+                if (!string.IsNullOrWhiteSpace(installx86Results.Logs)) logs.Add(new PackageTestLog("Install32Bit.txt", installx86Results.Logs));
                 if (!string.IsNullOrWhiteSpace(registrySnapshot)) logs.Add(new PackageTestLog("RegistrySnapshot.xml", registrySnapshot));
                 if (!string.IsNullOrWhiteSpace(filesSnapshot)) logs.Add(new PackageTestLog("FilesSnapshot.xml", filesSnapshot));
                 if (!string.IsNullOrWhiteSpace(upgradeResults.Logs)) logs.Add(new PackageTestLog("Upgrade.txt", upgradeResults.Logs));
