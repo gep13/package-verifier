@@ -17,11 +17,11 @@ namespace chocolatey.package.verifier.infrastructure.app.services
 {
     using results;
 
-    public interface IVagrantService
+    public interface IPackageTestService
     {
         bool prep();
         bool reset();
-        VagrantOutputResult run(string command);
+        TestCommandOutputResult run(string command);
         void shutdown();
         void destroy();
     }

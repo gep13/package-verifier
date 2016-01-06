@@ -28,19 +28,18 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
     using registration;
     using results;
     using services;
-    using synchronization;
 
     public class TestPackageTask : ITask
     {
-        private readonly IVagrantService _vagrantService;
+        private readonly IPackageTestService _testService;
         private readonly IFileSystem _fileSystem;
         private readonly IConfigurationSettings _configuration;
         private IDisposable _subscription;
-        private const string VAGRANT_LOCK_NAME = "vagrant_test";
+        private const string PROC_LOCK_NAME = "proc_test";
 
-        public TestPackageTask(IVagrantService vagrantService, IFileSystem fileSystem, IConfigurationSettings configuration)
+        public TestPackageTask(IPackageTestService testService, IFileSystem fileSystem, IConfigurationSettings configuration)
         {
-            _vagrantService = vagrantService;
+            _testService = testService;
             _fileSystem = fileSystem;
             _configuration = configuration;
         }
@@ -54,7 +53,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
         public void shutdown()
         {
             if (_subscription != null) _subscription.Dispose();
-            _vagrantService.shutdown();
+            _testService.shutdown();
         }
 
         private void test_package(VerifyPackageMessage message)
@@ -71,39 +70,16 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                 this.Log().Info(() => "========== {0} v{1} ==========".format_with(message.PackageId, message.PackageVersion));
                 this.Log().Info(() => "Testing Package: {0} Version: {1}".format_with(message.PackageId, message.PackageVersion));
 
-                var prepSuccess = _vagrantService.prep();
-                var resetSuccess = _vagrantService.reset();
+                var prepSuccess = _testService.prep();
+                var resetSuccess = _testService.reset();
                 if (!prepSuccess || !resetSuccess)
                 {
-                    Bootstrap.handle_exception(new ApplicationException("Unable to test package due to vagrant issues. See log for details"));
-                    return;
-                }
-
-                this.Log().Info(() => "Checking 32bit install.");
-                var installx86Results = _vagrantService.run(
-                    "choco.exe install {0} --version {1} -x86 -fdvy".format_with(
-                        message.PackageId,
-                        message.PackageVersion));
-
-                var upgradeResults = new VagrantOutputResult();
-                if (installx86Results.Success && installx86Results.ExitCode == 0)
-                {
-                    this.Log().Info(() => "Now checking upgrade of 32 bit version.");
-                    upgradeResults = _vagrantService.run("choco.exe upgrade {0} --version {1} -x86 -fdvy".format_with(message.PackageId, message.PackageVersion));
-                    this.Log().Info(() => "Upgrade was was '{0}'.".format_with(upgradeResults.ExitCode == 0 ? "successful" : "not successful"));
-
-                    if (detect_vagrant_errors(upgradeResults.Logs, message.PackageId, message.PackageVersion)) return;
-                }
-               
-                resetSuccess = _vagrantService.reset();
-                if (!resetSuccess)
-                {
-                    Bootstrap.handle_exception(new ApplicationException("Unable to test package due to vagrant issues. See log for details"));
+                    Bootstrap.handle_exception(new ApplicationException("Unable to test package due to testing service issues. See log for details"));
                     return;
                 }
 
                 this.Log().Info(() => "Checking install.");
-                var installResults = _vagrantService.run(
+                var installResults = _testService.run(
                     "choco.exe install {0} --version {1} -fdvy".format_with(
                         message.PackageId,
                         message.PackageVersion));
@@ -131,16 +107,18 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                     Bootstrap.handle_exception(new ApplicationException("Unable to read file '{0}':{1} {2}".format_with(filesSnapshotFile, Environment.NewLine, ex.ToString()), ex));
                 }
 
-                var success = (installResults.Success && installResults.ExitCode == 0) && (installx86Results.Success && installx86Results.ExitCode == 0);
+                var success = installResults.Success && installResults.ExitCode == 0;
                 this.Log().Info(() => "Install was '{0}'.".format_with(success ? "successful" : "not successful"));
 
                 if (detect_vagrant_errors(installResults.Logs, message.PackageId, message.PackageVersion)) return;
 
-                var uninstallResults = new VagrantOutputResult();
+                var upgradeResults = new TestCommandOutputResult();
+
+                var uninstallResults = new TestCommandOutputResult();
                 if (success)
                 {
                     this.Log().Info(() => "Now checking uninstall.");
-                    uninstallResults = _vagrantService.run("choco.exe uninstall {0} --version {1} -dvy".format_with(message.PackageId, message.PackageVersion));
+                    uninstallResults = _testService.run("choco.exe uninstall {0} --version {1} -dvy".format_with(message.PackageId, message.PackageVersion));
                     this.Log().Info(() => "Uninstall was '{0}'.".format_with(uninstallResults.ExitCode == 0 ? "successful" : "not successful"));
 
                     if (detect_vagrant_errors(uninstallResults.Logs, message.PackageId, message.PackageVersion)) return;
@@ -166,9 +144,10 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                 summary.AppendFormat("{0} * Tested {1} +00:00", Environment.NewLine, DateTime.UtcNow.ToString("dd MMM yyyy HH:mm:ss"));
                 summary.AppendFormat("{0} * Tested against {1} ({2})", Environment.NewLine, "win2012r2x64", "Windows Server 2012 R2 x64");
                 summary.AppendFormat("{0} * Tested with the latest version of choco, possibly a beta version.", Environment.NewLine);
-                summary.AppendFormat("{0} * Tested with {1} service v{2}{3}", 
-                    Environment.NewLine, 
-                    ApplicationParameters.Name, 
+                summary.AppendFormat(
+                    "{0} * Tested with {1} service v{2}{3}",
+                    Environment.NewLine,
+                    ApplicationParameters.Name,
                     ApplicationParameters.ProductVersion,
                     string.IsNullOrWhiteSpace(_configuration.InstanceName) ? string.Empty : " (Instance: {0})".format_with(_configuration.InstanceName)
                     );
@@ -176,12 +155,6 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                     "{0} * Install {1}.",
                     Environment.NewLine,
                     installResults.ExitCode == 0
-                        ? "was successful"
-                        : "failed. Note that the process may have hung, indicating a not completely silent install. This is usually seen when the last entry in the log is calling the install. This can also happen when a window pops up and needs to be closed to continue");   
-                summary.AppendFormat(
-                    "{0} * 32-bit install {1}.",
-                    Environment.NewLine,
-                    installx86Results.ExitCode == 0
                         ? "was successful"
                         : "failed. Note that the process may have hung, indicating a not completely silent install. This is usually seen when the last entry in the log is calling the install. This can also happen when a window pops up and needs to be closed to continue");
                 if (!string.IsNullOrWhiteSpace(upgradeResults.Logs))
@@ -201,8 +174,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
                 logs.Add(new PackageTestLog("_Summary.md", summary.ToString()));
                 if (!string.IsNullOrWhiteSpace(installResults.Logs)) logs.Add(new PackageTestLog("Install.txt", installResults.Logs));
-                if (!string.IsNullOrWhiteSpace(installx86Results.Logs)) logs.Add(new PackageTestLog("Install32Bit.txt", installx86Results.Logs));
-                if (!string.IsNullOrWhiteSpace(registrySnapshot)) logs.Add(new PackageTestLog("RegistrySnapshot.xml", registrySnapshot));
+                if (!string.IsNullOrWhiteSpace(registrySnapshot)) logs.Add(new PackageTestLog("1.RegistrySnapshot.xml", registrySnapshot));
                 if (!string.IsNullOrWhiteSpace(filesSnapshot)) logs.Add(new PackageTestLog("FilesSnapshot.xml", filesSnapshot));
                 if (!string.IsNullOrWhiteSpace(upgradeResults.Logs)) logs.Add(new PackageTestLog("Upgrade.txt", upgradeResults.Logs));
                 if (!string.IsNullOrWhiteSpace(uninstallResults.Logs)) logs.Add(new PackageTestLog("Uninstall.txt", uninstallResults.Logs));
@@ -234,7 +206,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             if (log.Contains("An action 'provision' was attempted") || log.Contains("VBoxManage.exe: error:"))
             {
                 this.Log().Warn("Unable to use vagrant machine for testing {0} v{1}:{2} {3}".format_with(packageId, packageVersion, Environment.NewLine, log));
-                _vagrantService.destroy();
+                _testService.destroy();
                 Thread.Sleep(20000);
                 return true;
             }

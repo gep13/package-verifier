@@ -53,7 +53,7 @@ namespace chocolatey.package.verifier.host.infrastructure.registration
                     {
                         new StartupTask(),
                         packagesCheckTask,
-                        new TestPackageTask(container.GetInstance<IVagrantService>(),container.GetInstance<IFileSystem>(),container.GetInstance<IConfigurationSettings>()),
+                        new TestPackageTask(container.GetInstance<IPackageTestService>(),container.GetInstance<IFileSystem>(),container.GetInstance<IConfigurationSettings>()),
                         new CreateGistTask(container.GetInstance<IGistService>()),
                         new UpdateWebsiteInformationTask(container.GetInstance<IConfigurationSettings>(),container.GetInstance<INuGetService>())
                     };

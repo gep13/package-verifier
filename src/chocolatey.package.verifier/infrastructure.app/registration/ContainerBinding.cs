@@ -57,7 +57,7 @@ namespace chocolatey.package.verifier.infrastructure.app.registration
             container.Register<IFileSystem, DotNetFileSystem>(Lifestyle.Singleton);
             container.Register<IRegularExpressionService, RegularExpressionService>(Lifestyle.Singleton);
             container.Register<IGistService, GistService>(Lifestyle.Singleton);
-            container.Register<IVagrantService, VagrantService>(Lifestyle.Singleton);
+            container.Register<IPackageTestService, VagrantService>(Lifestyle.Singleton);
             container.Register<INuGetService, NuGetService>(Lifestyle.Singleton);
 
             RegisterOverrideableComponents(container, configuration);

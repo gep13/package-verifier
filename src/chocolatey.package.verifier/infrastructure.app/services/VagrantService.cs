@@ -34,7 +34,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
         public string Command { get; set; }
     }
 
-    public class VagrantService : IVagrantService
+    public class VagrantService : IPackageTestService
     {
         private readonly ICommandExecutor _commandExecutor;
         private readonly IFileSystem _fileSystem;
@@ -97,10 +97,10 @@ namespace chocolatey.package.verifier.infrastructure.app.services
             return execute_vagrant("status").Logs.to_lower().Contains("running (");
         }
 
-        private VagrantOutputResult execute_vagrant(string command)
+        private TestCommandOutputResult execute_vagrant(string command)
         {
             this.Log().Debug(() => "Executing vagrant command '{0}'.".format_with(command.escape_curly_braces()));
-            var results = new VagrantOutputResult();
+            var results = new TestCommandOutputResult();
             var logs = new StringBuilder();
 
             var output = _commandExecutor.execute(
@@ -235,7 +235,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
             return true;
         }
 
-        public VagrantOutputResult run(string command)
+        public TestCommandOutputResult run(string command)
         {
             this.Log().Debug(() => "Ensuring vagrant sandbox is on.");
             execute_vagrant("sandbox on");
@@ -243,7 +243,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
             var filePrepped = make_vagrant_provision_file("ChocolateyAction.ps1");
             if (!filePrepped)
             {
-                return new VagrantOutputResult
+                return new TestCommandOutputResult
                 {
                     ExitCode = 1,
                     Messages =

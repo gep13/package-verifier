@@ -17,7 +17,7 @@ namespace chocolatey.package.verifier.infrastructure.app.results
 {
     using infrastructure.results;
 
-    public class VagrantOutputResult : Result
+    public class TestCommandOutputResult : Result
     {
         public int ExitCode { get; set; }
         public string Logs { get; set; }
