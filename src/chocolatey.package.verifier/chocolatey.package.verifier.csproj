@@ -161,6 +161,7 @@
     <Compile Include="infrastructure\filesystem\IFileSystem.cs" />
     <Compile Include="infrastructure\filesystem\IKnownFolder.cs" />
     <Compile Include="infrastructure\filesystem\KnownFolder.cs" />
+    <Compile Include="infrastructure\logging\ConsoleLog.cs" />
     <Compile Include="infrastructure\logging\log4netappenders\SmtpCustomAppender.cs" />
     <Compile Include="infrastructure\messaging\EventManager.cs" />
     <Compile Include="infrastructure\messaging\IMessage.cs" />
