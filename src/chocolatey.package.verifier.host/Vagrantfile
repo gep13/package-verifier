@@ -3,14 +3,14 @@
 
   config.vm.provider :virtualbox do |v, override|
     v.gui = false
-    v.customize ["modifyvm", :id, "--memory", "2048"]
-    v.customize ["modifyvm", :id, "--cpus", "1"]
+    v.customize ["modifyvm", :id, "--memory", "4096"]
+    v.customize ["modifyvm", :id, "--cpus", "2"]
     v.customize ["modifyvm", :id, "--vram", 32]
     v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     v.customize ["modifyvm", :id, "--audio", "none"]
     v.customize ["modifyvm", :id, "--clipboard", "disabled"]
     v.customize ["modifyvm", :id, "--usb", "off"]
-	v.linked_clone = true if Vagrant::VERSION >= '1.8.0'
+    v.linked_clone = true if Vagrant::VERSION >= '1.8.0'
   end
 
   config.windows.halt_timeout = 20
