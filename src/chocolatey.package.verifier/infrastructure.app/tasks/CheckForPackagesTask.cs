@@ -76,60 +76,60 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
                 var lastPackage = string.Empty;
 
-                for (var i = 0; i < 10; i++)
+                //for (var i = 0; i < 10; i++)
+                //{
+                this.Log().Info(() => "Grabbing next available package for verification.");
+
+                var service = new FeedContext_x0060_1(submittedPackagesUri)
                 {
-                    this.Log().Info(() => "Grabbing next available package for verification.");
+                    Timeout = 70
+                };
 
-                    var service = new FeedContext_x0060_1(submittedPackagesUri)
-                    {
-                        Timeout = 70
-                    };
+                var cacheTimeout = DateTime.UtcNow.AddMinutes(-31);
+                // this only returns 40 results at a time but at least we'll have something to start with
+                IQueryable<V2FeedPackage> packageQuery =
+                    service.Packages.Where(p => p.Created < cacheTimeout && (p.PackageTestResultStatus == null || p.PackageTestResultStatus == "Pending" || p.PackageTestResultStatus == "Unknown"));
 
-                    var cacheTimeout = DateTime.UtcNow.AddMinutes(-31);
-                    // this only returns 40 results at a time but at least we'll have something to start with
-                    IQueryable<V2FeedPackage> packageQuery =
-                        service.Packages.Where(p => p.Created < cacheTimeout && (p.PackageTestResultStatus == null || p.PackageTestResultStatus == "Pending" || p.PackageTestResultStatus == "Unknown"));
+                if (AdditionalPackageSelectionFilters != null) packageQuery = AdditionalPackageSelectionFilters.Invoke(packageQuery);
 
-                    if (AdditionalPackageSelectionFilters != null) packageQuery = AdditionalPackageSelectionFilters.Invoke(packageQuery);
+                packageQuery = packageQuery.OrderBy(p => p.Created);
 
-                    packageQuery = packageQuery.OrderBy(p => p.Created);
+                // let's specifically reduce the call to 30 results so we get back results faster from Chocolatey.org
+                IList<V2FeedPackage> packagesToValidate = packageQuery.Take(30).ToList();
 
-                    // let's specifically reduce the call to 30 results so we get back results faster from Chocolatey.org
-                    IList<V2FeedPackage> packagesToValidate = packageQuery.Take(30).ToList();
-
-                    if (packagesToValidate.Count == 0)
-                    {
-                        this.Log().Info("No packages to verify.");
-                        break;
-                    }
-
-                    //remove the random for now, we'll just grab the top result
-                    //this.Log().Info("Pulled in {0} packages, picking one at random to verify.".format_with(packagesToValidate.Count));
-
-                    //var skip = new Random().Next(packagesToValidate.Count);
-                    //if (skip < 0) skip = 0;
-                    //packagesToValidate = packagesToValidate.Skip(skip).Take(1).ToList();
-
-                    //var package = packagesToValidate.FirstOrDefault();
-                    //if (package == null) continue;
-
-                    //var packageId = "{0}:{1}".format_with(package.Id, package.Version);
-                    //if (lastPackage == packageId)
-                    //{
-                    //    this.Log().Info("Already verified {0} v{1} recently.".format_with(package.Title, package.Version));
-                    //    continue;
-                    //}
-                    //lastPackage = packageId;
-                    
-                    //this.Log().Info("{0} v{1} found for review.".format_with(package.Title, package.Version));
-                    //EventManager.publish(new VerifyPackageMessage(package.Id, package.Version));
-
-                    foreach (var package in packagesToValidate.or_empty_list_if_null())
-                    {
-                        this.Log().Info("{0} v{1} found for review.".format_with(package.Title, package.Version));
-                        EventManager.publish(new VerifyPackageMessage(package.Id, package.Version));
-                    }
+                if (packagesToValidate.Count == 0)
+                {
+                    this.Log().Info("No packages to verify.");
+                    //break;
                 }
+
+                //remove the random for now, we'll just grab the top result
+                //this.Log().Info("Pulled in {0} packages, picking one at random to verify.".format_with(packagesToValidate.Count));
+
+                //var skip = new Random().Next(packagesToValidate.Count);
+                //if (skip < 0) skip = 0;
+                //packagesToValidate = packagesToValidate.Skip(skip).Take(1).ToList();
+
+                //var package = packagesToValidate.FirstOrDefault();
+                //if (package == null) continue;
+
+                //var packageId = "{0}:{1}".format_with(package.Id, package.Version);
+                //if (lastPackage == packageId)
+                //{
+                //    this.Log().Info("Already verified {0} v{1} recently.".format_with(package.Title, package.Version));
+                //    continue;
+                //}
+                //lastPackage = packageId;
+
+                //this.Log().Info("{0} v{1} found for review.".format_with(package.Title, package.Version));
+                //EventManager.publish(new VerifyPackageMessage(package.Id, package.Version));
+
+                foreach (var package in packagesToValidate.or_empty_list_if_null())
+                {
+                    this.Log().Info("{0} v{1} found for review.".format_with(package.Title, package.Version));
+                    //EventManager.publish(new VerifyPackageMessage(package.Id, package.Version));
+                }
+                // }
             }
             catch (Exception ex)
             {
