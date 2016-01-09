@@ -127,7 +127,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                 foreach (var package in packagesToValidate.or_empty_list_if_null())
                 {
                     this.Log().Info("{0} v{1} found for review.".format_with(package.Title, package.Version));
-                    //EventManager.publish(new VerifyPackageMessage(package.Id, package.Version));
+                    EventManager.publish(new VerifyPackageMessage(package.Id, package.Version));
                 }
                 // }
             }
