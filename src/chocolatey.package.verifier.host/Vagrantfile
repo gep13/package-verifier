@@ -33,5 +33,5 @@
   #  It's not necessary if you are not using SSH, but it doesn't hurt anything to have it
   config.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", auto_correct: true
 
-  config.vm.provision :shell, :path => "shell/VagrantAction.ps1"
+  config.vm.provision :shell, :path => "shell/VagrantAction.ps1", :powershell_elevated_interactive => true
 end
