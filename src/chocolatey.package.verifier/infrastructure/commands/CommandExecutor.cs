@@ -17,6 +17,8 @@ namespace chocolatey.package.verifier.infrastructure.commands
 {
     using System;
     using System.Diagnostics;
+    using System.IO;
+    using System.Management;
     using System.Reflection;
     using app;
     using filesystem;
@@ -147,7 +149,7 @@ namespace chocolatey.package.verifier.infrastructure.commands
                     else
                     {
                         ApplicationParameters.Name.Log().Warn(() => "Killing process ['\"{0}\" {1}']".format_with(process, arguments));
-                        p.Kill();
+                        kill_process_and_children(p.Id);
                     }
                 }
             }
@@ -216,11 +218,11 @@ namespace chocolatey.package.verifier.infrastructure.commands
                     if (exited)
                     {
                         output.ExitCode = p.ExitCode;
-                    } 
+                    }
                     else
                     {
                         ApplicationParameters.Name.Log().Warn(() => "Killing process ['\"{0}\" {1}']".format_with(process, arguments));
-                        p.Kill();
+                        kill_process_and_children(p.Id);
                     }
                 }
 
@@ -232,6 +234,31 @@ namespace chocolatey.package.verifier.infrastructure.commands
                 .Debug(() => "Command ['\"{0}\" {1}'] exited with '{2}'".format_with(process, arguments, output.ExitCode));
 
             return output;
+        }
+
+        /// <summary>
+        /// Kill a process, and all of its children, grandchildren, etc.
+        /// </summary>
+        /// <param name="pid">Process ID.</param>
+        /// <remarks>From http://stackoverflow.com/a/10402906/18475 </remarks>
+        public static void kill_process_and_children(int pid)
+        {
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher
+              ("Select * From Win32_Process Where ParentProcessID=" + pid);
+            ManagementObjectCollection moc = searcher.Get();
+            foreach (ManagementObject mo in moc)
+            {
+                kill_process_and_children(Convert.ToInt32(mo["ProcessID"]));
+            }
+            try
+            {
+                Process proc = Process.GetProcessById(pid);
+                proc.Kill();
+            }
+            catch (ArgumentException)
+            {
+                // Process already exited.
+            }
         }
 
         private static void log_output(object sender, DataReceivedEventArgs e)
