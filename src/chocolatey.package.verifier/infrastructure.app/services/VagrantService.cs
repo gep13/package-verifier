@@ -106,7 +106,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
             var output = _commandExecutor.execute(
                 _vagrantExecutable,
                 command,
-                _configuration.CommandExecutionTimeoutSeconds,
+                _configuration.CommandExecutionTimeoutSeconds + 60,
                 _fileSystem.get_directory_name(Assembly.GetExecutingAssembly().Location),
                 (s, e) =>
                 {

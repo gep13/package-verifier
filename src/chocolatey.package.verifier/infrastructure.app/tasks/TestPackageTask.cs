@@ -80,9 +80,10 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
                 this.Log().Info(() => "Checking install.");
                 var installResults = _testService.run(
-                    "choco.exe install {0} --version {1} -fdvy".format_with(
+                    "choco.exe install {0} --version {1} -fdvy --execution-timeout={2}".format_with(
                         message.PackageId,
-                        message.PackageVersion));
+                        message.PackageVersion,
+                        _configuration.CommandExecutionTimeoutSeconds));
 
                 this.Log().Debug(() => "Grabbing results files (.registry/.files) to include in report.");
                 var registrySnapshot = string.Empty;
@@ -118,7 +119,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                 if (success)
                 {
                     this.Log().Info(() => "Now checking uninstall.");
-                    uninstallResults = _testService.run("choco.exe uninstall {0} --version {1} -dvy".format_with(message.PackageId, message.PackageVersion));
+                    uninstallResults = _testService.run("choco.exe uninstall {0} --version {1} -dvy --execution-timeout={2}".format_with(message.PackageId, message.PackageVersion, _configuration.CommandExecutionTimeoutSeconds));
                     this.Log().Info(() => "Uninstall was '{0}'.".format_with(uninstallResults.ExitCode == 0 ? "successful" : "not successful"));
 
                     if (detect_vagrant_errors(uninstallResults.Logs, message.PackageId, message.PackageVersion)) return;
