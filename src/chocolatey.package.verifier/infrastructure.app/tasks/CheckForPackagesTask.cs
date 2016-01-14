@@ -92,6 +92,8 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
                 if (AdditionalPackageSelectionFilters != null) packageQuery = AdditionalPackageSelectionFilters.Invoke(packageQuery);
 
+               //int total = packageQuery.Count();
+
                 packageQuery = packageQuery.OrderBy(p => p.Created);
 
                 // let's specifically reduce the call to 30 results so we get back results faster from Chocolatey.org
