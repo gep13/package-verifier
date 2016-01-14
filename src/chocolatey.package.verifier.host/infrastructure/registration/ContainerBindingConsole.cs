@@ -15,6 +15,7 @@
 
 namespace chocolatey.package.verifier.host.infrastructure.registration
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using SimpleInjector;
@@ -42,8 +43,27 @@ namespace chocolatey.package.verifier.host.infrastructure.registration
             var packagesCheckTask = new CheckForPackagesTask(config);
             if (config.PackageTypesToVerify.to_lower() != "submitted")
             {
+                var thirtyDaysAgo = DateTime.UtcNow.AddDays(-30);
                 packagesCheckTask.ServiceEndpoint = "/api/v2/";
-                packagesCheckTask.AdditionalPackageSelectionFilters = p => p.Where(pv => pv.IsLatestVersion);
+
+                // we should not have any existing packages that have not been tested
+                //pv.PackageTestResultStatus == null
+                //todo: We are going to rerun all existing packages, even failing for now - after this run is complete, we will only rerun passing
+                // we are doing this because we've completed some major fixes to the verifier that may fix some of the failing packages.
+                //&& (pv.PackageTestResultStatus == "Passing" && pv.PackageTestResultStatusDate < thirtyDaysAgo)
+
+                packagesCheckTask.AdditionalPackageSelectionFilters = p => p.Where(
+                    pv => pv.IsLatestVersion
+                          && (pv.PackageTestResultStatusDate == null || pv.PackageTestResultStatusDate < thirtyDaysAgo)
+                    );
+            }
+            else
+            {
+                packagesCheckTask.AdditionalPackageSelectionFilters = p => p.Where(
+                    pv => (pv.PackageTestResultStatus == null 
+                           || pv.PackageTestResultStatus == "Pending" 
+                           || pv.PackageTestResultStatus == "Unknown")
+                          );
             }
 
             container.Register<IEnumerable<ITask>>(

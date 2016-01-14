@@ -88,7 +88,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                 var cacheTimeout = DateTime.UtcNow.AddMinutes(-31);
                 // this only returns 40 results at a time but at least we'll have something to start with
                 IQueryable<V2FeedPackage> packageQuery =
-                    service.Packages.Where(p => p.Created < cacheTimeout && (p.PackageTestResultStatus == null || p.PackageTestResultStatus == "Pending" || p.PackageTestResultStatus == "Unknown"));
+                    service.Packages.Where(p => p.Created < cacheTimeout);
 
                 if (AdditionalPackageSelectionFilters != null) packageQuery = AdditionalPackageSelectionFilters.Invoke(packageQuery);
 
