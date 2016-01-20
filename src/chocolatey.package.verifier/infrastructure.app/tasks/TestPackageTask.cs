@@ -85,6 +85,13 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                         message.PackageVersion,
                         _configuration.CommandExecutionTimeoutSeconds));
 
+                if (installResults.Logs.Contains("The term 'choco.exe' is not recognized as the name of a cmdlet"))
+                {
+                    _testService.destroy();
+                    Bootstrap.handle_exception(new ApplicationException("Unable to test package due to testing service issues. See log for details"));
+                    return;
+                }
+
                 this.Log().Debug(() => "Grabbing results files (.registry/.files) to include in report.");
                 var registrySnapshot = string.Empty;
                 var registrySnapshotFile = ".\\files\\{0}.{1}\\.registry".format_with(message.PackageId, message.PackageVersion);
