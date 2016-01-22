@@ -92,7 +92,8 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
                 if (AdditionalPackageSelectionFilters != null) packageQuery = AdditionalPackageSelectionFilters.Invoke(packageQuery);
 
-               //int total = packageQuery.Count();
+                //int total = packageQuery.Count();
+                //packageQuery = packageQuery.Where(p => p.Id == "");
 
                 packageQuery = packageQuery.OrderBy(p => p.Created);
 
