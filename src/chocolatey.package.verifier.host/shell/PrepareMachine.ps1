@@ -21,7 +21,7 @@ try {
 	Write-Output 'Unable to disable IE First Run Welcome Screen. Packages that use one click deploy will be so disappointed.'
 }
 
-# Windows Update service should have starup type of manual
+Write-Output 'Setting Windows Update service to Manual startup type'
 Set-Service -Name wuauserv -StartupType Manual
 
 & c:\vagrant\shell\InstallNet4.ps1
