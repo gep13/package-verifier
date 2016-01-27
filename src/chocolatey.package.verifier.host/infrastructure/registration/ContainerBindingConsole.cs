@@ -54,7 +54,7 @@ namespace chocolatey.package.verifier.host.infrastructure.registration
 
                 packagesCheckTask.AdditionalPackageSelectionFilters = p => p.Where(
                     pv => pv.IsLatestVersion
-                          && (pv.PackageTestResultStatusDate == null || pv.PackageTestResultStatusDate < thirtyDaysAgo)
+                          && (pv.PackageTestResultStatusDate == null || pv.PackageTestResultStatusDate < thirtyDaysAgo || pv.PackageTestResultStatus == "Pending")
                           && pv.PackageTestResultStatus != "Exempted"
                     );
             }
