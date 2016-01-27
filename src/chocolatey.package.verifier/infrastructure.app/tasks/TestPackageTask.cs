@@ -80,7 +80,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
                 this.Log().Info(() => "Checking install.");
                 var installResults = _testService.run(
-                    "choco.exe install {0} --version {1} -fdvy --execution-timeout={2}".format_with(
+                    "choco.exe install {0} --version {1} -fdvy --execution-timeout={2} --allow-downgrade".format_with(
                         message.PackageId,
                         message.PackageVersion,
                         _configuration.CommandExecutionTimeoutSeconds));
