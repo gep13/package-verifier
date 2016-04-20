@@ -2,6 +2,7 @@ $installLatestBeta = $false
 $installLocalFile = $true
 $localChocolateyPackageFilePath = 'c:\vagrant\chocolatey.0.9.10-beta-20160323.nupkg'
 
+$env:chocolateyVersion="0.9.10-beta-20160402"
 $ChocoInstallPath = "$env:SystemDrive\ProgramData\Chocolatey\bin"
 $env:ChocolateyInstall = "$env:SystemDrive\ProgramData\Chocolatey"
 $env:Path += ";$ChocoInstallPath"
