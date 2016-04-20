@@ -70,6 +70,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                 this.Log().Info(() => "========== {0} v{1} ==========".format_with(message.PackageId, message.PackageVersion));
                 this.Log().Info(() => "Testing Package: {0} Version: {1}".format_with(message.PackageId, message.PackageVersion));
 
+                _fileSystem.delete_file(".\\choco_logs\\chocolatey.log");
                 var prepSuccess = _testService.prep();
                 var resetSuccess = _testService.reset();
                 if (!prepSuccess || !resetSuccess)
@@ -90,6 +91,22 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                     _testService.destroy();
                     Bootstrap.handle_exception(new ApplicationException("Unable to test package due to testing service issues. See log for details"));
                     return;
+                }
+
+                this.Log().Debug(() => "Grabbing actual log file to include in report.");
+                var installLog = string.Empty;
+                var installLogFile = ".\\choco_logs\\chocolatey.log";
+                try
+                {
+                    if (_fileSystem.file_exists(installLogFile))
+                    {
+                        installLog = _fileSystem.read_file(installLogFile);
+                        _fileSystem.delete_file(installLogFile);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Bootstrap.handle_exception(new ApplicationException("Unable to read file '{0}':{1} {2}".format_with(installLogFile, Environment.NewLine, ex.ToString()), ex));
                 }
 
                 this.Log().Debug(() => "Grabbing results files (.registry/.files) to include in report.");
@@ -122,12 +139,28 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
                 var upgradeResults = new TestCommandOutputResult();
 
+                var uninstallLog = string.Empty;
                 var uninstallResults = new TestCommandOutputResult();
                 if (success)
                 {
                     this.Log().Info(() => "Now checking uninstall.");
                     uninstallResults = _testService.run("choco.exe uninstall {0} --version {1} -dvy --execution-timeout={2}".format_with(message.PackageId, message.PackageVersion, _configuration.CommandExecutionTimeoutSeconds));
                     this.Log().Info(() => "Uninstall was '{0}'.".format_with(uninstallResults.ExitCode == 0 ? "successful" : "not successful"));
+                    this.Log().Debug(() => "Grabbing actual log file to include in report.");
+
+                    var uninstallLogFile = ".\\choco_logs\\chocolatey.log";
+                    try
+                    {
+                        if (_fileSystem.file_exists(uninstallLogFile))
+                        {
+                            uninstallLog = _fileSystem.read_file(uninstallLogFile);
+                            _fileSystem.delete_file(uninstallLogFile);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Bootstrap.handle_exception(new ApplicationException("Unable to read file '{0}':{1} {2}".format_with(uninstallLogFile, Environment.NewLine, ex.ToString()), ex));
+                    }
 
                     if (detect_vagrant_errors(uninstallResults.Logs, message.PackageId, message.PackageVersion)) return;
                 }
@@ -181,11 +214,11 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                             : "failed (allowed). Note that the process may have hung, indicating a not completely silent uninstall. This is usually seen when the last entry in the log is calling the uninstall. This can also happen when a window pops up and needs to be closed to continue");
 
                 logs.Add(new PackageTestLog("_Summary.md", summary.ToString()));
-                if (!string.IsNullOrWhiteSpace(installResults.Logs)) logs.Add(new PackageTestLog("Install.txt", installResults.Logs));
+                if (!string.IsNullOrWhiteSpace(installResults.Logs)) logs.Add(new PackageTestLog("Install.txt", string.IsNullOrWhiteSpace(installLog) ? installResults.Logs : installLog));
                 if (!string.IsNullOrWhiteSpace(registrySnapshot)) logs.Add(new PackageTestLog("1.RegistrySnapshot.xml", registrySnapshot));
                 if (!string.IsNullOrWhiteSpace(filesSnapshot)) logs.Add(new PackageTestLog("FilesSnapshot.xml", filesSnapshot));
                 if (!string.IsNullOrWhiteSpace(upgradeResults.Logs)) logs.Add(new PackageTestLog("Upgrade.txt", upgradeResults.Logs));
-                if (!string.IsNullOrWhiteSpace(uninstallResults.Logs)) logs.Add(new PackageTestLog("Uninstall.txt", uninstallResults.Logs));
+                if (!string.IsNullOrWhiteSpace(uninstallResults.Logs)) logs.Add(new PackageTestLog("Uninstall.txt", string.IsNullOrWhiteSpace(uninstallLog) ? uninstallResults.Logs : uninstallLog));
 
                 EventManager.publish(
                     new PackageTestResultMessage(

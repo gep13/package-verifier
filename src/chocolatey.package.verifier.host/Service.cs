@@ -79,6 +79,7 @@ namespace chocolatey.package.verifier.Host
 
                 var fileSystem = _container.GetInstance<IFileSystem>();
                 fileSystem.create_directory_if_not_exists(".\\files");
+                fileSystem.create_directory_if_not_exists(".\\choco_logs");
 
                 var tasks = _container.GetAllInstances<ITask>();
                 foreach (var task in tasks)
