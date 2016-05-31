@@ -78,3 +78,5 @@ choco feature enable -n autouninstaller
 choco feature enable -n allowGlobalConfirmation
 choco feature enable -n logEnvironmentValues
 #choco feature disable -n powershellHost
+
+Exit $LASTEXITCODE

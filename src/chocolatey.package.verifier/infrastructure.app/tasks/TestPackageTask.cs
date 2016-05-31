@@ -23,6 +23,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
     using domain;
     using filesystem;
     using infrastructure.messaging;
+    using infrastructure.results;
     using infrastructure.tasks;
     using messaging;
     using registration;
@@ -56,6 +57,24 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             _testService.shutdown();
         }
 
+        
+        private bool had_environment_errors(TestCommandOutputResult results)
+        {
+            var environmentErrors = false;
+
+            if (results.Logs.Contains("The term 'choco.exe' is not")) environmentErrors = true;
+            if (results.Logs.Contains("The term 'choco' is not")) environmentErrors = true;
+            if (results.Logs.Contains("Cannot remove item C:\\Windows\\Temp\\WinRM_Elevated_Shell.log")) environmentErrors = true;
+
+            if (environmentErrors)
+            {
+                _testService.destroy();
+                Bootstrap.handle_exception(new ApplicationException("Unable to test package due to testing environment issues. See log for details"));
+            }
+
+            return environmentErrors;
+        }
+
         private void test_package(VerifyPackageMessage message)
         {
             //var lockTaken = TransactionLock.acquire(VAGRANT_LOCK_NAME, 7200);
@@ -86,13 +105,8 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                         message.PackageVersion,
                         _configuration.CommandExecutionTimeoutSeconds));
 
-                if (installResults.Logs.Contains("The term 'choco.exe' is not recognized as the name of a cmdlet"))
-                {
-                    _testService.destroy();
-                    Bootstrap.handle_exception(new ApplicationException("Unable to test package due to testing service issues. See log for details"));
-                    return;
-                }
-
+                if (had_environment_errors(installResults)) return;
+                
                 this.Log().Debug(() => "Grabbing actual log file to include in report.");
                 var installLog = string.Empty;
                 var installLogFile = ".\\choco_logs\\chocolatey.log";
@@ -162,6 +176,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                         Bootstrap.handle_exception(new ApplicationException("Unable to read file '{0}':{1} {2}".format_with(uninstallLogFile, Environment.NewLine, ex.ToString()), ex));
                     }
 
+                    if (had_environment_errors(uninstallResults)) return;
                     if (detect_vagrant_errors(uninstallResults.Logs, message.PackageId, message.PackageVersion)) return;
                 }
 

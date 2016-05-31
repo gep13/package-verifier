@@ -24,6 +24,20 @@ try {
 Write-Output 'Setting Windows Update service to Manual startup type'
 Set-Service -Name wuauserv -StartupType Manual
 
+$exitCode = 0
+
 & c:\vagrant\shell\InstallNet4.ps1
+$scriptExitCode = $LASTEXITCODE
+if ($scriptExitCode -ne 0 -and $scriptExitCode -ne '') {
+  $exitCode = $scriptExitCode
+}
+
 & c:\vagrant\shell\InstallChocolatey.ps1
+$scriptExitCode = $LASTEXITCODE
+if ($scriptExitCode -ne 0 -and $scriptExitCode -ne '') {
+  $exitCode = $scriptExitCode
+}
+
 & c:\vagrant\shell\NotifyGuiAppsOfEnvironmentChanges.ps1
+
+Exit $exitCode
