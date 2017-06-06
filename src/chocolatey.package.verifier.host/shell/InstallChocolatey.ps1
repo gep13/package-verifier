@@ -77,6 +77,7 @@ if (!(Test-Path $ChocoInstallPath)) {
 choco feature enable -n autouninstaller
 choco feature enable -n allowGlobalConfirmation
 choco feature enable -n logEnvironmentValues
+choco feature disable -n showDownloadProgress
 #choco feature disable -n powershellHost
 
 Exit $LASTEXITCODE
