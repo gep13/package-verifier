@@ -17,8 +17,10 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 {
     using System;
     using System.Collections.Generic;
+    using System.Reflection;
     using System.Text;
     using System.Threading;
+    using commands;
     using configuration;
     using domain;
     using filesystem;
@@ -35,14 +37,16 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
         private readonly IPackageTestService _testService;
         private readonly IFileSystem _fileSystem;
         private readonly IConfigurationSettings _configuration;
+        private readonly IImageUploadService _imageUploadService;
         private IDisposable _subscription;
         private const string PROC_LOCK_NAME = "proc_test";
 
-        public TestPackageTask(IPackageTestService testService, IFileSystem fileSystem, IConfigurationSettings configuration)
+        public TestPackageTask(IPackageTestService testService, IFileSystem fileSystem, IConfigurationSettings configuration, IImageUploadService imageUploadService)
         {
             _testService = testService;
             _fileSystem = fileSystem;
             _configuration = configuration;
+            _imageUploadService = imageUploadService;
         }
 
         public void initialize()
