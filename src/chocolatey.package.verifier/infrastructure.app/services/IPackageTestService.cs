@@ -15,13 +15,14 @@
 
 namespace chocolatey.package.verifier.infrastructure.app.services
 {
+    using System;
     using results;
 
     public interface IPackageTestService
     {
         bool prep();
         bool reset();
-        TestCommandOutputResult run(string command);
+        TestCommandOutputResult run(string command, Action timeoutAction);
         void shutdown();
         void destroy();
     }

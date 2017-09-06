@@ -118,7 +118,46 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                     "choco.exe install {0} --version {1} -fdvy --execution-timeout={2} --allow-downgrade".format_with(
                         message.PackageId,
                         message.PackageVersion,
-                        _configuration.CommandExecutionTimeoutSeconds));
+                        _configuration.CommandExecutionTimeoutSeconds),
+                    () =>
+                    {
+                        if (string.IsNullOrWhiteSpace(_vboxManageExe) || !string.IsNullOrWhiteSpace(_configuration.VboxIdPath)) return;
+                        if (!_fileSystem.file_exists(_configuration.VboxIdPath)) return;
+                        var vmId = _fileSystem.read_file(_configuration.VboxIdPath);
+                        if (string.IsNullOrWhiteSpace(vmId)) return;
+
+                        var imageLocation = _fileSystem.combine_paths(imageDirectory, "{0}.{1}.install.png".format_with(message.PackageId, message.PackageVersion));
+
+                        try
+                        {
+                            CommandExecutor.execute_static(_vboxManageExe, 
+                                "controlvm {" + vmId + "} screenshotpng " + imageLocation, 
+                                30,
+                                _fileSystem.get_directory_name(Assembly.GetExecutingAssembly().Location),
+                                (o, e) =>
+                                {
+                                    if (e == null || string.IsNullOrWhiteSpace(e.Data)) return;
+                                    this.Log().Debug(() => " [VboxManage] {0}".format_with(e.Data));
+                                },
+                                (o, e) =>
+                                {
+                                    if (e == null || string.IsNullOrWhiteSpace(e.Data)) return;
+                                    this.Log().Warn(() => " [VboxManage][Error] {0}".format_with(e.Data));
+                                },
+                                null, 
+                                updateProcessPath: false,
+                                allowUseWindow: false);
+
+                            if (_fileSystem.file_exists(imageLocation))
+                            {
+                                installImage = _imageUploadService.upload_image(imageLocation);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            this.Log().Warn("Image capture failed for {0}v{1}:{2} {3}".format_with(message.PackageId, message.PackageVersion, Environment.NewLine, ex.Message));
+                        }
+                    });
 
                 installResults.ImageLink = installImage;
 
@@ -175,8 +214,49 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                 if (success)
                 {
                     this.Log().Info(() => "Now checking uninstall.");
-                    uninstallResults = _testService.run("choco.exe uninstall {0} --version {1} -dvy --execution-timeout={2}".format_with(message.PackageId, message.PackageVersion, _configuration.CommandExecutionTimeoutSeconds));
+
                     var uninstallImage = string.Empty;
+
+                    uninstallResults = _testService.run("choco.exe uninstall {0} --version {1} -dvy --execution-timeout={2}".format_with(message.PackageId, message.PackageVersion, _configuration.CommandExecutionTimeoutSeconds),
+                        () =>
+                        {
+                            if (string.IsNullOrWhiteSpace(_vboxManageExe) || !string.IsNullOrWhiteSpace(_configuration.VboxIdPath)) return;
+                            if (!_fileSystem.file_exists(_configuration.VboxIdPath)) return;
+                            var vmId = _fileSystem.read_file(_configuration.VboxIdPath);
+                            if (string.IsNullOrWhiteSpace(vmId)) return;
+
+                            var imageLocation = _fileSystem.combine_paths(imageDirectory, "{0}.{1}.uninstall.png".format_with(message.PackageId, message.PackageVersion));
+
+                            try
+                            {
+                                CommandExecutor.execute_static(_vboxManageExe,
+                                    "controlvm {" + vmId + "} screenshotpng " + imageLocation,
+                                    30,
+                                    _fileSystem.get_directory_name(Assembly.GetExecutingAssembly().Location),
+                                    (o, e) =>
+                                    {
+                                        if (e == null || string.IsNullOrWhiteSpace(e.Data)) return;
+                                        this.Log().Debug(() => " [VboxManage] {0}".format_with(e.Data));
+                                    },
+                                    (o, e) =>
+                                    {
+                                        if (e == null || string.IsNullOrWhiteSpace(e.Data)) return;
+                                        this.Log().Warn(() => " [VboxManage][Error] {0}".format_with(e.Data));
+                                    },
+                                    null,
+                                    updateProcessPath: false,
+                                    allowUseWindow: false);
+
+                                if (_fileSystem.file_exists(imageLocation))
+                                {
+                                    uninstallImage = _imageUploadService.upload_image(imageLocation);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                this.Log().Warn("Image capture failed for {0}v{1}:{2} {3}".format_with(message.PackageId, message.PackageVersion, Environment.NewLine, ex.Message));
+                            }
+                        });
                     this.Log().Info(() => "Uninstall was '{0}'.".format_with(uninstallResults.ExitCode == 0 ? "successful" : "not successful"));
                     this.Log().Debug(() => "Grabbing actual log file to include in report.");
 

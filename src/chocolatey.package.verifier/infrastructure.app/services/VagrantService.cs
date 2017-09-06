@@ -236,7 +236,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
             return true;
         }
 
-        public TestCommandOutputResult run(string command)
+        public TestCommandOutputResult run(string command, Action timeoutAction)
         {
             this.Log().Debug(() => "Ensuring vagrant sandbox is on.");
             execute_vagrant("sandbox on");
@@ -260,7 +260,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
 
             update_command_in_action_file(command);
 
-            return execute_vagrant("provision");
+            return execute_vagrant("provision", timeoutAction);
         }
 
         public void shutdown()
