@@ -98,6 +98,21 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         /// </summary>
         string GitHubPassword { get; }
 
+        /// <summary>
+        /// Gets the path to virtual box.
+        /// </summary>
+        /// <value>
+        /// The path to virtual box.
+        /// </value>
+        string PathToVirtualBox { get; }
+        
+        /// <summary>
+        /// Gets the vbox identifier file path. Used to pull out the current id for the vbox in use.
+        /// </summary>
+        /// <value>
+        /// The vbox identifier file path.
+        /// </value>
+        string VboxIdPath { get;}
         
         /// <summary>
         /// Gets the image upload client identifier.

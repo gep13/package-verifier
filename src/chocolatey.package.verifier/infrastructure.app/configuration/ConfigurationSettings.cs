@@ -111,7 +111,29 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
             get { return int.Parse(get_application_settings_value("CommandExecutionTimeoutSeconds")); }
         }
 
+        /// <summary>
+        /// Gets the path to vagrant. Used for isolating different vagrants.
+        /// </summary>
+        /// <value>
+        /// The path to vagrant.
+        /// </value>
         public string PathToVagrant { get { return get_application_settings_value("PathToVagrant"); } }
+
+        /// <summary>
+        /// Gets the path to virtual box.
+        /// </summary>
+        /// <value>
+        /// The path to virtual box.
+        /// </value>
+        public string PathToVirtualBox { get { return get_application_settings_value("PathToVirtualBox"); } }
+
+        /// <summary>
+        /// Gets the vbox identifier path.
+        /// </summary>
+        /// <value>
+        /// The vbox identifier path.
+        /// </value>
+        public string VboxIdPath { get { return get_application_settings_value("VboxIdPath"); } }
         public string PackagesUrl { get { return get_application_settings_value("PackagesUrl"); } }
         public string PackageTypesToVerify { get { return get_application_settings_value("PackageTypesToVerify"); } }
         public string PackagesApiKey { get { return get_application_settings_value("PackagesApiKey"); } }
