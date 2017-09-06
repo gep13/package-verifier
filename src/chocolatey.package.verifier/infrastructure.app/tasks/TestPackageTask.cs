@@ -39,6 +39,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
         private readonly IConfigurationSettings _configuration;
         private readonly IImageUploadService _imageUploadService;
         private IDisposable _subscription;
+        private readonly string _vboxManageExe;
         private const string PROC_LOCK_NAME = "proc_test";
 
         public TestPackageTask(IPackageTestService testService, IFileSystem fileSystem, IConfigurationSettings configuration, IImageUploadService imageUploadService)
@@ -47,6 +48,11 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             _fileSystem = fileSystem;
             _configuration = configuration;
             _imageUploadService = imageUploadService;
+
+            if (!string.IsNullOrWhiteSpace(_configuration.PathToVirtualBox))
+            {
+                _vboxManageExe = _fileSystem.combine_paths(_configuration.PathToVirtualBox, "vboxmanage.exe");
+            }
         }
 
         public void initialize()
