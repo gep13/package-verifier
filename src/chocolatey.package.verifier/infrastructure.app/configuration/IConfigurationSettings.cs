@@ -98,5 +98,21 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         /// </summary>
         string GitHubPassword { get; }
 
+        
+        /// <summary>
+        /// Gets the image upload client identifier.
+        /// </summary>
+        /// <value>
+        /// The image upload client identifier.
+        /// </value>
+        string ImageUploadClientId { get; }
+
+        /// <summary>
+        /// Gets the image upload client secret.
+        /// </summary>
+        /// <value>
+        /// The image upload client secret.
+        /// </value>
+        string ImageUploadClientSecret { get; }
     }
 }

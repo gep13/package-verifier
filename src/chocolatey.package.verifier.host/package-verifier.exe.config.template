@@ -22,6 +22,8 @@
     <add key="GitHub.Token" value="${github.token}"/>
     <add key="GitHub.UserName" value="${github.username}"/>
     <add key="GitHub.Password" value="${github.password}"/>
+    <add key="ImageUpload.ClientId" value="" />
+    <add key="ImageUpload.ClientSecret" value="" />
   </appSettings>
   
   <system.net>

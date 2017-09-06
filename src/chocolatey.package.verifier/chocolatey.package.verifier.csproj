@@ -138,6 +138,8 @@
     <Compile Include="infrastructure.app\messaging\PackageTestResultMessage.cs" />
     <Compile Include="infrastructure.app\services\GistService.cs" />
     <Compile Include="infrastructure.app\services\IGistService.cs" />
+    <Compile Include="infrastructure.app\services\IImageUploadService.cs" />
+    <Compile Include="infrastructure.app\services\ImageUploadService.cs" />
     <Compile Include="infrastructure.app\services\INuGetService.cs" />
     <Compile Include="infrastructure.app\services\IPackageCheckService.cs" />
     <Compile Include="infrastructure.app\services\IPackageSubmitResultsService.cs" />

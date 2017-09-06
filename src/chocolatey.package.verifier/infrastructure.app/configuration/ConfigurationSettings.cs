@@ -153,5 +153,29 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
             }
         }
 
+        /// <summary>
+        /// Gets the image upload client identifier.
+        /// </summary>
+        /// <value>
+        /// The image upload client identifier.
+        /// </value>
+        public string ImageUploadClientId {
+            get
+            {
+                return get_application_settings_value("ImageUpload.ClientId");
+            }
+        }
+        /// <summary>
+        /// Gets the image upload client secret.
+        /// </summary>
+        /// <value>
+        /// The image upload client secret.
+        /// </value>
+        public string ImageUploadClientSecret {
+            get
+            {
+                return get_application_settings_value("ImageUpload.ClientSecret");
+            }
+        }
     }
 }
