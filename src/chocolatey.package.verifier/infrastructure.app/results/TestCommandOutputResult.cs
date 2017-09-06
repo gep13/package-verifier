@@ -23,5 +23,6 @@ namespace chocolatey.package.verifier.infrastructure.app.results
         public string Logs { get; set; }
         public string DotFiles { get; set; }
         public string DotRegistry { get; set; }
+        public string ImageLink { get; set; }
     }
 }

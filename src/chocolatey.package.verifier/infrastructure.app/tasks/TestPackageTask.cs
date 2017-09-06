@@ -103,11 +103,17 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                 }
 
                 this.Log().Info(() => "Checking install.");
+
+                const string imageDirectory = ".\\images";
+                _fileSystem.create_directory_if_not_exists(imageDirectory);
+                var installImage = string.Empty;
                 var installResults = _testService.run(
                     "choco.exe install {0} --version {1} -fdvy --execution-timeout={2} --allow-downgrade".format_with(
                         message.PackageId,
                         message.PackageVersion,
                         _configuration.CommandExecutionTimeoutSeconds));
+
+                installResults.ImageLink = installImage;
 
                 if (had_environment_errors(installResults)) return;
                 
@@ -163,8 +169,11 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                 {
                     this.Log().Info(() => "Now checking uninstall.");
                     uninstallResults = _testService.run("choco.exe uninstall {0} --version {1} -dvy --execution-timeout={2}".format_with(message.PackageId, message.PackageVersion, _configuration.CommandExecutionTimeoutSeconds));
+                    var uninstallImage = string.Empty;
                     this.Log().Info(() => "Uninstall was '{0}'.".format_with(uninstallResults.ExitCode == 0 ? "successful" : "not successful"));
                     this.Log().Debug(() => "Grabbing actual log file to include in report.");
+
+                    uninstallResults.ImageLink = uninstallImage;
 
                     var uninstallLogFile = ".\\choco_logs\\chocolatey.log";
                     try
@@ -234,10 +243,21 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
                 logs.Add(new PackageTestLog("_Summary.md", summary.ToString()));
                 if (!string.IsNullOrWhiteSpace(installResults.Logs)) logs.Add(new PackageTestLog("Install.txt", string.IsNullOrWhiteSpace(installLog) ? installResults.Logs : installLog));
+                if (!string.IsNullOrWhiteSpace(installResults.ImageLink)) logs.Add(new PackageTestLog("InstallImage.md", @"
+This is the image that was taken when the install test failed:
+
+![{0} v{1} install failure]({2})
+".format_with(message.PackageId, message.PackageVersion, installResults.ImageLink)));
+
                 if (!string.IsNullOrWhiteSpace(registrySnapshot)) logs.Add(new PackageTestLog("1.RegistrySnapshot.xml", registrySnapshot));
                 if (!string.IsNullOrWhiteSpace(filesSnapshot)) logs.Add(new PackageTestLog("FilesSnapshot.xml", filesSnapshot));
                 if (!string.IsNullOrWhiteSpace(upgradeResults.Logs)) logs.Add(new PackageTestLog("Upgrade.txt", upgradeResults.Logs));
                 if (!string.IsNullOrWhiteSpace(uninstallResults.Logs)) logs.Add(new PackageTestLog("Uninstall.txt", string.IsNullOrWhiteSpace(uninstallLog) ? uninstallResults.Logs : uninstallLog));
+                if (!string.IsNullOrWhiteSpace(uninstallResults.ImageLink)) logs.Add(new PackageTestLog("UninstallImage.md", @"
+This is the image that was taken when the uninstall test failed:
+
+![{0} v{1} uninstall failure]({2})
+".format_with(message.PackageId, message.PackageVersion, uninstallResults.ImageLink)));
 
                 EventManager.publish(
                     new PackageTestResultMessage(
