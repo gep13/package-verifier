@@ -67,7 +67,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             _testService.shutdown();
         }
 
-        
+
         private bool had_environment_errors(TestCommandOutputResult results)
         {
             var environmentErrors = false;
@@ -113,6 +113,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                 const string imageDirectory = ".\\images";
                 _fileSystem.create_directory_if_not_exists(imageDirectory);
                 var installImage = string.Empty;
+
                 var installResults = _testService.run(
                     "choco.exe install {0} --version {1} -fdvy --execution-timeout={2} --allow-downgrade".format_with(
                         message.PackageId,
@@ -122,7 +123,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                 installResults.ImageLink = installImage;
 
                 if (had_environment_errors(installResults)) return;
-                
+
                 this.Log().Debug(() => "Grabbing actual log file to include in report.");
                 var installLog = string.Empty;
                 var installLogFile = ".\\choco_logs\\chocolatey.log";
