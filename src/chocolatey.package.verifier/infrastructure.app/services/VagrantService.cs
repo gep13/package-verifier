@@ -97,7 +97,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
             return execute_vagrant("status").Logs.to_lower().Contains("running (");
         }
 
-        private TestCommandOutputResult execute_vagrant(string command)
+        private TestCommandOutputResult execute_vagrant(string command, Action timeoutAction = null)
         {
             this.Log().Debug(() => "Executing vagrant command '{0}'.".format_with(command.escape_curly_braces()));
             var results = new TestCommandOutputResult();
@@ -132,6 +132,7 @@ namespace chocolatey.package.verifier.infrastructure.app.services
                             MessageType = ResultType.Note
                         });
                 },
+                timeoutAction,
                 updateProcessPath: false,
                 allowUseWindow: false);
 

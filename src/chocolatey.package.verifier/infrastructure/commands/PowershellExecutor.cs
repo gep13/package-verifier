@@ -57,6 +57,7 @@ namespace chocolatey.package.verifier.infrastructure.commands
                 workingDirectory: fileSystem.get_directory_name(fileSystem.get_current_assembly_path()),
                 stdOutAction: stdOutAction,
                 stdErrAction: stdErrAction,
+                timeoutAction:null,
                 updateProcessPath: true,
                 allowUseWindow: _allowUseWindow
                 );

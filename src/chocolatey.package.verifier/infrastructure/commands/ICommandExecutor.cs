@@ -43,6 +43,18 @@ namespace chocolatey.package.verifier.infrastructure.commands
             bool allowUseWindow
             );
 
+        int execute(
+            string process,
+            string arguments,
+            int waitForExitInSeconds,
+            string workingDirectory,
+            Action<object, DataReceivedEventArgs> stdOutAction,
+            Action<object, DataReceivedEventArgs> stdErrAction,
+            Action timeoutAction,
+            bool updateProcessPath,
+            bool allowUseWindow
+            );
+
         ProcessOutput execute(
             string process,
             string arguments,

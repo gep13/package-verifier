@@ -88,6 +88,31 @@ namespace chocolatey.package.verifier.infrastructure.commands
             bool allowUseWindow
             )
         {
+            return execute(
+                process,
+                arguments,
+                waitForExitInSeconds,
+                file_system.get_directory_name(Assembly.GetExecutingAssembly().Location),
+                stdOutAction,
+                stdErrAction,
+                null,
+                updateProcessPath,
+                allowUseWindow
+                );
+        }
+
+        public int execute(
+            string process,
+            string arguments,
+            int waitForExitInSeconds,
+            string workingDirectory,
+            Action<object, DataReceivedEventArgs> stdOutAction,
+            Action<object, DataReceivedEventArgs> stdErrAction,
+            Action timeoutAction,
+            bool updateProcessPath,
+            bool allowUseWindow
+            )
+        {
             return execute_static(
                 process,
                 arguments,
@@ -95,6 +120,7 @@ namespace chocolatey.package.verifier.infrastructure.commands
                 file_system.get_directory_name(Assembly.GetExecutingAssembly().Location),
                 stdOutAction,
                 stdErrAction,
+                timeoutAction,
                 updateProcessPath,
                 allowUseWindow
                 );
@@ -107,6 +133,7 @@ namespace chocolatey.package.verifier.infrastructure.commands
             string workingDirectory,
             Action<object, DataReceivedEventArgs> stdOutAction,
             Action<object, DataReceivedEventArgs> stdErrAction,
+            Action timeoutAction,
             bool updateProcessPath,
             bool allowUseWindow
             )
@@ -148,6 +175,7 @@ namespace chocolatey.package.verifier.infrastructure.commands
                     }
                     else
                     {
+                        if (timeoutAction != null) timeoutAction.Invoke();
                         ApplicationParameters.Name.Log().Warn(() => "Killing process ['\"{0}\" {1}']".format_with(process, arguments));
                         kill_process_and_children(p.Id);
                     }
