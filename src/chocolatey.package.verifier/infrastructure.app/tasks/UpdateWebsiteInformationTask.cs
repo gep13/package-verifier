@@ -56,6 +56,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
         private void update_website(FinalPackageTestResultMessage message)
         {
+            SecurityProtocol.set_protocol();
             this.Log().Info(() => "Updating website for {0} v{1} with success '{2}' and results url: '{3}'".format_with(message.PackageId, message.PackageVersion, message.Success, message.ResultDetailsUrl));
 
             try

@@ -47,6 +47,7 @@ namespace chocolatey.package.verifier.Host
             Bootstrap.initialize();
             _logger = LogManager.GetLogger(typeof(Service));
             Bootstrap.startup();
+            SecurityProtocol.set_protocol();
         }
 
         /// <summary>
