@@ -73,9 +73,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Nuget-Chocolatey\NuGet.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Octokit, Version=0.17.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Octokit.0.17.0\lib\net45\Octokit.dll</HintPath>
+    <Reference Include="Octokit, Version=0.29.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Octokit.0.29.0\lib\net45\Octokit.dll</HintPath>
     </Reference>
     <Reference Include="Reactive.EventAggregator, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Reactive.EventAggregator.2.0.0\lib\net45\Reactive.EventAggregator.dll</HintPath>
@@ -223,6 +222,7 @@
     <Compile Include="StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
