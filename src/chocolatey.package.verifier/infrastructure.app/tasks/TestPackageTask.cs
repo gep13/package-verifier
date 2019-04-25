@@ -121,7 +121,8 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                         _configuration.CommandExecutionTimeoutSeconds),
                     () =>
                     {
-                        if (string.IsNullOrWhiteSpace(_vboxManageExe) || !string.IsNullOrWhiteSpace(_configuration.VboxIdPath)) return;
+                        this.Log().Info(() => "Timeout triggered.");
+                        if (string.IsNullOrWhiteSpace(_vboxManageExe) || string.IsNullOrWhiteSpace(_configuration.VboxIdPath)) return;
                         if (!_fileSystem.file_exists(_configuration.VboxIdPath)) return;
                         var vmId = _fileSystem.read_file(_configuration.VboxIdPath);
                         if (string.IsNullOrWhiteSpace(vmId)) return;
