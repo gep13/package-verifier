@@ -24,6 +24,11 @@ try {
 Write-Output 'Setting Windows Update service to Manual startup type'
 Set-Service -Name wuauserv -StartupType Manual
 
+Write-Output 'Setting "Turn off display" to never on AC power'
+# this is required to keep the monitor on to create 
+# a screenshot that is not "black" when timed out.
+powercfg -change -monitor-timeout-ac 0
+
 $exitCode = 0
 
 & c:\vagrant\shell\InstallNet4.ps1
