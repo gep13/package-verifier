@@ -24,15 +24,26 @@
     <add key="GitHub.Token" value="${github.token}"/>
     <add key="GitHub.UserName" value="${github.username}"/>
     <add key="GitHub.Password" value="${github.password}"/>
-    <add key="ImageUpload.ClientId" value="" />
-    <add key="ImageUpload.ClientSecret" value="" />
+
+    <!-- Screenshots start -->
+    <!-- common settings -->
+    <add key="ImagesStoreType" value="FileSystem"/>
+    <add key="ImagesUploadFolder" value="verifier-screenshots" />
+    <add key="ImagesUrl" value="https://chocolatey.org" />
+    <!-- AWS S3 bucket settings -->
+    <add key="S3Bucket" value="" />
+    <add key="S3AccessKey" value="" />
+    <add key="S3SecretKey" value="" />
+    <!-- local settings -->
+    <add key="ImagesFolder" value="..\Website" />
+    <!-- Screenshots end -->
   </appSettings>
   
   <system.net>
     <mailSettings>
       <!-- Local Debug directory -->
       <smtp deliveryMethod="${server.smtp.deliveryMethod}" from="package-verifier-service@noreply.org">
-        <network host="${server.smtp}" defaultCredentials="${email.use.defaultCredentials}" enableSsl="${server.smtp.enablessl}" port="${server.smtp.port}" ${server.smtp.credentials} />
+        <network host="${server.smtp}" defaultCredentials="${email.use.defaultCredentials}" enableSsl="${server.smtp.enablessl}" port="${server.smtp.port}" server="${server.smtp.credentials}" />
         <specifiedPickupDirectory pickupDirectoryLocation=".\App_Data\Email"/>
       </smtp>
     </mailSettings>

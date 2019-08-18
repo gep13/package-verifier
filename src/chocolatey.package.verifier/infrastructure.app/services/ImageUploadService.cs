@@ -15,48 +15,43 @@
 
 namespace chocolatey.package.verifier.infrastructure.app.services
 {
-    using System;
-    using System.Diagnostics;
-    using System.IO;
     using configuration;
     using filesystem;
-    using Imgur.API;
-    using Imgur.API.Authentication.Impl;
-    using Imgur.API.Endpoints.Impl;
-    using Imgur.API.Models;
+    using System;
 
     public class ImageUploadService : IImageUploadService
     {
         private readonly IConfigurationSettings _configuration;
         private readonly IFileSystem _fileSystem;
+        private readonly IFileStorageService _imageStorageService;
 
-        public ImageUploadService(IConfigurationSettings configuration, IFileSystem fileSystem)
+
+        public ImageUploadService(
+            IConfigurationSettings configuration,
+            IFileSystem fileSystem,
+            IFileStorageService imageStorageService)
         {
             _configuration = configuration;
             _fileSystem = fileSystem;
+            _imageStorageService = imageStorageService;
         }
-        
+
         public string upload_image(string imageLocation)
         {
             var imageLink = string.Empty;
 
             try
             {
-                var client = new ImgurClient(_configuration.ImageUploadClientId,_configuration.ImageUploadClientSecret);
-                var endpoint = new ImageEndpoint(client);
-                IImage image;
-                using (var imageStream = new FileStream(imageLocation, FileMode.Open,FileAccess.Read))
-                {
-                    image = endpoint.UploadImageStreamAsync(imageStream).GetAwaiter().GetResult();
-                }
+                var imageStream = _fileSystem.open_file_readonly(imageLocation);
+                var fileName = _fileSystem.get_file_name(imageLocation);
 
-                imageLink = image.Link;
+                _imageStorageService.save_file(_configuration.ImagesUploadFolder, fileName, imageStream);
 
-                this.Log().Debug("Image uploaded to '{0}' from '{1}'".format_with(imageLink, imageLocation));
+                imageLink = _imageStorageService.get_url(_configuration.ImagesUploadFolder, fileName);
             }
-            catch (ImgurException ex)
+            catch (Exception ex)
             {
-                this.Log().Warn("Upload failed for image:{0} {1}".format_with(Environment.NewLine,ex.Message));
+                this.Log().Warn("Upload failed for image:{0} {1}".format_with(Environment.NewLine, ex.Message));
             }
 
             return imageLink;

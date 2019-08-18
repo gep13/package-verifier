@@ -41,6 +41,8 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
         private IDisposable _subscription;
         private readonly string _vboxManageExe;
         private const string PROC_LOCK_NAME = "proc_test";
+        private const string _imageFormat = "{0}.{1}.{2}.{3}.png";
+        private const string _dateTimeFormat = "yyyyMMddHHmmss";
 
         public TestPackageTask(IPackageTestService testService, IFileSystem fileSystem, IConfigurationSettings configuration, IImageUploadService imageUploadService)
         {
@@ -98,6 +100,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
             {
                 this.Log().Info(() => "========== {0} v{1} ==========".format_with(message.PackageId, message.PackageVersion));
                 this.Log().Info(() => "Testing Package: {0} Version: {1}".format_with(message.PackageId, message.PackageVersion));
+                
 
                 _fileSystem.delete_file(".\\choco_logs\\chocolatey.log");
                 var prepSuccess = _testService.prep();
@@ -127,7 +130,12 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                         var vmId = _fileSystem.read_file(_configuration.VboxIdPath);
                         if (string.IsNullOrWhiteSpace(vmId)) return;
 
-                        var imageLocation = _fileSystem.combine_paths(imageDirectory, "{0}.{1}.install.png".format_with(message.PackageId, message.PackageVersion));
+                        var imageLocation = _fileSystem.combine_paths(imageDirectory, _imageFormat.format_with(
+                            message.PackageId,
+                            message.PackageVersion,
+                            DateTime.Now.ToString(_dateTimeFormat),
+                            "install"
+                        ));
 
                         try
                         {
@@ -221,12 +229,17 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                     uninstallResults = _testService.run("choco.exe uninstall {0} --version {1} -dvy --execution-timeout={2}".format_with(message.PackageId, message.PackageVersion, _configuration.CommandExecutionTimeoutSeconds),
                         () =>
                         {
-                            if (string.IsNullOrWhiteSpace(_vboxManageExe) || !string.IsNullOrWhiteSpace(_configuration.VboxIdPath)) return;
+                            if (string.IsNullOrWhiteSpace(_vboxManageExe) || string.IsNullOrWhiteSpace(_configuration.VboxIdPath)) return;
                             if (!_fileSystem.file_exists(_configuration.VboxIdPath)) return;
                             var vmId = _fileSystem.read_file(_configuration.VboxIdPath);
                             if (string.IsNullOrWhiteSpace(vmId)) return;
 
-                            var imageLocation = _fileSystem.combine_paths(imageDirectory, "{0}.{1}.uninstall.png".format_with(message.PackageId, message.PackageVersion));
+                            var imageLocation = _fileSystem.combine_paths(imageDirectory, _imageFormat.format_with(
+                                message.PackageId,
+                                message.PackageVersion,
+                                DateTime.Now.ToString(_dateTimeFormat),
+                                "uninstall"
+                            ));
 
                             try
                             {

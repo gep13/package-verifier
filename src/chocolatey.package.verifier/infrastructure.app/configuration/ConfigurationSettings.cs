@@ -176,27 +176,45 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         }
 
         /// <summary>
-        /// Gets the image upload client identifier.
+        /// Gets the S3 bucket name
         /// </summary>
-        /// <value>
-        /// The image upload client identifier.
-        /// </value>
-        public string ImageUploadClientId {
-            get
-            {
-                return get_application_settings_value("ImageUpload.ClientId");
-            }
-        }
+        public string S3Bucket { get { return get_application_settings_value("S3Bucket"); } }
+
         /// <summary>
-        /// Gets the image upload client secret.
+        /// Gets the friendly Images Url
         /// </summary>
-        /// <value>
-        /// The image upload client secret.
-        /// </value>
-        public string ImageUploadClientSecret {
+        public string ImagesUrl { get { return get_application_settings_value("ImagesUrl"); } }
+
+        /// <summary>
+        /// Gets the local images folder
+        /// </summary>
+        public string ImagesUploadFolder { get { return get_application_settings_value("ImagesUploadFolder"); } }
+
+        /// <summary>
+        /// Gets the remote folder
+        /// </summary>
+        public string ImagesFolder { get { return get_application_settings_value("ImagesFolder"); } }
+
+        /// <summary>
+        /// Gets the Amazon S3 access key
+        /// </summary>
+        public string S3AccessKey { get { return get_application_settings_value("S3AccessKey"); } }
+
+        /// <summary>
+        /// Gets the Amazon S3 Secret key
+        /// </summary>
+        public string S3SecretKey { get { return get_application_settings_value("S3SecretKey"); } }
+
+        /// <summary>
+        /// Gets the Image Store Type
+        /// </summary>
+        public ImagesStoreType ImagesStoreType
+        {
             get
             {
-                return get_application_settings_value("ImageUpload.ClientSecret");
+                var data = get_application_settings_value("ImagesStoreType");
+                var storeType = (ImagesStoreType)Enum.Parse(typeof(ImagesStoreType), data);
+                return Enum.IsDefined(typeof(ImagesStoreType), storeType) ? storeType : ImagesStoreType.NotSpecified;
             }
         }
     }

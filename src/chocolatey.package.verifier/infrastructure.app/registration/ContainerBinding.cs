@@ -48,6 +48,18 @@ namespace chocolatey.package.verifier.infrastructure.app.registration
             container.Register<IMessageSubscriptionManagerService, MessageSubscriptionManagerService>(Lifestyle.Singleton);
             EventManager.initialize_with(container.GetInstance<IMessageSubscriptionManagerService>);
 
+            switch (configuration.ImagesStoreType)
+            {
+                case ImagesStoreType.AmazonS3Storage:
+                    container.Register<IAmazonS3Client, AmazonS3ClientWrapper>(Lifestyle.Singleton);
+                    container.Register<IFileStorageService, AmazonS3FileStorageService>(Lifestyle.Singleton);
+                    break;
+                case ImagesStoreType.FileSystem:
+                case ImagesStoreType.NotSpecified:
+                    container.Register<IFileStorageService, FileSystemFileStorageService>(Lifestyle.Singleton);
+                    break;
+            }
+
             container.Register<INotificationSendService, SmtpMarkdownNotificationSendService>(Lifestyle.Singleton);
             container.Register<IMessageService, MessageService>(Lifestyle.Singleton);
             container.Register<IEmailDistributionService, EmailDistributionService>(Lifestyle.Singleton);
