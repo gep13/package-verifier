@@ -36,11 +36,12 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AWSSDK, Version=1.3.18.0, Culture=neutral, PublicKeyToken=cd2d24cd2bace800, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\AWSSDK.1.3.18.0\lib\AWSSDK.dll</HintPath>
+    </Reference>
     <Reference Include="EnsureThat">
       <HintPath>..\packages\Ensure.That.0.5.0\lib\EnsureThat.dll</HintPath>
-    </Reference>
-    <Reference Include="Imgur.API, Version=4.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Imgur.API.4.0.1\lib\net45\Imgur.API.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
@@ -65,9 +66,6 @@
     <Reference Include="Microsoft.Data.Services.Client, Version=5.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.Data.Services.Client.5.7.0\lib\net40\Microsoft.Data.Services.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NuGet.Core, Version=1.6.30117.9648, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -127,6 +125,7 @@
     <Compile Include="EnumerationExtensions.cs" />
     <Compile Include="infrastructure.app\ApplicationFileType.cs" />
     <Compile Include="infrastructure.app\FileInformation.cs" />
+    <Compile Include="infrastructure.app\ImagesStoreType.cs" />
     <Compile Include="infrastructure.app\messaging\FinalPackageTestResultMessage.cs" />
     <Compile Include="infrastructure.app\messaging\ImportFilesCompleteMessage.cs" />
     <Compile Include="infrastructure.app\messaging\VerifyPackageMessage.cs" />
@@ -136,7 +135,12 @@
     <Compile Include="infrastructure.app\results\NuGetServiceGetClientResult.cs" />
     <Compile Include="infrastructure.app\results\PackageTestResult.cs" />
     <Compile Include="infrastructure.app\messaging\PackageTestResultMessage.cs" />
+    <Compile Include="infrastructure.app\services\AmazonS3ClientWrapper.cs" />
+    <Compile Include="infrastructure.app\services\AmazonS3FileStorageService.cs" />
+    <Compile Include="infrastructure.app\services\FileSystemFileStorageService.cs" />
     <Compile Include="infrastructure.app\services\GistService.cs" />
+    <Compile Include="infrastructure.app\services\IAmazonS3Client.cs" />
+    <Compile Include="infrastructure.app\services\IFileStorageService.cs" />
     <Compile Include="infrastructure.app\services\IGistService.cs" />
     <Compile Include="infrastructure.app\services\IImageUploadService.cs" />
     <Compile Include="infrastructure.app\services\ImageUploadService.cs" />

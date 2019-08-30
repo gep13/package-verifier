@@ -113,21 +113,61 @@ namespace chocolatey.package.verifier.infrastructure.app.configuration
         /// The vbox identifier file path.
         /// </value>
         string VboxIdPath { get;}
-        
-        /// <summary>
-        /// Gets the image upload client identifier.
-        /// </summary>
-        /// <value>
-        /// The image upload client identifier.
-        /// </value>
-        string ImageUploadClientId { get; }
 
         /// <summary>
-        /// Gets the image upload client secret.
+        /// Gets the S3 Bucket name
         /// </summary>
         /// <value>
-        /// The image upload client secret.
+        /// The S3 Bucket name
         /// </value>
-        string ImageUploadClientSecret { get; }
+        string S3Bucket { get; }
+
+        /// <summary>
+        /// Gets the local folder where images will be stored.
+        /// </summary>
+        /// <value>
+        /// The local ImagesFolder directory name
+        /// </value>
+        string ImagesFolder { get; }
+
+        /// <summary>
+        /// Gets the folder where images will be uploaded.
+        /// </summary>
+        /// <value>
+        /// The ImagesUploadFolder directory name
+        /// </value>
+        string ImagesUploadFolder { get; }
+
+        /// <summary>
+        /// Gets the friendly URL for the images folder.
+        /// </summary>
+        /// <value>
+        /// The friendly URL to the images
+        /// </value>
+        string ImagesUrl { get; }
+
+        /// <summary>
+        /// Gets the S3 Access Key
+        /// </summary>
+        /// <value>
+        /// The Amazon S3 access key
+        /// </value>
+        string S3AccessKey { get; }
+
+        /// <summary>
+        /// Gets the S3 Secret Key
+        /// </summary>
+        /// <value>
+        /// The Amazon S3 secret key
+        /// </value>
+        string S3SecretKey { get; }
+
+        /// <summary>
+        /// Get the type of images store
+        /// </summary>
+        /// <value>
+        /// The Images Store type you want.
+        /// </value>
+        ImagesStoreType ImagesStoreType { get; }
     }
 }
