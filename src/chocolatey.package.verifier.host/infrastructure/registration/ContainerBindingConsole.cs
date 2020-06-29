@@ -60,10 +60,13 @@ namespace chocolatey.package.verifier.host.infrastructure.registration
             }
             else
             {
+                // We should only include packages in the verification queue, if they have first been successfully validated, or if it has been
+                // exempted from validation.
                 packagesCheckTask.AdditionalPackageSelectionFilters = p => p.Where(
-                    pv => (pv.PackageTestResultStatus == null 
-                           || pv.PackageTestResultStatus == "Pending" 
-                           || pv.PackageTestResultStatus == "Unknown")
+                    pv => (pv.PackageTestResultStatus == null
+                           || pv.PackageTestResultStatus == "Pending"
+                           || pv.PackageTestResultStatus == "Unknown") &&
+                          (pv.PackageValidationResultStatus == "Passing" || pv.PackageValidationResultStatus == "Exempted")
                           );
             }
 
