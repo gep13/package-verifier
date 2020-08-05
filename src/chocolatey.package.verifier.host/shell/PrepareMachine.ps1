@@ -45,4 +45,7 @@ if ($scriptExitCode -ne 0 -and $scriptExitCode -ne '') {
 
 & c:\vagrant\shell\NotifyGuiAppsOfEnvironmentChanges.ps1
 
+# install the latest version of the virtual box guest extensions
+choco install virtualbox-guest-additions-guest.install
+
 Exit $exitCode
