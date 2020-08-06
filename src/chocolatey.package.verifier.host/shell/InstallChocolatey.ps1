@@ -36,7 +36,7 @@ param (
     throw "No file exists at $chocolateyPackageFilePath"
   }
 
-  if ($env:TEMP -eq $null) {
+  if ($null -eq $env:TEMP) {
     $env:TEMP = Join-Path $env:SystemDrive 'temp'
   }
   $chocTempDir = Join-Path $env:TEMP "chocolatey"
@@ -93,5 +93,13 @@ choco feature enable -n allowGlobalConfirmation
 choco feature enable -n logEnvironmentValues
 choco feature disable -n showDownloadProgress
 #choco feature disable -n powershellHost
+
+$cachedPackagesPath = 'c:\cached-packages'
+if (Test-Path -Path $cachedPackagesPath -PathType Container) {
+  Write-Output "Local packages path '$cachedPackagesPath' exists. Adding as a Chocolatey source with priority 1."
+  choco source add --name="'cached-packages'" --source="'$cachedPackagesPath'" --priority=1
+} else {
+  Write-Output "Local packages path '$cachedPackagesPath' does not exist. All packages will be downloaded from Chocolatey.org"
+}
 
 Exit $LASTEXITCODE
