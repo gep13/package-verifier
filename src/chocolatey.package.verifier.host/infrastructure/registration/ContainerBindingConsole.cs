@@ -62,12 +62,12 @@ namespace chocolatey.package.verifier.host.infrastructure.registration
             {
                 // We should only include packages in the verification queue, if they have first been successfully validated, or if it has been
                 // exempted from validation.
+                // In the case where the package version is a pre-release package, if it has also failed validation, it should be added to the
+                // package verifier queue
                 packagesCheckTask.AdditionalPackageSelectionFilters = p => p.Where(
-                    pv => (pv.PackageTestResultStatus == null
-                           || pv.PackageTestResultStatus == "Pending"
-                           || pv.PackageTestResultStatus == "Unknown") &&
-                          (pv.PackageValidationResultStatus == "Passing" || pv.PackageValidationResultStatus == "Exempted")
-                          );
+                    pv => (pv.PackageTestResultStatus == null || pv.PackageTestResultStatus == "Pending" || pv.PackageTestResultStatus == "Unknown") &&
+                          ((pv.PackageValidationResultStatus == "Passing" || pv.PackageValidationResultStatus == "Exempted") ||
+                          (pv.IsPrerelease && pv.PackageValidationResultStatus == "Failing")));
             }
 
             container.Register<IEnumerable<ITask>>(
