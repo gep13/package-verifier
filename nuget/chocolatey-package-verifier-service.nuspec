@@ -31,4 +31,8 @@
       <dependency id="virtualbox" version="(,4.3.40]" />
     </dependencies>
   </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+    <file src="..\..\code_drop\_PublishedApplications\chocolatey.package.verifier.host\**\*" target="tools\files" exclude="**\Vagrantfile;**\package-cacher.exe.config" />
+  </files>
 </package>
