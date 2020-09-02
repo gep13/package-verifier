@@ -33,6 +33,6 @@
   </metadata>
   <files>
     <file src="tools\**" target="tools" />
-    <file src="..\..\code_drop\_PublishedApplications\chocolatey.package.verifier.host\**\*" target="tools\files" exclude="**\Vagrantfile;**\package-verifier.exe.config" />
+    <file src="..\_PublishedApplications\chocolatey.package.verifier.host\**\*" target="tools\files" exclude="**\Vagrantfile;**\package-verifier.exe.config" />
   </files>
 </package>
