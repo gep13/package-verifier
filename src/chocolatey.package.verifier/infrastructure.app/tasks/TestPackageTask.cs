@@ -1,12 +1,12 @@
 ﻿// Copyright © 2015 - Present RealDimensions Software, LLC
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
-// 
+//
 // You may obtain a copy of the License at
-// 
+//
 // 	http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,6 +43,8 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
         private const string PROC_LOCK_NAME = "proc_test";
         private const string _imageFormat = "{0}.{1}.{2}.{3}.png";
         private const string _dateTimeFormat = "yyyyMMddHHmmss";
+        private bool _vmIdAvailable = false;
+        private string _vmId = string.Empty;
 
         public TestPackageTask(IPackageTestService testService, IFileSystem fileSystem, IConfigurationSettings configuration, IImageUploadService imageUploadService)
         {
@@ -73,11 +75,18 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
         private bool had_environment_errors(TestCommandOutputResult results)
         {
             var environmentErrors = false;
-            var vmId = _fileSystem.read_file(_configuration.VboxIdPath);
 
             if (results.Logs.Contains("The term 'choco.exe' is not")) environmentErrors = true;
             if (results.Logs.Contains("The term 'choco' is not")) environmentErrors = true;
-            if (results.Logs.Contains("Cannot remove item C:\\Windows\\Temp\\{0}\\WinRM_Elevated_Shell.log".format_with(vmId))) environmentErrors = true;
+
+            if (_vmIdAvailable)
+            {
+                if (results.Logs.Contains("Cannot remove item C:\\Windows\\Temp\\{0}\\WinRM_Elevated_Shell.log".format_with(_vmId))) environmentErrors = true;
+            }
+            else
+            {
+                if (results.Logs.Contains("Cannot remove item C:\\Windows\\Temp\\WinRM_Elevated_Shell.log")) environmentErrors = true;
+            }
 
             if (environmentErrors)
             {
@@ -102,17 +111,6 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                 this.Log().Info(() => "========== {0} v{1} ==========".format_with(message.PackageId, message.PackageVersion));
                 this.Log().Info(() => "Testing Package: {0} Version: {1}".format_with(message.PackageId, message.PackageVersion));
 
-                var tempFolder = Environment.GetEnvironmentVariable("TEMP");
-                var vmId = _fileSystem.read_file(_configuration.VboxIdPath);
-                if (!tempFolder.EndsWith(vmId))
-                {
-                    var runFolder = "{0}\\{1}".format_with(tempFolder, vmId);
-                    this.Log().Info(() => "Setting temp folder to: {0}".format_with(runFolder));
-
-                    Environment.SetEnvironmentVariable("TEMP", runFolder);
-                    _fileSystem.create_directory_if_not_exists(runFolder);
-                }
-
                 _fileSystem.delete_file(".\\choco_logs\\chocolatey.log");
                 var prepSuccess = _testService.prep();
                 var resetSuccess = _testService.reset();
@@ -120,6 +118,22 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                 {
                     Bootstrap.handle_exception(new ApplicationException("Unable to test package due to testing service issues. See log for details"));
                     return;
+                }
+
+                if (_fileSystem.file_exists(_configuration.VboxIdPath))
+                {
+                    _vmId = _fileSystem.read_file(_configuration.VboxIdPath);
+                    _vmIdAvailable = !string.IsNullOrWhiteSpace(_vmId);
+                }
+
+                var tempFolder = Environment.GetEnvironmentVariable("TEMP");
+                if (_vmIdAvailable && !tempFolder.EndsWith(_vmId))
+                {
+                    var runFolder = "{0}\\{1}".format_with(tempFolder, _vmId);
+                    this.Log().Info(() => "Setting temp folder to: {0}".format_with(runFolder));
+
+                    Environment.SetEnvironmentVariable("TEMP", runFolder);
+                    _fileSystem.create_directory_if_not_exists(runFolder);
                 }
 
                 this.Log().Info(() => "Checking install.");
@@ -137,8 +151,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                     {
                         this.Log().Info(() => "Timeout triggered.");
                         if (string.IsNullOrWhiteSpace(_vboxManageExe) || string.IsNullOrWhiteSpace(_configuration.VboxIdPath)) return;
-                        if (!_fileSystem.file_exists(_configuration.VboxIdPath)) return;
-                        if (string.IsNullOrWhiteSpace(vmId)) return;
+                        if (!_vmIdAvailable) return;
 
                         var imageLocation = _fileSystem.combine_paths(imageDirectory, _imageFormat.format_with(
                             message.PackageId,
@@ -149,8 +162,8 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
 
                         try
                         {
-                            CommandExecutor.execute_static(_vboxManageExe, 
-                                "controlvm {" + vmId + "} screenshotpng " + imageLocation, 
+                            CommandExecutor.execute_static(_vboxManageExe,
+                                "controlvm {" + _vmId + "} screenshotpng " + imageLocation,
                                 30,
                                 _fileSystem.get_directory_name(Assembly.GetExecutingAssembly().Location),
                                 (o, e) =>
@@ -163,7 +176,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                                     if (e == null || string.IsNullOrWhiteSpace(e.Data)) return;
                                     this.Log().Warn(() => " [VboxManage][Error] {0}".format_with(e.Data));
                                 },
-                                null, 
+                                null,
                                 updateProcessPath: false,
                                 allowUseWindow: false);
 
@@ -241,7 +254,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                         {
                             if (string.IsNullOrWhiteSpace(_vboxManageExe) || string.IsNullOrWhiteSpace(_configuration.VboxIdPath)) return;
                             if (!_fileSystem.file_exists(_configuration.VboxIdPath)) return;
-                            if (string.IsNullOrWhiteSpace(vmId)) return;
+                            if (!_vmIdAvailable) return;
 
                             var imageLocation = _fileSystem.combine_paths(imageDirectory, _imageFormat.format_with(
                                 message.PackageId,
@@ -253,7 +266,7 @@ namespace chocolatey.package.verifier.infrastructure.app.tasks
                             try
                             {
                                 CommandExecutor.execute_static(_vboxManageExe,
-                                    "controlvm {" + vmId + "} screenshotpng " + imageLocation,
+                                    "controlvm {" + _vmId + "} screenshotpng " + imageLocation,
                                     30,
                                     _fileSystem.get_directory_name(Assembly.GetExecutingAssembly().Location),
                                     (o, e) =>
