@@ -38,14 +38,14 @@ Build Process:
 
  * Run `build.bat`.
 
-Running the build on Windows should produce an artifact that is tested and ready to be used.
-
+Running the build on Windows should produce an artifact that is tested and ready to be used. It will also produce a Chocolatey package which requires licensed components to use. To use it ensure you are running a currently licensed version of Chocolatey For Business.
 
 ## Setup
 
 You need the following installed on a machine that you will use the verifier with:
 
-* Vagrant (right now 1.6.5 or 1.7.3 is recommended) - you should verify it works.
+* Vagrant 2.2.7 is recommended.
+* VirtualBox 4.3.40 is recommended. Later version of VirtualBox have been found to cause issues.
 * The vagrant box(es) should be already installed on the machine. 1 box at a time currently supported.
 * The configuration file has the rest of what is necessary for config.
 * Install the service and let it run.
