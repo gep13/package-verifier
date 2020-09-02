@@ -7,9 +7,11 @@ The verifier is a service that checks the correctness (that the package actually
 Want quick feedback to your questions? [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/chocolatey/choco?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ### Requirements
+
 * .NET Framework 4.0
 
 ### License / Credits
+
 Apache 2.0 - see [LICENSE](https://github.com/chocolatey/package-verifier/blob/master/LICENSE) and [NOTICE](https://github.com/chocolatey/package-verifier/blob/master/NOTICE) files.
 
 ## Contributing
@@ -28,13 +30,13 @@ There is a `build.bat`/`build.sh` file that creates a necessary generated file n
 
 Prerequisites:
 
- * .NET Framework 4+
- * Visual Studio is helpful for working on source.
- * ReSharper is immensely helpful (and there is a `.sln.DotSettings` file to help with code conventions).
+* .NET Framework 4+
+* Visual Studio is helpful for working on source.
+* ReSharper is immensely helpful (and there is a `.sln.DotSettings` file to help with code conventions).
 
 Build Process:
 
- * Run `build.bat`.
+* Run `build.bat`.
 
 Running the build on Windows should produce an artifact that is tested and ready to be used. It will also produce a Chocolatey package which requires licensed components to use. To use it ensure you are running a currently licensed version of Chocolatey For Business.
 
