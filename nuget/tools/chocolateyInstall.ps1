@@ -56,7 +56,7 @@ if (-not (Test-Path -Path $configPath)) {
 
 $sourcePath = (Join-Path -Path $toolsDir -ChildPath "files")
 Write-Verbose "Copying files from '$sourcePath' to '$destinationPath'"
-Copy-Item -Path $sourcePath -Destination $destinationPath -Recurse -Force
+Copy-Item -Path "$sourcePath\*" -Destination $destinationPath -Recurse -Force
 
 Write-Verbose "Removing package files from '$sourcePath'"
 Remove-Item -Path $sourcePath -Recurse -Force
