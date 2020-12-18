@@ -1,7 +1,7 @@
 ﻿$ErrorActionPreference = 'Stop'
 $serviceName = 'package-verifier'
 
-$binPath = Join-Path (Get-ToolsLocation) -ChildPath 'chocolatey-package-verifier'
+$binPath = Join-Path (Get-ToolsLocation) -ChildPath 'verifier'
 
 Uninstall-ChocolateyWindowsService -Name $serviceName
 
