@@ -26,7 +26,6 @@
     <tags>chocolatey-package-verifier verifier admin</tags>
     <dependencies>
       <dependency id="chocolatey.extension" version="2.0.3" />
-      <dependency id="chocolatey-package-verifier-config" version="1.1.0" />
       <dependency id="chocolatey-package-verifier-vagrant" version="2.2.7" />
       <dependency id="virtualbox" version="(,4.3.40]" />
     </dependencies>
